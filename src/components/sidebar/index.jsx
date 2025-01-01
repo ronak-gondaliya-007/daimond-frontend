@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../assets/css/sidebar.css';
 
 import sidebarLogo from '../../assets/images/sidebar-logo.svg';
@@ -10,9 +11,21 @@ import icon4 from '../../assets/images/icon-4.svg';
 
 const Sidebar = () => {
     const [selectedItem, setSelectedItem] = useState('Dashboard');
+    const navigate = useNavigate();
 
     const handleItemClick = (itemName) => {
         setSelectedItem(itemName);
+
+        switch (itemName) {
+            case 'Dashboard':
+                navigate('/');
+                break;
+            case 'Stock':
+                navigate('/stock');
+                break;
+            default:
+                console.warn(`Navigation route not defined for item: ${itemName}`);
+        }
     };
 
     const isSelected = (itemName) => selectedItem === itemName;
