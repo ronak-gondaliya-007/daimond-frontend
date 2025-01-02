@@ -2,26 +2,36 @@ import React from 'react';
 import { useLocation } from "react-router-dom";
 import '../../assets/css/navbar.css';
 
+import { sections } from '../../constant';
+
 const Navbar = () => {
     const location = useLocation();
 
-    const getRouteName = (pathname) => {
-        if (pathname === "/") return "Dashboard";
-        return pathname
-            .replace("/", "")
-            .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
+    const generateTitleItemNames = () => {
+        return sections.map(section => {
+            let response = {};
+            section.items.map(item => {
+                if (item.slug === location.pathname) {
+                    return response = {
+                        title: section.title,
+                        name: item.name
+                    }
+                }
+            })
+            return response;
+        }).filter(item => Object.keys(item).length);
     };
 
-    const currentRoute = getRouteName(location.pathname);
-
     const hideSearchBar = location.pathname !== "/";
+    const navbarTitle = generateTitleItemNames();
+    console.log(navbarTitle);
 
     return (
         <header className={`header ${hideSearchBar ? "no-search" : ""}`}>
             <div className="header-left">
-                <span>{currentRoute}</span>
+                <span className='navabr-title'>{navbarTitle[0].title}</span>
+                <span className='navbar-blank'>/</span>
+                <span className='navbar-name'>{navbarTitle[0].name}</span>
             </div>
             <div className="header-right">
                 {(!hideSearchBar &&

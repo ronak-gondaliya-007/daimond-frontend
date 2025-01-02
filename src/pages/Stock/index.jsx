@@ -1,5 +1,6 @@
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/sidebar";
+import Search from "../../components/search";
 import Table from "../../components/table";
 import "../../assets/css/stock.css";
 
@@ -46,6 +47,7 @@ const Stock = () => {
             <Sidebar />
             <div className="main-content">
                 <Navbar />
+                <Search />
                 <Table headers={headers} data={diamonds} />
             </div>
         </div>

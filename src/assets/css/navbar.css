@@ -21,8 +21,23 @@ body {
 .header-left {
     padding: 4px 8px;
     color: #000;
-    font-size: 14px;
+    font-size: 15px;
+}
+
+span.navabr-title {
+    font-weight: 500;
     opacity: 0.4;
+    margin-right: 16px;
+}
+
+span.navbar-blank {
+    font-weight: 500;
+    opacity: 0.4;
+    margin-right: 16px;
+}
+
+span.navbar-name {
+    font-weight: 400;
 }
 
 .header-right {
