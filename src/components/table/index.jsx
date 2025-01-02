@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../assets/css/table.css';
 
 import daimondIcon from '../../assets/images/daimond.svg';
@@ -6,8 +7,11 @@ import button from '../../assets/images/button.svg';
 import button1 from '../../assets/images/button-1.svg';
 import button2 from '../../assets/images/button-2.svg';
 import Pagination from '../pagination';
+import DetailPopup from '../popup/Detail';
 
 const Table = ({ headers, data }) => {
+    const navigate = useNavigate();
+
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 3;
 
@@ -20,6 +24,16 @@ const Table = ({ headers, data }) => {
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
+    };
+
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const handleViewClick = (item) => {
+        setSelectedItem(item);
+    };
+
+    const handleClosePopup = () => {
+        setSelectedItem(null);
     };
 
     return (
@@ -68,7 +82,7 @@ const Table = ({ headers, data }) => {
                             })}
                             <td>
                                 <button>
-                                    <img src={button} alt="View" />
+                                    <img src={button} alt="View" onClick={() => handleViewClick(item)} />
                                 </button>
                                 <button>
                                     <img src={button1} alt="Delete" />
@@ -86,6 +100,8 @@ const Table = ({ headers, data }) => {
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
+
+            {selectedItem && <DetailPopup data={selectedItem} onClose={handleClosePopup} />}
         </div>
     );
 };

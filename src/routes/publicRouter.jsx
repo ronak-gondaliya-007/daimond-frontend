@@ -1,5 +1,6 @@
 import { memo, Suspense } from "react";
-import { useLocation, Navigate, Outlet } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
+import Loader from "../components/loader";
 
 const PublicRouter = ({ title, element: Element }) => {
     const location = useLocation();
@@ -8,7 +9,7 @@ const PublicRouter = ({ title, element: Element }) => {
     let redirectPath = "/dashboard";
 
     return true ? (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader />}>
             <Element title={title} />
         </Suspense>
     ) : (
