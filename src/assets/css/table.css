@@ -1,49 +1,226 @@
-.diamond-table-container {
-    width: 100%;
-    overflow-x: auto;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
 }
 
-table {
+.table-container {
+    max-width: 91.2rem;
+    width: 100%;
+    margin: 60px auto;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+}
+
+.common-table {
+    padding: 0 1.5rem;
     width: 100%;
     border-collapse: collapse;
+    border-radius: 12px;
 }
 
-th,
-td {
-    border: 1px solid #ddd;
-    padding: 10px;
+.common-table th,
+.common-table td {
+    text-align: center;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.common-table th {
+    max-height: 44px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #717680;
+    background-color: #FAFAFA;
+}
+
+/* Set border-radius for the first and last th */
+.common-table th:first-child {
+    border-top-left-radius: 12px;
+    padding: 13px;
+}
+
+.common-table th:nth-child(2) {
     text-align: left;
+    width: 15%;
 }
 
-th {
-    background-color: #f2f2f2;
+.common-table th:last-child {
+    border-top-right-radius: 12px;
 }
 
-.action-btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
+.diamond-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #0A112F;
+    margin: 0;
+    text-align: start;
+    position: relative;
     cursor: pointer;
-    margin-right: 5px;
+}
+
+.diamond-name p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 150px;
+    display: inline-block;
+    margin: 0;
+}
+
+.diamond-name::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1;
+}
+
+.diamond-name:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+
+.diamond-id {
+    font-size: 0.9rem;
+    font-weight: 200;
+    color: #70707A;
+    margin: 0;
+    text-align: start;
+}
+
+.diamond-info {
+    display: flex;
+    align-items: center;
+}
+
+.diamond-info img {
+    width: 40px;
+    height: 40px;
+    margin: 0 12px 0 0;
+}
+
+td button {
+    background-color: #fff;
+    border: none;
+    padding: 8px 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+td button img {
+    height: 40px;
+    width: 40px;
+}
+
+.common-table th input[type="checkbox"],
+.common-table td input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    appearance: none;
+    border: 2px solid #E9EAEB;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.common-table input[type="checkbox"]:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.common-table input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 5px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
 }
 
 .pagination {
     display: flex;
+    justify-content: space-between;
+    padding: 12px;
+}
+
+.pagination .functional {
+    margin: 0 24px;
+    display: flex;
     justify-content: center;
-    margin-top: 20px;
-}
-
-.pagination button {
-    margin: 0 5px;
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
+    align-items: center;
+    color: #414651;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 9px 12px;
+    gap: 5px;
+    border: 1px solid #D5D7DA;
     cursor: pointer;
+    box-shadow: #D5D7DA;
 }
 
-.pagination button.active {
-    background-color: #4CAF50;
-    color: white;
+.pagination .functional img {
+    height: 20px;
+    width: 20px;
+}
+
+.pagination .functional .next-arrow {
+    transform: rotate(180deg);
+}
+
+.pagination .functional p {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.pagination .functional:disabled {
+    opacity: 0;
+    font-weight: bold;
+    color: #535862;
+}
+
+.pagination .page-numbers button {
+    height: 40px;
+    width: 40px;
+    background: #fff;
+    border: none;
+    gap: 15px;
+    font-weight: 400;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.3s, border 0.3s;
+}
+
+.pagination .page-numbers .active {
+    background: #E9EAEB;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    color: #0A112F;
+    border: none;
+}
+
+.pagination .page-numbers button:disabled {
+    opacity: 1;
+    cursor: not-allowed;
+    font-weight: bold;
+    color: #535862;
 }
