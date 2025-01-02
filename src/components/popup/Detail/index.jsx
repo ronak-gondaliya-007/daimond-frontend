@@ -18,20 +18,62 @@ const DetailPopup = ({ data, onClose }) => {
                     </button>
                 </div>
                 <div className="popup-details">
-                    <p><strong>Diamond name and Id:</strong> {item['Diamond name and Id']}</p>
-                    <p><strong>ID:</strong> {item.id}</p>
-                    <p><strong>Carat:</strong> {item.carat}</p>
-                    <p><strong>Color:</strong> {item.color}</p>
+                    <div className="rows-detail">
+                        <div className="item-detail">
+                            <div className="key">Diamond name</div>
+                            <div className="value">{item.name}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">ID</div>
+                            <div className="value">{item.id}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Carat</div>
+                            <div className="value">{item.carat}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Color</div>
+                            <div className="value">{item.color}</div>
+                        </div>
+                    </div>
 
-                    <p><strong>Clarity:</strong> {item.clarity}</p>
-                    <p><strong>Polish:</strong> {item.polish}</p>
-                    <p><strong>Symmetry:</strong> {item.symmetry}</p>
-                    <p><strong>Depth:</strong> {item.depth}</p>
+                    <div className="rows-detail">
+                        <div className="item-detail">
+                            <div className="key">Clarity</div>
+                            <div className="value">{item.clarity}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Polish</div>
+                            <div className="value">{item.polish}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Symmetry</div>
+                            <div className="value">{item.symmetry}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Depth</div>
+                            <div className="value">{item.depth}</div>
+                        </div>
+                    </div>
 
-                    <p><strong>Fluorescence:</strong> {item.fluorescence}</p>
-                    <p><strong>Table:</strong> {item.table}</p>
-                    <p><strong>Ratio:</strong> {item.ratio}</p>
-                    <p><strong>Certificate No:</strong> {item.certificateNo}</p>
+                    <div className="rows-detail">
+                        <div className="item-detail">
+                            <div className="key">Fluorescence</div>
+                            <div className="value">{item.fluorescence}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Table</div>
+                            <div className="value">{item.table}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Ratio</div>
+                            <div className="value">{item.ratio}</div>
+                        </div>
+                        <div className="item-detail">
+                            <div className="key">Certificate No</div>
+                            <div className="value">{item.certificateNo}</div>
+                        </div>
+                    </div>
 
                     {item.images && item.images.length > 0 && (
                         <div className="popup-images">
@@ -41,7 +83,11 @@ const DetailPopup = ({ data, onClose }) => {
                         </div>
                     )}
 
-                    <p><strong>Remark:</strong> {item.remark}</p>
+                    <div className="item-detail">
+                        <div className="key">Remark</div>
+                        <div className="value">{item.remark}</div>
+                    </div>
+
                 </div>
             </div>
         </div>

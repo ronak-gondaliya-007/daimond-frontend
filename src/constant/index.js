@@ -75,7 +75,7 @@ export const diamonds = [
 ];
 
 export const diamondDetail = {
-    'Diamond name and Id': 'Arlene',
+    name: 'Arlene',
     id: '123456789',
     carat: '1.23',
     color: 'F',
