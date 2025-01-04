@@ -4,7 +4,7 @@ import '../../assets/css/navbar.css';
 
 import { sections } from '../../constant';
 
-const Navbar = () => {
+const Navbar = ({ title, name, action }) => {
     const location = useLocation();
 
     const generateTitleItemNames = () => {
@@ -24,14 +24,15 @@ const Navbar = () => {
 
     const hideSearchBar = location.pathname !== "/";
     const navbarTitle = generateTitleItemNames();
-    console.log(navbarTitle);
 
     return (
         <header className={`header ${hideSearchBar ? "no-search" : ""}`}>
             <div className="header-left">
-                <span className='navabr-title'>{navbarTitle[0].title}</span>
+                <span className='navabr-title'>{title ?? navbarTitle[0].title}</span>
                 <span className='navbar-blank'>/</span>
-                <span className='navbar-name'>{navbarTitle[0].name}</span>
+                <span className={action && action != "" ? 'navbar-name-disable' : 'navbar-name'}>{name ?? navbarTitle[0].name}</span>
+                {action && action != "" ? <span className='navbar-blank'>/</span> : ""}
+                {action && action != "" ? <span className='navbar-name'>{action}</span> : ""}
             </div>
             <div className="header-right">
                 {(!hideSearchBar &&

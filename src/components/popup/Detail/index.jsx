@@ -77,15 +77,18 @@ const DetailPopup = ({ data, onClose }) => {
 
                     {item.images && item.images.length > 0 && (
                         <div className="popup-images">
-                            {item.images.map((img, index) => (
-                                <img key={index} src={img} alt={`diamond-img-${index}`} />
-                            ))}
+                            <div className="key">Images</div>
+                            <div className="value">
+                                {item.images.map((img, index) => (
+                                    <img key={index} src={img} alt={`diamond-img-${index}`} />
+                                ))}
+                            </div>
                         </div>
                     )}
 
-                    <div className="item-detail">
-                        <div className="key">Remark</div>
-                        <div className="value">{item.remark}</div>
+                    <div className="remark-detail">
+                        <div className="remark-key">Remark</div>
+                        <div className="remark-value">{item.remark}</div>
                     </div>
 
                 </div>

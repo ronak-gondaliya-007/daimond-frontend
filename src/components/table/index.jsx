@@ -8,6 +8,8 @@ import button1 from '../../assets/images/button-1.svg';
 import button2 from '../../assets/images/button-2.svg';
 import Pagination from '../pagination';
 import DetailPopup from '../popup/Detail';
+import DeletePopup from '../popup/delete';
+import StockForm from '../../pages/Stock/Form';
 
 const Table = ({ headers, data }) => {
     const navigate = useNavigate();
@@ -29,7 +31,16 @@ const Table = ({ headers, data }) => {
     const [selectedItem, setSelectedItem] = useState(null);
 
     const handleViewClick = (item) => {
-        setSelectedItem(item);
+        setSelectedItem({ ...item, action: 'view' });
+    };
+
+    const handleDeleteClick = (item) => {
+        setSelectedItem({ ...item, action: 'delete' });
+    };
+
+    const handleEditClick = (item) => {
+        setSelectedItem({ ...item, action: 'edit' });
+        navigate('/stock-edit');
     };
 
     const handleClosePopup = () => {
@@ -42,7 +53,7 @@ const Table = ({ headers, data }) => {
                 <thead>
                     <tr>
                         <th style={{ width: '20px', height: '20px' }}>
-                            <input type="checkbox" />
+                            <input type="checkbox" className='checkbox' />
                         </th>
                         {headers.map((header, index) => (
                             <th key={index}>{header}</th>
@@ -85,23 +96,26 @@ const Table = ({ headers, data }) => {
                                     <img src={button} alt="View" onClick={() => handleViewClick(item)} />
                                 </button>
                                 <button>
-                                    <img src={button1} alt="Delete" />
+                                    <img src={button1} alt="Delete" onClick={() => handleDeleteClick(item)} />
                                 </button>
                                 <button>
-                                    <img src={button2} alt="Edit" />
+                                    <img src={button2} alt="Edit" onClick={() => handleEditClick(item)} />
                                 </button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
 
-            {selectedItem && <DetailPopup data={selectedItem} onClose={handleClosePopup} />}
+            {selectedItem && selectedItem.action === 'view' && <DetailPopup data={selectedItem} onClose={handleClosePopup} />}
+            {selectedItem && selectedItem.action === 'delete' && <DeletePopup data={selectedItem} onClose={handleClosePopup} />}
+            {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
         </div>
     );
 };

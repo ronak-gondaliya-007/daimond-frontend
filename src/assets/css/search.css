@@ -33,7 +33,7 @@ body {
     text-align: center;
 }
 
-.search-bar-inner input {
+.search-bar-inner input[type="text"] {
     width: 100%;
     border: none;
     background-color: transparent;
@@ -41,6 +41,7 @@ body {
     color: #1E1E1E;
     outline: none;
     margin-left: 12px;
+    margin-bottom: 0;
 }
 
 .search-buttons {

@@ -38,6 +38,13 @@ span.navbar-blank {
 
 span.navbar-name {
     font-weight: 400;
+    margin-right: 16px;
+}
+
+span.navbar-name-disable {
+    font-weight: 500;
+    opacity: 0.4;
+    margin-right: 16px;
 }
 
 .header-right {
