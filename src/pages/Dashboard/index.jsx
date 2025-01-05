@@ -1,16 +1,13 @@
+import { downArrow, upArrow } from 'assets/utils/images';
 import React from 'react';
-import '../../assets/css/dashboard.css';
-
-import Sidebar from '../../components/sidebar';
-import Navbar from '../../components/navbar';
-import NotificationsAndActivities from '../../components/notification';
 
 const Dashboard = () => {
+
     const stats = [
-        { title: 'Views', value: 7265, change: '+11.01%' },
-        { title: 'Visits', value: 3671, change: '-0.03%' },
-        { title: 'New Users', value: 156, change: '+15.03%' },
-        { title: 'Total Users', value: 2318, change: '+6.08%' },
+        { title: 'Views', value: 72656, change: '+113.01%', isUp: true },
+        { title: 'Visits', value: 3671, change: '-0.03%', isUp: false },
+        { title: 'New Users', value: 156, change: '+15.03%', isUp: true },
+        { title: 'Total Users', value: 2318, change: '+6.08%', isUp: true }
     ];
 
     const stockSummary = [
@@ -23,44 +20,53 @@ const Dashboard = () => {
     ];
 
     return (
-        <div className="dashboard-container">
-            <Sidebar />
-            <div className="main-content">
-                <Navbar />
-                <div className="dashboard">
-                    <div className="stats-container">
-                        {stats.map((stat, index) => (
-                            <div key={index} className="stat-card">
-                                <h2>{stat.title}</h2>
-                                <span className="value">{stat.value}</span>
-                                <span className="change">{stat.change}</span>
+        <div className="w-full h-full p-[20px]">
+            <div className='flex justify-between item-center'>
+                <h2>Overview</h2>
+                <div>
+                    <select className='outline-none cursor-pointer'>
+                        <option>Today</option>
+                        <option>Next Day</option>
+                    </select>
+                </div>
+            </div>
+
+            <div className='flex flex-wrap mt-[24px]'>
+                {
+                    stats.map(({ title, value, change, isUp }, index) => (
+                        <div key={index} className='min-w-[202px] w-max h-[112px] flex flex-col justify-between rounded-[16px] p-[24px] bg-[#EDEEFC] even:bg-[#E6F1FD] mb-[8px] mr-[8px]'>
+                            <p className='text-[14px] font-medium text-[#000]'>{title}</p>
+                            <div className='flex items-center justify-between'>
+                                <span className='text-[24px] font-medium text-[#000]'>{value.toLocaleString()}</span>
+                                <div className='flex items-center gap-[4px] ml-[8px]'>
+                                    <span>{change}</span>
+                                    <img src={isUp ? upArrow : downArrow} alt={isUp ? 'up arrow' : 'down arrow'} />
+                                </div>
                             </div>
-                        ))}
-                    </div>
-
-                    <div className="chart-container">
-                        <h2>Total Sales</h2>
-                        {/* Placeholder for the chart component */}
-                        {/* You can integrate a chart library like Chart.js or Recharts here */}
-                        <div className="chart">
-                            {/* Chart visualization goes here */}
                         </div>
-                    </div>
+                    ))
+                }
+            </div>
 
-                    <div className="stock-summary-container">
-                        <h2>Summary of stock</h2>
-                        <ul>
-                            {stockSummary.map((item, index) => (
-                                <li key={index}>
-                                    <span className="platform">{item.platform}</span>
-                                    <span className="value">{item.value}</span>
-                                </li>
-                            ))}
-                        </ul>
+            <div className='flex justify-between mt-[24px]'>
+                <div>
+                    chart
+                </div>
+
+                <div className='w-[275px] border-[1px] border-[#E0E0E0] rounded-[16px] p-[24px]'>
+                    <h3 className='text-[20px] font-bold text-[#000]'>Summary of stock</h3>
+                    <div className='mt-[20px]'>
+                        {
+                            stockSummary.map(({ platform, value }, index) => (
+                                <div key={index} className='flex justify-between items-center mt-[20px]'>
+                                    <p>{platform}</p>
+                                    <p>{value}</p>
+                                </div>
+                            ))
+                        }
                     </div>
                 </div>
             </div>
-            <NotificationsAndActivities />
         </div>
     );
 };

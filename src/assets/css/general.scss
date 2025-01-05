@@ -1,0 +1,53 @@
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    & label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #344054;
+        margin-bottom: 8px;
+
+        @media (max-width: $breakpoint-sm) {
+            font-size: 14px;
+        }
+    }
+
+    & input {
+        height: 48px;
+        width: 100%;
+        border: 1px solid #d1e9ff;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 14px;
+        outline: none;
+
+        @media (max-width: $breakpoint-sm) {
+            font-size: 12px;
+            height: 40px;
+        }
+    }
+
+    & .error-text {
+        height: 22px;
+        display: flex;
+        align-items: center;
+        color: $error-color;
+        font-size: 12px;
+    }
+
+    & .error {
+        border-color: $error-color;
+    }
+}
+
+.primary-btn {
+    background-color: $primary-color;
+    color: $white;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: 600;
+    width: 100%;
+}

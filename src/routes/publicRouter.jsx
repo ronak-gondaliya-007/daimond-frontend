@@ -1,20 +1,60 @@
 import { memo, Suspense } from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation, Navigate, Outlet } from "react-router-dom";
 import Loader from "../components/loader";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorBoundaryFallback from "../components/error-boundary-fallback/ErrorBoundaryFallback";
+import Layout from "../components/layout/Layout";
+import { LAYOUTS } from "../constant";
+import DashboardLayout from "components/layout/DashboardLayout";
 
-const PublicRouter = ({ title, element: Element }) => {
+const PublicRouter = ({ title, layout }) => {
+
     const location = useLocation();
     const auth = false;
+    const rootPath = "/dashboard";
 
-    let redirectPath = "/dashboard";
+    const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
-    return true ? (
-        <Suspense fallback={<Loader />}>
-            <Element title={title} />
-        </Suspense>
-    ) : (
-        <Navigate to={redirectPath} state={{ from: location }} replace />
-    );
+    function getLayout() {
+        switch (layout) {
+            case MAIN:
+                return (
+                    <Layout>
+                        <Outlet />
+                    </Layout>
+                )
+
+            case DASHBOARD_LAYOUT:
+                return (
+                    <DashboardLayout>
+                        <Outlet />
+                    </DashboardLayout>
+                )
+
+            default:
+                return <Outlet />
+        }
+    }
+
+
+    switch (true) {
+        case !!auth:
+            return (
+                <Navigate to={rootPath} state={{ from: location }} replace />
+            )
+
+        default:
+            return (
+                <>
+                    <title>{title}</title>
+                    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+                        <Suspense fallback={<Loader />}>
+                            {getLayout()}
+                        </Suspense>
+                    </ErrorBoundary>
+                </>
+            )
+    }
 };
 
 export default memo(PublicRouter);

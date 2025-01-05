@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import Sidebar from '../../../components/sidebar';
-import Navbar from '../../../components/navbar';
-
-import '../../../assets/css/form.css';
-import InputField from '../../../components/FormFields/InputField';
-import TextAreaField from '../../../components/FormFields/TextAreaField';
-import FileField from '../../../components/FormFields/FileField';
+import Sidebar from 'components/layout/sidebar/Sidebar';
+import Navbar from 'components/navbar'; 
+import 'assets/css/form.css';
+import InputField from 'components/FormFields/InputField';
+import TextAreaField from 'components/FormFields/TextAreaField';
+import FileField from 'components/FormFields/FileField';
 
 const StockForm = ({ data }) => {
     const [name, setName] = useState('');
