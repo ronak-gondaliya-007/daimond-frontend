@@ -51,3 +51,23 @@
     font-weight: 600;
     width: 100%;
 }
+
+// ! scrollbar
+::-webkit-scrollbar {
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background-color: rgb(206 204 204);
+    border-radius: 10px;
+}

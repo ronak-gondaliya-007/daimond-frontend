@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/table.css';
+// import '../../assets/css/table.css';
 
 import daimondIcon from '../../assets/images/daimond.svg';
 import button from '../../assets/images/button.svg';
@@ -11,7 +11,11 @@ import DetailPopup from '../popup/Detail';
 import DeletePopup from '../popup/delete';
 import StockForm from '../../pages/Stock/Form';
 
-const Table = ({ headers, data }) => {
+const Table = ({
+    columns,
+    data,
+    tableClass
+}) => {
     const navigate = useNavigate();
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -48,62 +52,55 @@ const Table = ({ headers, data }) => {
     };
 
     return (
-        <div className="table-container">
+        <div className={`table-container ${tableClass}`}>
             <table className="common-table">
                 <thead>
-                    <tr>
-                        <th style={{ width: '20px', height: '20px' }}>
-                            <input type="checkbox" className='checkbox' />
-                        </th>
-                        {headers.map((header, index) => (
-                            <th key={index}>{header}</th>
-                        ))}
-                        <th>Actions</th>
+                    <tr className='text-center py-[12px]'>
+                        {
+                            columns.map(({ label, isCheckbox }, index) => (
+                                <th
+                                    key={index}
+                                    className={`
+                                        // ${isCheckbox ? 'max-w-[50px]' : ''}
+                                    `}
+                                >
+                                    <div className='custom-checkbox flex items-center justify-center'>
+                                        {isCheckbox && <input type="checkbox" className='checkmark' />}
+                                        <span className='text-[14px] font-medium text-[#0A112F]'>{label}</span>
+                                    </div>
+                                </th>
+                            ))
+                        }
                     </tr>
+
                 </thead>
                 <tbody>
-                    {displayedData.map((item, index) => (
-                        <tr key={index}>
-                            <td>
-                                <input type="checkbox" />
-                            </td>
-                            {headers.map((header, colIndex) => {
-                                if (header === "Diamond Name and ID") {
-                                    return (
-                                        <td key={colIndex}>
-                                            <div className="diamond-info">
-                                                <img src={daimondIcon} alt="Diamond" />
-                                                <div>
-                                                    <div
-                                                        className="diamond-name"
-                                                        data-tooltip={item["name"] || "No name available"}
-                                                    >
-                                                        <p>{item["name"]}</p>
-                                                    </div>
-                                                    <p className="diamond-id">{item["id"]}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    );
-                                } else if (header === "Ref No") {
-                                    return <td key={colIndex}>{item["refNo"]}</td>;
-                                } else {
-                                    return <td key={colIndex}>{item[header.toLowerCase()]}</td>;
+                    {
+                        data.map((item, index) => (
+                            <tr key={index}>
+                                {
+                                    columns.map((col) => {
+                                        switch (col.type) {
+                                            case "checkbox": {
+                                                return <td className='custom-checkbox w-[80px] min-w-[80px]'>
+                                                    <input type="checkbox" className='checkmark' />
+                                                </td>;
+                                            }
+                                            case "custom": {
+                                                return <td>{col.render(item, index)}</td>;
+                                            }
+                                            case "action": {
+                                                return col.render(item, index);
+                                            }
+                                            default: {
+                                                return <td><span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{item[col.key]}</span></td>
+                                            }
+                                        }
+                                    })
                                 }
-                            })}
-                            <td>
-                                <button>
-                                    <img src={button} alt="View" onClick={() => handleViewClick(item)} />
-                                </button>
-                                <button>
-                                    <img src={button1} alt="Delete" onClick={() => handleDeleteClick(item)} />
-                                </button>
-                                <button>
-                                    <img src={button2} alt="Edit" onClick={() => handleEditClick(item)} />
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                            </tr>
+                        ))
+                    }
                 </tbody>
             </table>
 

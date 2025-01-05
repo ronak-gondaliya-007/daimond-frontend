@@ -8,14 +8,12 @@ const DashboardLayout = ({
     breadcrumb
 }) => {
     return (
-        <div className='flex'>
+        <div className='flex h-screen overflow-hidden'>
             <Sidebar />
-            <div className='flex-1'>
-                <div className='flex flex-col'>
-                    <Header breadcrumb={breadcrumb} />
-                    <div className='flex-1'>
-                        {children}
-                    </div>
+            <div className='flex-1 w-full max-w-[calc(100%-450px)] lg:max-w-[calc(100%-550px)]'>
+                <Header breadcrumb={breadcrumb} />
+                <div className='flex-1 h-[calc(100vh-68px)] overflow-y-auto'>
+                    {children}
                 </div>
             </div>
             <Notifications />

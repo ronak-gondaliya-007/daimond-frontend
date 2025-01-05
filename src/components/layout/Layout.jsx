@@ -1,19 +1,18 @@
-import React from 'react';
+ import React from 'react';
 import Sidebar from './sidebar/Sidebar';
 import Header from './header/Header';
 
 const Layout = ({
-    children
+    children,
+    breadcrumb
 }) => {
     return (
-        <div className='flex flex-col min-h-screen'>
+        <div className='flex h-screen overflow-hidden'>
             <Sidebar />
-            <div className='flex-1'>
-                <div className='flex flex-col'>
-                    <Header />
-                    <div className='flex-1'>
-                        {children}
-                    </div>
+            <div className='flex-1 w-full max-w-[calc(100%-200px)] lg:max-w-[calc(100%-250px)]'>
+                <Header breadcrumb={breadcrumb} />
+                <div className='flex-1 h-[calc(100vh-68px)] overflow-y-auto'>
+                    {children}
                 </div>
             </div>
         </div>

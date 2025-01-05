@@ -16,7 +16,7 @@ const CommonRouter = ({
         switch (layout) {
             case MAIN:
                 return (
-                    <Layout>
+                    <Layout breadcrumb={breadcrumb}>
                         <Outlet />
                     </Layout>
                 )

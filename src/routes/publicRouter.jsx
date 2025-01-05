@@ -7,7 +7,11 @@ import Layout from "../components/layout/Layout";
 import { LAYOUTS } from "../constant";
 import DashboardLayout from "components/layout/DashboardLayout";
 
-const PublicRouter = ({ title, layout }) => {
+const PublicRouter = ({
+    title,
+    layout,
+    breadcrumb
+}) => {
 
     const location = useLocation();
     const auth = false;
@@ -19,14 +23,14 @@ const PublicRouter = ({ title, layout }) => {
         switch (layout) {
             case MAIN:
                 return (
-                    <Layout>
+                    <Layout breadcrumb={breadcrumb}>
                         <Outlet />
                     </Layout>
                 )
 
             case DASHBOARD_LAYOUT:
                 return (
-                    <DashboardLayout>
+                    <DashboardLayout breadcrumb={breadcrumb}>
                         <Outlet />
                     </DashboardLayout>
                 )

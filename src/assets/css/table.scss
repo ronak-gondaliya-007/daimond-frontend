@@ -1,0 +1,75 @@
+.table-container {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow-x: auto;
+
+    .common-table {
+        padding: 0 1.5rem;
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 12px;
+    }
+
+    th,
+    td {
+        text-align: center;
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        height: 50px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #717680;
+        background-color: #fafafa;
+    }
+
+    th:first-child {
+        border-top-left-radius: 12px;
+    }
+
+    th:last-child {
+        border-top-right-radius: 12px;
+    }
+
+    .custom-checkbox {
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            position: relative;
+            background-color: #fff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+    }
+
+    .tbl-action {
+        button {
+            background-color: #fff;
+            border: none;
+            padding: 8px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            outline: none;
+
+            img {
+                max-height: 40px;
+                max-width: 40px;
+                min-height: 40px;
+                min-width: 40px;
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+    }
+
+    .tbl-action {
+        width: 165px;
+        padding-right: 0;
+    }
+}
