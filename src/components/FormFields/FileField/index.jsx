@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-
-import deleteIcon from '../../../assets/images/delete.svg';
-import addIcon from '../../../assets/images/add.svg';
+import deleteIcon from 'assets/images/delete.svg';
+import addIcon from 'assets/images/add.svg';
 
 function FileField() {
     const [images, setImages] = useState([]);

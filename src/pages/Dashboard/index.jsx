@@ -1,7 +1,19 @@
 import { downArrow, upArrow } from 'assets/utils/images';
-import React from 'react';
+import React, { useEffect } from 'react';
+import useCommonStore from 'store/common-store/useCommonStore';
 
 const Dashboard = () => {
+
+    const { setState } = useCommonStore();
+
+    useEffect(() => {
+        setState({ isSearch: true })
+
+        return () => {
+            setState({ isSearch: false })
+        }
+    }, [])
+
 
     const stats = [
         { title: 'Views', value: 72656, change: '+113.01%', isUp: true },
@@ -31,10 +43,18 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className='flex flex-wrap mt-[24px]'>
+            <div className='flex mt-[24px] flex-wrap 2xl:flex-nowrap justify-between'>
                 {
                     stats.map(({ title, value, change, isUp }, index) => (
-                        <div key={index} className='min-w-[202px] w-max h-[112px] flex flex-col justify-between rounded-[16px] p-[24px] bg-[#EDEEFC] even:bg-[#E6F1FD] mb-[8px] mr-[8px]'>
+                        <div
+                            key={index}
+                            className={`
+                                w-full md:min-w-[202px] md:w-[250px] 2xl:w-full h-[112px] 
+                                flex flex-col justify-between rounded-[16px] 
+                                p-[18px] md:p-[24px] 
+                                bg-[#EDEEFC] even:bg-[#E6F1FD] 
+                                mb-[14px] 2xl:mr-[8px]
+                            `}>
                             <p className='text-[14px] font-medium text-[#000]'>{title}</p>
                             <div className='flex items-center justify-between'>
                                 <span className='text-[24px] font-medium text-[#000]'>{value.toLocaleString()}</span>

@@ -26,16 +26,18 @@ export const publicRoutes = [
         breadcrumb: ["Management", "Stock"]
     },
     {
-        path: '/stock-add',
+        path: '/stock/add',
         element: StockForm,
         title: "StockAdd",
-        layout: ""
+        layout: MAIN,
+        breadcrumb: ["Management", "Stock", "Add"]
     },
     {
-        path: '/stock-edit',
+        path: '/stock/edit/:stockId',
         element: StockForm,
         title: "StockEdit",
-        layout: ""
+        layout: MAIN,
+        breadcrumb: ["Management", "Stock", "Edit"]
     }
 ];
 

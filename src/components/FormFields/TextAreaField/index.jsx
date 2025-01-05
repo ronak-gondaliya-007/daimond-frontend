@@ -1,13 +1,22 @@
-import '../../../assets/css/fields.css';
-
-const TextAreaField = ({ label, id, value, onChange }) => (
-    <div className="form-group single">
+const TextAreaField = ({
+    id,
+    label,
+    type = "text",
+    name,
+    placeholder = "",
+    register,
+    rule,
+    errors
+}) => (
+    <div className="form-group mb-[16px]">
         <label htmlFor={id}>{label}</label>
         <textarea
+            type={type}
             id={id}
-            value={value}
-            onChange={onChange}
+            placeholder={placeholder}
+            {...register(name, rule)}
         />
+        {!!errors?.[name] && <span className="error-text">{errors[name].message}</span>}
     </div>
 );
 

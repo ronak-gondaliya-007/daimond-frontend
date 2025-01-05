@@ -28,7 +28,7 @@ const Search = () => {
             <div className="w-[250px] h-full">
                 <button
                     className='w-full h-full py-[17.5px] md-2:py-[20.5px] bg-[#1E1E1E] text-white rounded-[10px]'
-                    onClick={() => navigate('/stock-add')}
+                    onClick={() => navigate('/stock/add')}
                 >
                     + Add New
                 </button>

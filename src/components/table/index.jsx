@@ -23,10 +23,6 @@ const Table = ({
 
     const totalPages = Math.ceil(data.length / rowsPerPage);
 
-    const displayedData = data.slice(
-        (currentPage - 1) * rowsPerPage,
-        currentPage * rowsPerPage
-    );
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -34,16 +30,7 @@ const Table = ({
 
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const handleViewClick = (item) => {
-        setSelectedItem({ ...item, action: 'view' });
-    };
-
-    const handleDeleteClick = (item) => {
-        setSelectedItem({ ...item, action: 'delete' });
-    };
-
     const handleEditClick = (item) => {
-        setSelectedItem({ ...item, action: 'edit' });
         navigate('/stock-edit');
     };
 
@@ -112,7 +99,7 @@ const Table = ({
 
             {selectedItem && selectedItem.action === 'view' && <DetailPopup data={selectedItem} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'delete' && <DeletePopup data={selectedItem} onClose={handleClosePopup} />}
-            {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
+            {/* {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />} */}
         </div>
     );
 };

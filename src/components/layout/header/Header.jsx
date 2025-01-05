@@ -1,13 +1,14 @@
 import React from 'react';
 import { search, searchD } from 'assets/utils/images';
+import useCommonStore from 'store/common-store/useCommonStore';
 
 const Header = ({
-    breadcrumb = [],
-    isSearch = false
+    breadcrumb = []
 }) => {
+    const { isSearch } = useCommonStore();
     return (
         <header className="w-full h-[68px] flex items-center px-[20px] border-b border-[rgba(0,0,0,0.1)]">
-            <div className="flex w-full justify-between items-center"> 
+            <div className="flex w-full justify-between items-center">
                 {
                     breadcrumb.length &&
                     <div className="hidden items-center md-2:flex">
@@ -23,7 +24,7 @@ const Header = ({
                 }
 
                 {
-                    !isSearch &&
+                    isSearch &&
                     <div className="relative min-w-[200px] max-w-[260px] w-full h-[40px]">
                         <input
                             type="search"
