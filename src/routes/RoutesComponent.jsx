@@ -1,9 +1,9 @@
 import { memo } from "react";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
-import { commonRoutes, publicRoutes } from "./index";
-import PublicRouter from "./PublicRouter";
 import CommonRouter from "./CommonRouter";
 import NotFound from "pages/not-found/NotFound";
+import { commonRoutes, publicRoutes } from "routes";
+import PublicRouter from "./publicRouter";
 
 function RoutesComponent() {
 
