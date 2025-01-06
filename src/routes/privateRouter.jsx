@@ -7,13 +7,14 @@ import Layout from "../components/layout/Layout";
 import { LAYOUTS } from "../constant";
 import DashboardLayout from "components/layout/DashboardLayout";
 
-const PublicRouter = ({
+const PrivateRouter = ({
     title,
     layout,
     breadcrumb,
     auth
 }) => {
     const location = useLocation();
+    const rootPath = "/login";
 
     const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -25,6 +26,7 @@ const PublicRouter = ({
                         <Outlet />
                     </Layout>
                 )
+
             case DASHBOARD_LAYOUT:
                 return (
                     <DashboardLayout breadcrumb={breadcrumb}>
@@ -37,10 +39,11 @@ const PublicRouter = ({
         }
     }
 
-    switch (auth) {
-        case auth:
+
+    switch (true) {
+        case !auth:
             return (
-                <Navigate to={'/'} state={{ from: location }} replace />
+                <Navigate to={rootPath} state={{ from: location }} replace />
             )
         default:
             return (
@@ -56,4 +59,4 @@ const PublicRouter = ({
     }
 };
 
-export default memo(PublicRouter);
+export default memo(PrivateRouter);

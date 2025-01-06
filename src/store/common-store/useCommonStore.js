@@ -5,7 +5,6 @@ const initialState = {
 }
 
 const useCommonStore = create((set, get) => ({
-
   ...initialState,
   setState: (nextState) => set(() => ({ ...nextState })),
   getState: () => get(),

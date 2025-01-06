@@ -1,14 +1,33 @@
-import React from "react";
-import { openEye } from "../../assets/utils/images.js";
+import React, { useState } from "react";
+import { openEye, closeEye } from "../../assets/utils/images.js";
 import { useForm } from "react-hook-form";
 import logo from "assets/images/logo.svg";
+import axiosClient from "../../api/AxiosClient.js";
 
 const Login = () => {
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        try {
+            const response = await axiosClient.post("/user/login", {
+                email: data.email,
+                password: data.password,
+            });
+            debugger
+            if (response.status === 200) {
+                localStorage.setItem("token", response.data.data.accessToken);
+                console.log("Login successful");
+                window.location.href = "/";
+            }
+        } catch (error) {
+            console.error("Login failed:", error.response?.data?.message || error.message);
+        }
     };
 
     return (
@@ -44,7 +63,7 @@ const Login = () => {
                             <div className="relative">
                                 <input
                                     className={`input ${errors.password ? "error" : ""}`}
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
                                     {...register("password", {
                                         required: "*Password is required",
@@ -54,8 +73,8 @@ const Login = () => {
                                         },
                                     })}
                                 />
-                                <span className="password-eye">
-                                    <img src={openEye} alt="open eye" />
+                                <span className="password-eye" onClick={togglePasswordVisibility}>
+                                    <img src={showPassword ? closeEye : openEye} alt="toggle visibility" />
                                 </span>
                             </div>
                             {!!errors?.password && <span className="error-text">{errors.password.message}</span>}

@@ -17,6 +17,16 @@ export const publicRoutes = [
         element: Login,
         title: "Login",
         layout: ""
+    }
+];
+
+export const privateRoutes = [
+    {
+        path: '/',
+        element: Dashboard,
+        title: "Dashboard",
+        layout: DASHBOARD_LAYOUT,
+        breadcrumb: ["Dashboard"]
     },
     {
         path: '/stock',
@@ -38,19 +48,5 @@ export const publicRoutes = [
         title: "StockEdit",
         layout: MAIN,
         breadcrumb: ["Management", "Stock", "Edit"]
-    }
-];
-
-export const privateRoutes = [
-
-];
-
-export const commonRoutes = [
-    {
-        path: '/',
-        element: Dashboard,
-        title: "Dashboard",
-        layout: DASHBOARD_LAYOUT,
-        breadcrumb: ["Dashboard"]
     }
 ];

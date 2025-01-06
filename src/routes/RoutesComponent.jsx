@@ -1,41 +1,51 @@
 import { memo } from "react";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
-import CommonRouter from "./CommonRouter";
 import NotFound from "pages/not-found/NotFound";
-import { commonRoutes, publicRoutes } from "routes";
+import { privateRoutes, publicRoutes } from "routes";
 import PublicRouter from "./publicRouter";
+import PrivateRouter from "./privateRouter";
+import Cookies from "universal-cookie";
 
 function RoutesComponent() {
+    const cookies = new Cookies();
 
+    const isAuthenticated = () => {
+        const authDetails = JSON.parse(localStorage.getItem("authDetails"));
+        const token = localStorage.getItem("token");
+        if (!token) {
+            localStorage.removeItem("authDetails");
+            return false;
+        }
+        // Check if the user is logged in and token exists
+        return token ? true : false;
+    };
 
     const render = () => {
-
         return (
             <>
-
                 {/* Public Route List  */}
                 {publicRoutes.map(({ title, path, element: Element, ...rest }) => (
-                    <Route key={title} element={<PublicRouter title={title} {...rest} />}>
+                    <Route
+                        key={title}
+                        element={<PublicRouter title={title} {...rest} auth={isAuthenticated()} />}
+                    >
                         <Route path={path} element={<Element />} />
                     </Route>
                 ))}
 
                 {/* Private Route List */}
-                {/* {privateRouteList.map(({ title, path, allowedRoles, element: Element, ...rest }) => (
-                    <Route key={title} element={<PrivateRouter allowedRoles={allowedRoles} title={title} {...rest} />}>
-                        <Route path={path} element={<Element />} />
-                    </Route>
-                ))} */}
-
-                {/* common Route List  */}
-                {commonRoutes.map(({ title, path, element: Element, ...rest }) => (
-                    <Route key={title} element={<CommonRouter title={title} {...rest} />}>
+                {privateRoutes.map(({ title, path, allowedRoles, element: Element, ...rest }) => (
+                    <Route
+                        key={title}
+                        element={
+                            <PrivateRouter allowedRoles={allowedRoles} title={title} {...rest} auth={isAuthenticated()} />
+                        }
+                    >
                         <Route path={path} element={<Element />} />
                     </Route>
                 ))}
 
                 <Route path={'/*'} element={<NotFound />} />
-
             </>
         )
     }
