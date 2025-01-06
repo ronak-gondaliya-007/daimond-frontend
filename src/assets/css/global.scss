@@ -18,6 +18,36 @@ body {
   --light-black: rgba(0, 0, 0, 0.4);
 }
 
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.blinking-message {
+  animation: blink 1s ease-in-out infinite;
+}
+
+.error-message {
+  opacity: 0;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.error-message.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
 @import "./variable.scss";
 @import "./login.scss";
 @import "./general.scss";

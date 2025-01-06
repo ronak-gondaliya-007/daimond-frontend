@@ -38,7 +38,7 @@ const PublicRouter = ({
     }
 
     switch (auth) {
-        case auth:
+        case true:
             return (
                 <Navigate to={'/'} state={{ from: location }} replace />
             )

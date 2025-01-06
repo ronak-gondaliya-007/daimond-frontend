@@ -3,8 +3,12 @@ import { openEye, closeEye } from "../../assets/utils/images.js";
 import { useForm } from "react-hook-form";
 import logo from "assets/images/logo.svg";
 import axiosClient from "../../api/AxiosClient.js";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    const navigate = useNavigate();
+
+    const [message, setMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -19,14 +23,14 @@ const Login = () => {
                 email: data.email,
                 password: data.password,
             });
-            debugger
+
             if (response.status === 200) {
-                localStorage.setItem("token", response.data.data.accessToken);
-                console.log("Login successful");
+                localStorage.setItem("token", response?.data?.data?.accessToken);
+                localStorage.setItem("authDetails", JSON.stringify(response?.data?.data?.user));
                 window.location.href = "/";
             }
         } catch (error) {
-            console.error("Login failed:", error.response?.data?.message || error.message);
+            setMessage(error.response?.data?.message);
         }
     };
 
@@ -42,7 +46,7 @@ const Login = () => {
                         <div className="form-group mb-[16px]">
                             <label className="label">Email</label>
                             <input
-                                className={`input ${errors.email ? "error" : ""}`}
+                                className={`input ${errors.email || message ? "error" : ""}`}
                                 type="email"
                                 placeholder="Enter your email"
                                 {...register("email", {
@@ -52,17 +56,18 @@ const Login = () => {
                                         message: "*Please enter a valid email address",
                                     },
                                 })}
+                                onChange={() => { setMessage("") }}
                             />
                             {!!errors?.email && <span className="error-text">{errors.email.message}</span>}
                         </div>
                         <div className="form-group mb-[16px]">
                             <div className="flex justify-between">
                                 <label className="label">Password</label>
-                                <span className="text-[#1570EF] text-[14px] sm:text-[16px] cursor-pointer">Forgot password?</span>
+                                <span className="text-[#1570EF] text-[14px] sm:text-[16px] cursor-pointer" onClick={() => navigate("/forgot-password")}>Forgot password?</span>
                             </div>
                             <div className="relative">
                                 <input
-                                    className={`input ${errors.password ? "error" : ""}`}
+                                    className={`input ${errors.password || message ? "error" : ""}`}
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Enter your password"
                                     {...register("password", {
@@ -72,6 +77,7 @@ const Login = () => {
                                             message: "*Password must be at least 6 characters",
                                         },
                                     })}
+                                    onChange={() => { setMessage("") }}
                                 />
                                 <span className="password-eye" onClick={togglePasswordVisibility}>
                                     <img src={showPassword ? closeEye : openEye} alt="toggle visibility" />
@@ -83,6 +89,9 @@ const Login = () => {
                             <button className="primary-btn" type="submit">Login now</button>
                         </div>
                     </form>
+                    {message && (
+                        <p className={`mt-0 text text-center text-red-600 blinking-message error-message ${message ? "show" : ""}`}>{message}</p>
+                    )}
                 </div>
             </div>
         </div>

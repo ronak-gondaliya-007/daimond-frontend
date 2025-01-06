@@ -84,7 +84,7 @@ const columns = [
 
 const Stock = () => {
     return (
-        <div className="w-full p-[20px]">
+        <div className="w-full p-[20px] max-w-[100rem] mx-auto">
             <div className="w-full flex justify-between items-center mb-[24px]">
                 <h6 className="text-[16px]">Overview</h6>
             </div>

@@ -12,21 +12,18 @@ axiosClient.defaults.timeout = 600000;
 
 axiosClient.interceptors.response.use(
     function (response) {
-        console.log(response);
         if (response.data?.statusCode === 401) {
             cookies.remove("token", { path: "/" });
             window.location.reload();
         }
         return response;
     },
+
     function (error) {
-        console.log(error);
         let res = error.response;
         if (res?.status === 501) {
             cookies.remove("token", { path: "/login" });
             toast.error(error?.response?.data?.message);
-        } else if (res?.status === 200) {
-            localStorage.setItem("authDetails", JSON.stringify(res?.data?.data));
         }
         console.error("Looks like there was a problem. Status Code:" + res?.status);
         return Promise.reject(error);

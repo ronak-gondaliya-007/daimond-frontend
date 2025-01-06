@@ -14,7 +14,6 @@ const PrivateRouter = ({
     auth
 }) => {
     const location = useLocation();
-    const rootPath = "/login";
 
     const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -39,11 +38,10 @@ const PrivateRouter = ({
         }
     }
 
-
-    switch (true) {
-        case !auth:
+    switch (auth) {
+        case false:
             return (
-                <Navigate to={rootPath} state={{ from: location }} replace />
+                <Navigate to={'/login'} state={{ from: location }} replace />
             )
         default:
             return (

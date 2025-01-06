@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import '../../assets/css/table.css';
 
-import daimondIcon from '../../assets/images/daimond.svg';
-import button from '../../assets/images/button.svg';
-import button1 from '../../assets/images/button-1.svg';
-import button2 from '../../assets/images/button-2.svg';
 import Pagination from '../pagination';
 import DetailPopup from '../popup/Detail';
 import DeletePopup from '../popup/delete';
@@ -48,10 +44,10 @@ const Table = ({
                                 <th
                                     key={index}
                                     className={`
-                                        // ${isCheckbox ? 'max-w-[50px]' : ''}
+                                         ${isCheckbox ? 'max-w-[50px]' : ''}
                                     `}
                                 >
-                                    <div className='custom-checkbox flex items-center justify-center'>
+                                    <div className={`custom-checkbox ${!isCheckbox ? 'flex item-center' : ''}`}>
                                         {isCheckbox && <input type="checkbox" className='checkmark' />}
                                         <span className='text-[14px] font-medium text-[#0A112F]'>{label}</span>
                                     </div>
@@ -99,7 +95,7 @@ const Table = ({
 
             {selectedItem && selectedItem.action === 'view' && <DetailPopup data={selectedItem} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'delete' && <DeletePopup data={selectedItem} onClose={handleClosePopup} />}
-            {/* {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />} */}
+            {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
         </div>
     );
 };

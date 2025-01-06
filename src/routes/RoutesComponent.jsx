@@ -12,12 +12,11 @@ function RoutesComponent() {
     const isAuthenticated = () => {
         const authDetails = JSON.parse(localStorage.getItem("authDetails"));
         const token = localStorage.getItem("token");
-        if (!token) {
+        if (!token && !authDetails) {
             localStorage.removeItem("authDetails");
             return false;
         }
-        // Check if the user is logged in and token exists
-        return token ? true : false;
+        return true;
     };
 
     const render = () => {

@@ -57,7 +57,7 @@ const StockForm = () => {
     }
 
     return (
-        <div className='px-[15px] py-[25px]'>
+        <div className='px-[100px] py-[50px]'>
             <form className="stock-add" onSubmit={handleSubmit(onSubmit)}>
 
                 {
@@ -67,8 +67,8 @@ const StockForm = () => {
                 }
 
                 <div className='w-full flex items-center justify-end gap-[20px]'>
-                    <button type='button' className='w-[150px] h-[58px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[20px]' onClick={() => reset()}>Reset</button>
-                    <button type='submit' className='w-[150px] h-[58px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[20px]'>Submit</button>
+                    <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>
+                    <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>
                 </div>
             </form>
         </div>
@@ -111,7 +111,7 @@ const BasicImage = ({
                     !!images.length &&
                     images.map((src, index) => (
                         <div key={index} className='relative w-[96px] h-[80px] rounded-[8px] bg-[#F5F5F5] border-[1px] border-[#EFF1F999] border-dashed'>
-                            <img src={src} alt='' className='w-full h-full object-cover' />
+                            <img src={src} alt='' className='w-full h-full object-cover rounded-[8px]' />
                             <span className='cursor-pointer absolute top-[3px] right-[3px]' onClick={() => handleDelete(index)}>
                                 <img src={deleteIcon} alt='delete' className='w-[25px] h-[25px] rounded-[12px]' />
                             </span>
