@@ -13,7 +13,9 @@
         }
     }
 
-    & input, textarea {
+    & input,
+    textarea,
+    select {
         height: 48px;
         width: 100%;
         border: 1px solid #d1e9ff;
@@ -25,6 +27,30 @@
         @media (max-width: $breakpoint-sm) {
             font-size: 12px;
             height: 40px;
+        }
+    }
+
+    & select {
+        cursor: pointer;
+
+        &:focus {
+            outline: none;
+        }
+
+        option {
+            cursor: pointer;
+        }
+    }
+
+    .react-tel-input {
+        input {
+            width: 100%;
+            border-color: #d1e9ff;
+            padding-left: 10px;
+        }
+
+        .flag-dropdown {
+            display: none;
         }
     }
 

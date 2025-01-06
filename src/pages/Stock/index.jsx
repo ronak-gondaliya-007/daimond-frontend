@@ -1,15 +1,11 @@
-import Navbar from "components/navbar";
-import Sidebar from "components/layout/sidebar/Sidebar";
 import Search from "components/search";
 import Table from "components/table";
-import diamondIcon from '../../assets/images/daimond.svg';
-import button from '../../assets/images/button.svg';
-import button1 from '../../assets/images/button-1.svg';
-import button2 from '../../assets/images/button-2.svg';
-
-// import "assets/css/stock.css";
-
+import diamondIcon from 'assets/images/daimond.svg';
+import button from 'assets/images/button.svg';
+import button1 from 'assets/images/button-1.svg';
+import button2 from 'assets/images/button-2.svg';
 import { diamonds } from "constant";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
     {
@@ -83,12 +79,20 @@ const columns = [
 ];
 
 const Stock = () => {
+    const navigate = useNavigate();
+
     return (
         <div className="w-full p-[20px] max-w-[100rem] mx-auto">
             <div className="w-full flex justify-between items-center mb-[24px]">
                 <h6 className="text-[16px]">Overview</h6>
             </div>
-            <Search />
+            <Search
+                placeholder="Search by: diamond ID, customer name, etc..."
+                addBtn={{
+                    title: '+ Add New',
+                    onClick: () => navigate('/stock/add')
+                }}
+            />
             <div className="my-[30px] stock-table">
                 <Table
                     columns={columns}

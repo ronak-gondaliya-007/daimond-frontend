@@ -1,5 +1,5 @@
 import { downArrow, upArrow } from 'assets/utils/images';
-import React, { useEffect } from 'react';
+import React, { Children, useEffect } from 'react';
 import useCommonStore from 'store/common-store/useCommonStore';
 
 const Dashboard = () => {
@@ -16,10 +16,20 @@ const Dashboard = () => {
 
 
     const stats = [
-        { title: 'Views', value: 72656, change: '+113.01%', isUp: true },
-        { title: 'Visits', value: 3671, change: '-0.03%', isUp: false },
-        { title: 'New Users', value: 156, change: '+15.03%', isUp: true },
-        { title: 'Total Users', value: 2318, change: '+6.08%', isUp: true }
+        {
+            className: 'w-full md-2:w-1/2 2xl:flex gap-[14px]',
+            childrens: [
+                { title: 'Views', value: 72656, change: '+113.01%', isUp: true },
+                { title: 'Visits', value: 3671, change: '-0.03%', isUp: false }
+            ]
+        },
+        {
+            className: 'w-full md-2:w-1/2 2xl:flex gap-[14px]',
+            childrens: [
+                { title: 'New Users', value: 156, change: '+15.03%', isUp: true },
+                { title: 'Total Users', value: 2318, change: '+6.08%', isUp: true }
+            ]
+        }
     ];
 
     const stockSummary = [
@@ -43,26 +53,34 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className='flex mt-[24px] flex-wrap 2xl:flex-nowrap justify-between'>
+            {/* w-full md:min-w-[202px] md:w-[250px] 2xl:w-full  */}
+            {/* <div className='flex mt-[24px] flex-wrap 2xl:flex-nowrap justify-between'> */}
+            <div className='block md-2:flex mt-[24px] gap-[14px]'>
                 {
-                    stats.map(({ title, value, change, isUp }, index) => (
-                        <div
-                            key={index}
-                            className={`
-                                w-full md:min-w-[202px] md:w-[250px] 2xl:w-full h-[112px] 
-                                flex flex-col justify-between rounded-[16px] 
-                                p-[18px] md:p-[24px] 
-                                bg-[#EDEEFC] even:bg-[#E6F1FD] 
-                                mb-[14px] 2xl:mr-[8px]
-                            `}>
-                            <p className='text-[14px] font-medium text-[#000]'>{title}</p>
-                            <div className='flex items-center justify-between'>
-                                <span className='text-[24px] font-medium text-[#000]'>{value.toLocaleString()}</span>
-                                <div className='flex items-center gap-[4px] ml-[8px]'>
-                                    <span>{change}</span>
-                                    <img src={isUp ? upArrow : downArrow} alt={isUp ? 'up arrow' : 'down arrow'} />
-                                </div>
-                            </div>
+                    stats.map(({ className, childrens }, index) => (
+                        <div key={index} className={className}>
+                            {
+                                childrens.map(({ title, value, change, isUp }, index) => (
+                                    <div
+                                        key={index}
+                                        className={`
+                                            w-full 2xl:w-1/2 h-[112px] 
+                                            flex flex-col justify-between rounded-[16px] 
+                                            p-[18px] md:p-[24px] 
+                                            bg-[#EDEEFC] even:bg-[#E6F1FD] 
+                                            mb-[14px] 2xl:mr-[8px]
+                                        `}>
+                                        <p className='text-[14px] font-medium text-[#000]'>{title}</p>
+                                        <div className='flex items-center justify-between'>
+                                            <span className='text-[24px] font-medium text-[#000]'>{value.toLocaleString()}</span>
+                                            <div className='flex items-center gap-[4px] ml-[8px]'>
+                                                <span>{change}</span>
+                                                <img src={isUp ? upArrow : downArrow} alt={isUp ? 'up arrow' : 'down arrow'} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            }
                         </div>
                     ))
                 }

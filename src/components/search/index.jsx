@@ -1,9 +1,13 @@
-import { useNavigate } from 'react-router-dom';
-import searchIcon from '../../assets/images/search.svg';
-import slidersIcon from '../../assets/images/sliders.svg';
+import searchIcon from 'assets/images/search.svg';
+import slidersIcon from 'assets/images/sliders.svg';
 
-const Search = () => {
-    const navigate = useNavigate();
+const Search = ({
+    placeholder = 'Search...',
+    addBtn = {
+        title: '+ Add New',
+        onClick: () => {}
+    }
+}) => {
 
     return (
         <div className="w-full flex items-center gap-[16px] md:flex-nowrap flex-wrap">
@@ -11,7 +15,7 @@ const Search = () => {
                 <img src={searchIcon} alt='Search' className='w-[24px] h-[24px] mx-[16px]' />
                 <input
                     type="text"
-                    placeholder="Search by: diamond ID, customer name, etc..."
+                    placeholder={placeholder}
                     className='w-full h-full outline-none text-[16px] md-2:text-[16px] text-[--light-black]'
                 />
                 <div className='flex items-center gap-[16px] mx-[6px]'>
@@ -28,9 +32,9 @@ const Search = () => {
             <div className="w-[250px] h-full">
                 <button
                     className='w-full h-full py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
-                    onClick={() => navigate('/stock/add')}
+                    onClick={addBtn.onClick}
                 >
-                    + Add New
+                    {addBtn.title}
                 </button>
             </div>
         </div>

@@ -26,10 +26,6 @@ const Table = ({
 
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const handleEditClick = (item) => {
-        navigate('/stock-edit');
-    };
-
     const handleClosePopup = () => {
         setSelectedItem(null);
     };
@@ -66,7 +62,9 @@ const Table = ({
                                         switch (col.type) {
                                             case "checkbox": {
                                                 return <td className='custom-checkbox w-[80px] min-w-[80px]'>
-                                                    <input type="checkbox" className='checkmark' />
+                                                    <div className='flex items-center justify-center'>
+                                                        <input type="checkbox" className='checkmark' />
+                                                    </div>
                                                 </td>;
                                             }
                                             case "custom": {

@@ -9,6 +9,8 @@ const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 
 // common routes
 const Dashboard = lazy(() => import("../pages/Dashboard"));
+const RolesPermission = lazy(() => import("../pages/roles-permission/RolesPermission"));
+const RolesPermissionForm = lazy(() => import("../pages/roles-permission/Form"));
 
 const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -35,6 +37,8 @@ export const privateRoutes = [
         layout: DASHBOARD_LAYOUT,
         breadcrumb: ["Dashboard"]
     },
+
+    // --> Management
     {
         path: '/stock',
         element: Stock,
@@ -55,5 +59,19 @@ export const privateRoutes = [
         title: "StockEdit",
         layout: MAIN,
         breadcrumb: ["Management", "Stock", "Edit"]
+    },
+    {
+        path: '/roles-permission',
+        element: RolesPermission,
+        title: "Roles & Permission",
+        layout: DASHBOARD_LAYOUT,
+        breadcrumb: ["Management", "Users"]
+    },
+    {
+        path: '/roles-permission/add',
+        element: RolesPermissionForm,
+        title: "Roles & Permission",
+        layout: MAIN,
+        breadcrumb: ["Management", "Users", "Add"]
     }
 ];
