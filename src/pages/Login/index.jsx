@@ -4,12 +4,36 @@ import { useForm } from "react-hook-form";
 import logo from "assets/images/logo.svg";
 import axiosClient from "../../api/AxiosClient.js";
 import { useNavigate } from "react-router-dom";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 const Login = () => {
     const navigate = useNavigate();
 
     const [message, setMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+
+    // Utility to fetch IP address
+    const getIPAddress = async () => {
+        try {
+            const response = await axiosClient.get("https://api.ipify.org?format=json");
+            return response.data.ip;
+        } catch (error) {
+            console.error("Error fetching IP address:", error);
+            return null;
+        }
+    };
+
+    // Utility to fetch system key
+    const getSystemKey = async () => {
+        try {
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            return result.visitorId;
+        } catch (error) {
+            console.error("Error fetching system key:", error);
+            return null;
+        }
+    };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -22,6 +46,8 @@ const Login = () => {
             const response = await axiosClient.post("/user/login", {
                 email: data.email,
                 password: data.password,
+                loginIp: await getIPAddress(),
+                loginSystemKey: await getSystemKey()
             });
 
             if (response.status === 200) {

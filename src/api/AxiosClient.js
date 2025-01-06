@@ -4,6 +4,7 @@ import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
+// Initialize axios client
 const axiosClient = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
 });
@@ -32,7 +33,11 @@ axiosClient.interceptors.response.use(
 
 axiosClient.interceptors.request.use(function (config) {
     const token = cookies.get("token");
-    config.headers["Authorization"] = token || "";
+
+    // Set Authorization header
+    if (token) {
+        config.headers["Authorization"] = token;
+    }
     return config;
 });
 
