@@ -14,6 +14,7 @@ const Customer = lazy(() => import("../pages/Customer"));
 const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
 const RolesPermission = lazy(() => import("../pages/roles-permission/RolesPermission"));
 const RolesPermissionForm = lazy(() => import("../pages/roles-permission/Form"));
+const ReportsAnalytics = lazy(() => import("../pages/reports-analytics/ReportsAnalytics"));
 
 const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -97,5 +98,14 @@ export const privateRoutes = [
         title: "Roles & Permission",
         layout: MAIN,
         breadcrumb: ["Management", "Users", "Add"]
+    },
+
+    // Other
+    {
+        path: '/reports-analytics',
+        element: ReportsAnalytics,
+        title: "Reports & Analytics",
+        layout: MAIN,
+        breadcrumb: ["Other", "Reports & Analytics"]
     }
 ];

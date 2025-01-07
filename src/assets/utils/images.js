@@ -6,6 +6,7 @@ import searchD from '../images/search-i.svg';
 import upArrow from '../images/up-arrow.svg';
 import downArrow from '../images/down-arrow.svg';
 import backArrow from '../images/back-arrow.svg';
+import arrowRight from '../images/arrow-right.svg';
 
 export {
     logo,
@@ -15,5 +16,6 @@ export {
     searchD,
     upArrow,
     downArrow,
-    backArrow
+    backArrow,
+    arrowRight,
 };
