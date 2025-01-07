@@ -4,6 +4,7 @@ import Table from 'components/table';
 import diamondIcon from 'assets/images/daimond.svg';
 import { getDate } from 'utils/dateFormat';
 import { useNavigate } from 'react-router-dom';
+import button1 from 'assets/images/button-1.svg';
 
 const usersData = [
     {
@@ -130,6 +131,9 @@ const RolesPermission = () => {
                             `}
                             ></div>
                         </label>
+                        <button>
+                            <img src={button1} alt="Delete" />
+                        </button>
                     </div>
                 </td>
             }

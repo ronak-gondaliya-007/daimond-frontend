@@ -60,9 +60,11 @@ export const userForm = [
                 name: "role",
                 label: "Role",
                 type: "SELECT",
+                placeholder: "Select Role",
                 options: [
-                    { value: "admin", label: "Admin" },
-                    { value: "user", label: "User" }
+                    { value: "none", label: "Select Role" },
+                    { value: "sales", label: "Sales" },
+                    { value: "finance", label: "Finance" }
                 ]
             },
             {
