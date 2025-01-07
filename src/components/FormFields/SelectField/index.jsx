@@ -4,13 +4,14 @@ const SelectField = ({
     id,
     label,
     name,
+    formGroup = "",
     options,
     register,
     rule,
     errors
 }) => {
     return (
-        <div className="form-group mb-[16px]">
+        <div className={`form-group mb-[16px] ${formGroup}`}>
             <label htmlFor={id}>{label}</label>
             <select
                 id={id}

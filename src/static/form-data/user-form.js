@@ -1,30 +1,30 @@
 export const userForm = [
-    {
-        id: 1,
-        type: "ROW",
-        childrens: [
-            {
-                id: 2,
-                name: "firstName",
-                label: "First Name",
-                type: "INPUT",
-                placeholder: "Enter First Name",
-                rule: {
-                    required: "*First Name is required"
-                }
-            },
-            {
-                id: 3,
-                name: "lastName",
-                label: "Last Name",
-                type: "INPUT",
-                placeholder: "Enter Last Name",
-                rule: {
-                    required: "*Last Name is required"
-                },
-            },
-        ],
-    },
+    // {
+    //     id: 1,
+    //     type: "ROW",
+    //     childrens: [
+    //         {
+    //             id: 2,
+    //             name: "firstName",
+    //             label: "First Name",
+    //             type: "INPUT",
+    //             placeholder: "Enter First Name",
+    //             rule: {
+    //                 required: "*First Name is required"
+    //             }
+    //         },
+    //         {
+    //             id: 3,
+    //             name: "lastName",
+    //             label: "Last Name",
+    //             type: "INPUT",
+    //             placeholder: "Enter Last Name",
+    //             rule: {
+    //                 required: "*Last Name is required"
+    //             },
+    //         },
+    //     ],
+    // },
     {
         id: 4,
         type: "ROW",

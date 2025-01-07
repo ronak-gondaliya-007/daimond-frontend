@@ -3,12 +3,15 @@ import { LAYOUTS } from "../constant";
 
 //public Route
 const Login = lazy(() => import("../pages/Login"));
-const Stock = lazy(() => import("../pages/Stock"));
-const StockForm = lazy(() => import("../pages/Stock/Form"));
 const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 
 // common routes
 const Dashboard = lazy(() => import("../pages/Dashboard"));
+const SellInvoice = lazy(() => import("../pages/sell-invoice"));
+const Stock = lazy(() => import("../pages/Stock"));
+const StockForm = lazy(() => import("../pages/Stock/Form"));
+const Customer = lazy(() => import("../pages/Customer"));
+const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
 const RolesPermission = lazy(() => import("../pages/roles-permission/RolesPermission"));
 const RolesPermissionForm = lazy(() => import("../pages/roles-permission/Form"));
 
@@ -37,6 +40,13 @@ export const privateRoutes = [
         layout: DASHBOARD_LAYOUT,
         breadcrumb: ["Dashboard"]
     },
+    {
+        path: '/sell-invoice',
+        element: SellInvoice,
+        title: "Sell / Invoice",
+        layout: MAIN,
+        breadcrumb: ["Management", "Sell / Invoice"]
+    },
 
     // --> Management
     {
@@ -59,6 +69,20 @@ export const privateRoutes = [
         title: "StockEdit",
         layout: MAIN,
         breadcrumb: ["Management", "Stock", "Edit"]
+    },
+    {
+        path: '/customer',
+        element: Customer,
+        title: "Customer",
+        layout: MAIN,
+        breadcrumb: ["Management", "Customer"]
+    },
+    {
+        path: '/customer/add',
+        element: CustomerAdd,
+        title: "Customer Add",
+        layout: MAIN,
+        breadcrumb: ["Management", "Customer", "Add"]
     },
     {
         path: '/roles-permission',

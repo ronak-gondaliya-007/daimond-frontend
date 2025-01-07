@@ -9,7 +9,7 @@ import addIcon from 'assets/images/add.svg';
 
 const RolesPermissionForm = () => {
 
-    const { register, handleSubmit, control, getValues, formState: { errors }, reset, setValue, watch } = useForm();
+    const { register, handleSubmit, control, formState: { errors }, reset, setValue, watch } = useForm();
     const profileImg = watch("profileImage");
 
     const getComponent = (field) => {
@@ -68,18 +68,16 @@ const RolesPermissionForm = () => {
         console.log({ ...data });
     }
 
-    console.log(profileImg)
-
     return (
         <div className='px-[100px] py-[50px]'>
             <form className="stock-add" onSubmit={handleSubmit(onSubmit)}>
 
                 <div className='w-full flex items-center gap-[10px]'>
-                    <div className='form-group mb-[16px] w-full h-[150px] outline-none rounded-[12px] border border-[#d1e9ff] bg-[#eff1f999]'>
+                    <div className='form-group mb-[16px] w-1/2 h-[134px] outline-none rounded-[12px] border border-[#d1e9ff] bg-[#eff1f999]'>
                         <label htmlFor='profile-image'>Profile Image</label>
                         <div className='relative w-[122px] h-[113px] mt-[26px] ml-[10px] mb-[10px] border border-[rgba(0,0,0,0.1)] rounded-[12px] cursor-pointer'>
                             {
-                                !!profileImg
+                                (!!profileImg && profileImg?.[0])
                                     ? (
                                         <>
                                             <img src={URL.createObjectURL(profileImg[0])} alt='profile-image' className='w-full h-full object-cover rounded-[12px]' />
@@ -113,6 +111,37 @@ const RolesPermissionForm = () => {
                             }
                         </div>
                         {!!errors?.["profileImage"] && <span className="error-text">{errors["profileImage"].message}</span>}
+                    </div>
+
+                    <div className='w-full'>
+                        <InputField
+                            {...{
+                                id: 2,
+                                name: "firstName",
+                                label: "First Name",
+                                type: "INPUT",
+                                placeholder: "Enter First Name",
+                                rule: {
+                                    required: "*First Name is required"
+                                }
+                            }}
+                            register={register}
+                            errors={errors}
+                        />
+                        <InputField
+                            {...{
+                                id: 3,
+                                name: "lastName",
+                                label: "Last Name",
+                                type: "INPUT",
+                                placeholder: "Enter Last Name",
+                                rule: {
+                                    required: "*Last Name is required"
+                                },
+                            }}
+                            register={register}
+                            errors={errors}
+                        />
                     </div>
                 </div>
 
