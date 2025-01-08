@@ -8,6 +8,7 @@ const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
 // common routes
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const SellInvoice = lazy(() => import("../pages/sell-invoice"));
+const Memo = lazy(() => import("../pages/memo"));
 const Stock = lazy(() => import("../pages/Stock"));
 const StockForm = lazy(() => import("../pages/Stock/Form"));
 const Customer = lazy(() => import("../pages/Customer"));
@@ -50,6 +51,13 @@ export const privateRoutes = [
     },
 
     // --> Management
+    {
+        path: '/memo',
+        element: Memo,
+        title: "Memo",
+        layout: MAIN,
+        breadcrumb: ["Management", "Memo"]
+    },
     {
         path: '/stock',
         element: Stock,
