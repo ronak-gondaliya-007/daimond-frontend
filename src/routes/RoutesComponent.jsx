@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
-import NotFound from "pages/not-found/NotFound";
+import NotFound from "pages/404/NotFound";
 import { privateRoutes, publicRoutes } from "routes";
 import PublicRouter from "./publicRouter";
 import PrivateRouter from "./privateRouter";

@@ -14,17 +14,22 @@ axiosClient.defaults.timeout = 600000;
 axiosClient.interceptors.response.use(
     function (response) {
         if (response.data?.statusCode === 401) {
-            cookies.remove("token", { path: "/" });
-            window.location.reload();
+            cookies.remove("token", { path: "/login" });
+            localStorage.removeItem("token");
+
+            window.location.href = '/login';
         }
         return response;
     },
 
     function (error) {
         let res = error.response;
-        if (res?.status === 501) {
-            cookies.remove("token", { path: "/login" });
-            toast.error(error?.response?.data?.message);
+        if (res?.status === 401) {
+            localStorage.removeItem("authDetails");
+            localStorage.removeItem("token");
+
+            window.location.reload();
+            window.location.href = '/login';
         }
         console.error("Looks like there was a problem. Status Code:" + res?.status);
         return Promise.reject(error);
@@ -32,7 +37,7 @@ axiosClient.interceptors.response.use(
 );
 
 axiosClient.interceptors.request.use(function (config) {
-    const token = cookies.get("token");
+    const token = localStorage.getItem("token");
 
     // Set Authorization header
     if (token) {

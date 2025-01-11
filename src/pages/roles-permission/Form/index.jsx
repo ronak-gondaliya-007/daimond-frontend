@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { userForm } from 'static/form-data/user-form';
 import PhoneInputField from 'components/FormFields/PhoneInputField/PhoneInputField';
 import addIcon from 'assets/images/add.svg';
+import axiosClient from 'api/AxiosClient';
 
 const RolesPermissionForm = () => {
 
@@ -58,15 +59,64 @@ const RolesPermissionForm = () => {
         }
     }
 
-    const handleChange = (element) => {
-        const ele = element.target.files;
-
-        setValue("profileImage", URL.createObjectURL(ele[0]))
+    const handleChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const objectURL = URL.createObjectURL(file);
+            setValue('profileImage', { file, preview: objectURL });
+        }
     }
 
-    const onSubmit = (data) => {
-        console.log({ ...data });
-    }
+    const handleImageUpload = async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append('ProfilePic', file);
+
+            const response = await axiosClient.post('/user/upload-image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            
+            if (response.data.status !== 'Success') {
+                throw new Error('Failed to upload the image');
+            }
+
+            return response.data.data;
+        } catch (error) {
+            throw new Error('Failed to upload the image');
+        }
+    };
+
+    const onSubmit = async (data) => {
+        try {
+            console.log("profileImg",profileImg);
+            
+            if (profileImg && profileImg !== undefined) {
+                const uploadedImageUrl = await handleImageUpload(profileImg.file);
+                data.profilePic = uploadedImageUrl;
+            }
+
+            if(data.role) delete data.role;
+            if(data.Role) delete data.Role;
+            if(data.profileImage) delete data.profileImage;
+
+            const response = await axiosClient.post('/user/register', data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (response.data.status !== 'Success') {
+                throw new Error('Failed to create user.');
+            }
+
+            console.log('Upload successful! Redirecting to roles and permission page...');
+            window.location.href = '/roles-permission';
+        } catch (error) {
+            console.error('Error handling image operations:', error.message);
+        }
+    };
 
     return (
         <div className='px-[100px] py-[50px]'>
@@ -77,10 +127,10 @@ const RolesPermissionForm = () => {
                         <label htmlFor='profile-image'>Profile Image</label>
                         <div className='relative w-[122px] h-[113px] mt-[26px] ml-[10px] mb-[10px] border border-[rgba(0,0,0,0.1)] rounded-[12px] cursor-pointer'>
                             {
-                                (!!profileImg && profileImg?.[0])
+                                (!!profileImg?.preview)
                                     ? (
                                         <>
-                                            <img src={URL.createObjectURL(profileImg[0])} alt='profile-image' className='w-full h-full object-cover rounded-[12px]' />
+                                            <img src={profileImg?.preview} alt='profile-image' className='w-full h-[100px] object-cover rounded-[12px]' />
                                             <button type='button' className='absolute top-[6px] left-[135px] w-[180px] h-[54px] bg-[#342C2C] text-white text-[16px] rounded-[12px]'>
                                                 Upload new image
                                                 <input
@@ -88,9 +138,11 @@ const RolesPermissionForm = () => {
                                                     id='profile-image'
                                                     className='absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer'
                                                     accept='.jpeg, .png, .jpeg'
-                                                    {...register('profileImage', { required: "*Profile Image is required" }, {
-                                                        onChange: (element) => handleChange(element)
-                                                    })}
+                                                    // {...register('profileImage', { required: "*Profile Image is required" }, {
+                                                    //     onChange: (element) => handleChange(element)
+                                                    // })}
+                                                    {...register('profileImage')}
+                                                    onChange={handleChange}
                                                 />
                                             </button>
                                         </>
@@ -102,46 +154,17 @@ const RolesPermissionForm = () => {
                                                 id='profile-image'
                                                 className='!w-full !h-full outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px] opacity-0 cursor-pointer z-10'
                                                 accept='.jpeg, .png, .jpeg'
-                                                {...register('profileImage', { required: "*Profile Image is required" }, {
-                                                    onChange: (element) => handleChange(element)
-                                                })}
+                                                // {...register('profileImage', { required: "*Profile Image is required" }, {
+                                                //     onChange: (element) => handleChange(element)
+                                                // })}
+                                                {...register('profileImage')}
+                                                onChange={handleChange}
                                             />
                                         </>
                                     )
                             }
                         </div>
                         {!!errors?.["profileImage"] && <span className="error-text">{errors["profileImage"].message}</span>}
-                    </div>
-
-                    <div className='w-full'>
-                        <InputField
-                            {...{
-                                id: 2,
-                                name: "firstName",
-                                label: "First Name",
-                                type: "INPUT",
-                                placeholder: "Enter First Name",
-                                rule: {
-                                    required: "*First Name is required"
-                                }
-                            }}
-                            register={register}
-                            errors={errors}
-                        />
-                        <InputField
-                            {...{
-                                id: 3,
-                                name: "lastName",
-                                label: "Last Name",
-                                type: "INPUT",
-                                placeholder: "Enter Last Name",
-                                rule: {
-                                    required: "*Last Name is required"
-                                },
-                            }}
-                            register={register}
-                            errors={errors}
-                        />
                     </div>
                 </div>
 

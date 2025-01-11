@@ -10,20 +10,11 @@ import StockForm from '../../pages/Stock/Form';
 const Table = ({
     columns,
     data,
-    tableClass
+    tableClass,
+    currentPage,
+    totalPages,
+    onPageChange
 }) => {
-    const navigate = useNavigate();
-
-    const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 3;
-
-    const totalPages = Math.ceil(data.length / rowsPerPage);
-
-
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-    };
-
     const [selectedItem, setSelectedItem] = useState(null);
 
     const handleClosePopup = () => {
@@ -88,7 +79,7 @@ const Table = ({
             <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={handlePageChange}
+                onPageChange={onPageChange}
             />
 
             {selectedItem && selectedItem.action === 'view' && <DetailPopup data={selectedItem} onClose={handleClosePopup} />}

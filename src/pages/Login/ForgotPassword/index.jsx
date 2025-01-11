@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { logo, backArrow } from "../../assets/utils/images.js";
+import { logo, backArrow } from "../../../assets/utils/images.js";
 import { useForm } from "react-hook-form";
 import axiosClient from "api/AxiosClient.js";
 

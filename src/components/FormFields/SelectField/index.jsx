@@ -7,8 +7,9 @@ const SelectField = ({
     formGroup = "",
     options,
     register,
-    rule,
-    errors
+    rule = { required: true },
+    errors,
+    placeholder = "Select Role"
 }) => {
     return (
         <div className={`form-group mb-[16px] ${formGroup}`}>
@@ -17,6 +18,9 @@ const SelectField = ({
                 id={id}
                 {...register(name, rule)}
             >
+                <option value="" key="placeholder" disabled selected>
+                    {placeholder}
+                </option>
                 {
                     options.map((option) => (
                         <option value={option.value}>{option.label}</option>

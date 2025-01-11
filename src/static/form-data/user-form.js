@@ -1,30 +1,30 @@
 export const userForm = [
-    // {
-    //     id: 1,
-    //     type: "ROW",
-    //     childrens: [
-    //         {
-    //             id: 2,
-    //             name: "firstName",
-    //             label: "First Name",
-    //             type: "INPUT",
-    //             placeholder: "Enter First Name",
-    //             rule: {
-    //                 required: "*First Name is required"
-    //             }
-    //         },
-    //         {
-    //             id: 3,
-    //             name: "lastName",
-    //             label: "Last Name",
-    //             type: "INPUT",
-    //             placeholder: "Enter Last Name",
-    //             rule: {
-    //                 required: "*Last Name is required"
-    //             },
-    //         },
-    //     ],
-    // },
+    {
+        id: 1,
+        type: "ROW",
+        childrens: [
+            {
+                id: 2,
+                name: "firstName",
+                label: "First Name",
+                type: "INPUT",
+                placeholder: "Enter First Name",
+                rule: {
+                    required: "*First Name is required"
+                }
+            },
+            {
+                id: 3,
+                name: "lastName",
+                label: "Last Name",
+                type: "INPUT",
+                placeholder: "Enter Last Name",
+                rule: {
+                    required: "*Last Name is required"
+                },
+            },
+        ],
+    },
     {
         id: 4,
         type: "ROW",
@@ -36,7 +36,11 @@ export const userForm = [
                 type: "INPUT",
                 placeholder: "Enter Email",
                 rule: {
-                    required: "*Email is required"
+                    required: "*Email is required",
+                    pattern: {
+                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                        message: "*Please enter a valid email"
+                    }
                 },
             },
             {
@@ -57,15 +61,17 @@ export const userForm = [
         childrens: [
             {
                 id: 8,
-                name: "role",
+                name: "userType",
                 label: "Role",
                 type: "SELECT",
                 placeholder: "Select Role",
                 options: [
-                    { value: "none", label: "Select Role" },
-                    { value: "sales", label: "Sales" },
-                    { value: "finance", label: "Finance" }
-                ]
+                    { value: "Sales", label: "Sales" },
+                    { value: "Finance", label: "Finance" }
+                ],
+                rule: {
+                    required: "*Role is required"
+                },
             },
             {
                 id: 9,

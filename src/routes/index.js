@@ -3,19 +3,19 @@ import { LAYOUTS } from "../constant";
 
 //public Route
 const Login = lazy(() => import("../pages/Login"));
-const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const ForgotPassword = lazy(() => import("../pages/Login/ForgotPassword"));
 
 // common routes
 const Dashboard = lazy(() => import("../pages/Dashboard"));
-const SellInvoice = lazy(() => import("../pages/sell-invoice"));
-const Memo = lazy(() => import("../pages/memo"));
+const SellInvoice = lazy(() => import("../pages/Sell-Invoice"));
+const Memo = lazy(() => import("../pages/Memo"));
 const Stock = lazy(() => import("../pages/Stock"));
 const StockForm = lazy(() => import("../pages/Stock/Form"));
 const Customer = lazy(() => import("../pages/Customer"));
 const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
 const RolesPermission = lazy(() => import("../pages/roles-permission/RolesPermission"));
 const RolesPermissionForm = lazy(() => import("../pages/roles-permission/Form"));
-const ReportsAnalytics = lazy(() => import("../pages/reports-analytics/ReportsAnalytics"));
+const ReportsAnalytics = lazy(() => import("../pages/Reports-Analytics/ReportsAnalytics"));
 
 const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
