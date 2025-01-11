@@ -9,6 +9,7 @@ import backArrow from '../images/back-arrow.svg';
 import arrowRight from '../images/arrow-right.svg';
 import arrowDown from '../images/arrow-down.svg';
 import arrowUp from '../images/arrow-up.svg';
+import noDataFound from '../images/no-data.svg';
 
 export {
     logo,
@@ -21,5 +22,6 @@ export {
     backArrow,
     arrowRight,
     arrowDown,
-    arrowUp
+    arrowUp,
+    noDataFound
 };

@@ -35,7 +35,6 @@ const customer = [
 ]
 
 const Customer = () => {
-
     const navigate = useNavigate();
 
     const columns = [

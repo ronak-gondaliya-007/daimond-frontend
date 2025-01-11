@@ -8,6 +8,7 @@ import button1 from 'assets/images/button-1.svg';
 import axiosClient from 'api/AxiosClient';
 import { arrowDown, arrowUp } from 'assets/utils/images';
 import Loader from 'components/loader';
+import NoDataFound from 'components/no-data-found';
 
 const RolesPermission = () => {
     const navigate = useNavigate();
@@ -217,27 +218,31 @@ const RolesPermission = () => {
                 }}
             />
             <div className="my-[30px] stock-table">
-                <Table
-                    columns={columns.map(column => ({
-                        ...column,
-                        label: (
-                            <div
-                                className="flex items-center cursor-pointer gap-[5px]"
-                                onClick={() => column.sortable && handleSort(column.key)}
-                            >
-                                {column.label}
-                                {column.sortable && sortConfig.key === column.key && (
-                                    <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
-                                )}
-                            </div>
-                        ),
-                    }))}
-                    data={usersData || []}
-                    tableClass="stock-table"
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
+                {usersData.length === 0 ? (
+                    <NoDataFound message="Oops! No users found."/>
+                ) : (
+                    <Table
+                        columns={columns.map(column => ({
+                            ...column,
+                            label: (
+                                <div
+                                    className="flex items-center cursor-pointer gap-[5px]"
+                                    onClick={() => column.sortable && handleSort(column.key)}
+                                >
+                                    {column.label}
+                                    {column.sortable && sortConfig.key === column.key && (
+                                        <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
+                                    )}
+                                </div>
+                            ),
+                        }))}
+                        data={usersData || []}
+                        tableClass="stock-table"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
+                )}
             </div>
         </div>
     )
