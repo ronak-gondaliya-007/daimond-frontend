@@ -34,8 +34,6 @@ const ResetPassword = () => {
 
     const onSubmit = async (data) => {
         try {
-            console.log(data);
-
             const response = await axiosClient.post("/user/reset-password", {
                 userId: id,
                 token: token,
@@ -64,7 +62,7 @@ const ResetPassword = () => {
                             <label className="label">New Password</label>
                             <div className="relative">
                                 <input
-                                    className={`input ${errors.password || message ? "error" : ""}`}
+                                    className={`input ${errors.newPassword || message ? "error" : ""}`}
                                     type={showNewPassword ? "text" : "password"}
                                     placeholder="Enter your new password"
                                     {...register("newPassword", {
@@ -80,13 +78,13 @@ const ResetPassword = () => {
                                     <img src={showNewPassword ? openEye : closeEye} alt="toggle visibility" />
                                 </span>
                             </div>
-                            {!!errors?.password && <span className="error-text">{errors.password.message}</span>}
+                            {!!errors?.newPassword && <span className="error-text">{errors.newPassword.message}</span>}
                         </div>
                         <div className="form-group mb-[16px]">
                             <label className="label">Confirm Password</label>
                             <div className="relative">
                                 <input
-                                    className={`input ${errors.password || message ? "error" : ""}`}
+                                    className={`input ${errors.confirmPassword || message ? "error" : ""}`}
                                     type={showConfirmPassword ? "text" : "password"}
                                     placeholder="Enter your confirm password"
                                     {...register("confirmPassword", {
@@ -102,7 +100,7 @@ const ResetPassword = () => {
                                     <img src={showConfirmPassword ? openEye : closeEye} alt="toggle visibility" />
                                 </span>
                             </div>
-                            {!!errors?.password && <span className="error-text">{errors.password.message}</span>}
+                            {!!errors?.confirmPassword && <span className="error-text">{errors.confirmPassword.message}</span>}
                         </div>
                         <div className="form-group">
                             <button className="primary-btn" type="submit">Reset Password</button>

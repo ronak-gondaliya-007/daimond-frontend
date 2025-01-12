@@ -43,6 +43,12 @@ const Login = () => {
 
     const onSubmit = async (data) => {
         try {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(data.email)) {
+                setMessage('Please enter a valid email address.');
+            }
+
             const response = await axiosClient.post("/user/login", {
                 email: data.email,
                 password: data.password,
@@ -78,7 +84,7 @@ const Login = () => {
                                 {...register("email", {
                                     required: "*Email is required",
                                     pattern: {
-                                        value:  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                                         message: "*Please enter a valid email address",
                                     },
                                 })}
