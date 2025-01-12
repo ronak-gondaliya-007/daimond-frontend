@@ -5,7 +5,7 @@ import { sections } from 'constant';
 
 const Sidebar = () => {
     const navigate = useNavigate();
-    let { pathname } = useLocation();
+    const { pathname } = useLocation();
 
     function isCurrentTag(slug) {
         const route = pathname.split('/').filter(Boolean);

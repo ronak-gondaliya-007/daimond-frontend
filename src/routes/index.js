@@ -4,6 +4,7 @@ import { LAYOUTS } from "../constant";
 //public Route
 const Login = lazy(() => import("../pages/Login"));
 const ForgotPassword = lazy(() => import("../pages/Login/ForgotPassword"));
+const ResetPassword = lazy(() => import("../pages/Login/ResetPassword"));
 
 // common routes
 const Dashboard = lazy(() => import("../pages/Dashboard"));
@@ -30,6 +31,12 @@ export const publicRoutes = [
         path: "/forgot-password",
         element: ForgotPassword,
         title: "ForgotPassword",
+        layout: ""
+    },
+    {
+        path: "/reset-password",
+        element: ResetPassword,
+        title: "ResetPassword",
         layout: ""
     }
 ];

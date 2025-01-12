@@ -106,7 +106,7 @@ const Login = () => {
                                     onChange={() => { setMessage("") }}
                                 />
                                 <span className="password-eye" onClick={togglePasswordVisibility}>
-                                    <img src={showPassword ? closeEye : openEye} alt="toggle visibility" />
+                                    <img src={showPassword ? openEye : closeEye} alt="toggle visibility" />
                                 </span>
                             </div>
                             {!!errors?.password && <span className="error-text">{errors.password.message}</span>}
