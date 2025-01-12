@@ -11,6 +11,7 @@ const Search = ({
     onSearch,
     searchQuery,
     loading,
+    showButtons = true
 }) => {
     const [query, setQuery] = useState(searchQuery);
     const timeoutRef = useRef(null);
@@ -41,7 +42,7 @@ const Search = ({
                     placeholder={placeholder}
                     className='w-full h-full outline-none text-[16px] md-2:text-[16px] text-[black]'
                 />
-                <div className='flex items-center gap-[16px] mx-[6px]'>
+                {showButtons ? <div className='flex items-center gap-[16px] mx-[6px]'>
                     <button className='w-max px-[18px] py-[10px] bg-[#F1F2F4] rounded-[4px] text-[14px] font-medium text-[#18191C] flex items-center gap-[12px]'>
                         <img src={slidersIcon} alt="Filters" className='w-[24px] h-[24px] mr-[2px]' />
                         <p>Filters</p>
@@ -50,7 +51,7 @@ const Search = ({
                         <img src={slidersIcon} alt="Filters" className='w-[24px] h-[24px] mr-[2px]' />
                         <p>Sort</p>
                     </button>
-                </div>
+                </div> : <div className='flex items-center gap-[16px] mx-[6px]'></div>}
             </div>
             <div className="w-[250px] h-full">
                 <button

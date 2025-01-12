@@ -131,7 +131,7 @@ const Customer = () => {
             type: 'checkbox'
         },
         {
-            label: 'Customer Name',
+            label: selectedTab === 'customer' ? 'Customer Name' : 'Vendor Name',
             key: 'name'
         },
         {
@@ -201,7 +201,7 @@ const Customer = () => {
                         </button>
                     </div>
                 </div>
-                <div className="w-[250px] h-[52px]">
+                <div className="w-[250px] h-[55px]">
                     <button
                         className='w-full h-full py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
                         onClick={handleAddClick}

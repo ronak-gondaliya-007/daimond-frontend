@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-// import '../../assets/css/table.css';
 
 import Pagination from '../pagination';
 import DetailPopup from '../popup/Detail';
@@ -27,11 +25,12 @@ const Table = ({
                 <thead>
                     <tr className='text-center py-[12px]'>
                         {
-                            columns.map(({ label, isCheckbox }, index) => (
+                            columns.map(({ label, isCheckbox, className }, index) => (
                                 <th
                                     key={index}
                                     className={`
                                          ${isCheckbox ? 'max-w-[50px]' : ''}
+                                         ${className || ''}
                                     `}
                                 >
                                     <div className={`custom-checkbox ${!isCheckbox ? 'flex item-center' : ''}`}>
@@ -42,7 +41,6 @@ const Table = ({
                             ))
                         }
                     </tr>
-
                 </thead>
                 <tbody>
                     {

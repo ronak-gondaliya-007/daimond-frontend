@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Search from 'components/search'
 import Table from 'components/table';
 import diamondIcon from 'assets/images/daimond.svg';
-import { getDate } from 'utils/dateFormat';
+import { getDate, getTime } from 'utils/dateFormat';
 import { useNavigate } from 'react-router-dom';
 import button1 from 'assets/images/button-1.svg';
 import axiosClient from 'api/AxiosClient';
@@ -139,7 +139,7 @@ const RolesPermission = () => {
             key: 'createdAt',
             type: 'custom',
             render: ({ createdAt }) => {
-                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)}</span>
+                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)} {getTime(createdAt)}</span>
             },
             sortable: true
         },
