@@ -17,6 +17,7 @@ const SelectField = ({
             <select
                 id={id}
                 {...register(name, rule)}
+                className={`select-field ${errors?.[name] ? "error" : ""}`}
             >
                 <option value="" key="placeholder" disabled selected>
                     {placeholder}

@@ -14,6 +14,7 @@ const TextAreaField = ({
             type={type}
             id={id}
             placeholder={placeholder}
+            className={`text-area-field ${errors?.[name] ? "error" : ""}`}
             {...register(name, rule)}
         />
         {!!errors?.[name] && <span className="error-text">{errors[name].message}</span>}

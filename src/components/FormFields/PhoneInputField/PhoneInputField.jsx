@@ -32,6 +32,8 @@ const PhoneInputField = ({
                             name: name,
                             id: id,
                         }}
+                        containerClass={!!errors?.[name] ? 'input-error' : ''}
+                        inputClass={!!errors?.[name] ? 'input-box-error' : ''}
                     />
                 )}
             />
