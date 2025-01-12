@@ -90,8 +90,6 @@ const RolesPermissionForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            console.log("profileImg",profileImg);
-            
             if (profileImg && profileImg !== undefined) {
                 const uploadedImageUrl = await handleImageUpload(profileImg.file);
                 data.profilePic = uploadedImageUrl;
@@ -104,14 +102,13 @@ const RolesPermissionForm = () => {
             const response = await axiosClient.post('/user/register', data, {
                 headers: {
                     'Content-Type': 'application/json',
-                },
+                }
             });
             
             if (response.data.status !== 'Success') {
                 throw new Error('Failed to create user.');
             }
 
-            console.log('Upload successful! Redirecting to roles and permission page...');
             window.location.href = '/roles-permission';
         } catch (error) {
             console.error('Error handling image operations:', error.message);

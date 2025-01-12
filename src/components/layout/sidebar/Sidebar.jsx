@@ -1,16 +1,18 @@
 import React from 'react';
-import { matchPath, useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import sidebarLogo from 'assets/images/sidebar-logo.svg';
 import { sections } from 'constant';
 
 const Sidebar = () => {
-
     const navigate = useNavigate();
-    const { pathname } = useLocation();
-
+    let { pathname } = useLocation();
 
     function isCurrentTag(slug) {
         const route = pathname.split('/').filter(Boolean);
+
+        if (slug === '/customer' && (pathname.startsWith('/customer') || pathname.startsWith('/vendor'))) {
+            return true;
+        }
 
         if (slug === pathname) return true;
         return route.length > 0 && slug.includes(route[0]);

@@ -11,14 +11,12 @@ const Search = ({
     onSearch,
     searchQuery,
     loading,
-    showButtons = true
 }) => {
     const [query, setQuery] = useState(searchQuery);
     const timeoutRef = useRef(null);
 
     const handleSearchChange = (e) => {
         const value = e.target.value;
-        // setSearchValue(value);
         setQuery(value);
 
         // Clear previous timeout to prevent multiple API calls

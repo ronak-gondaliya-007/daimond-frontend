@@ -87,11 +87,25 @@ export const privateRoutes = [
         breadcrumb: ["Management", "Customer"]
     },
     {
+        path: '/vendor',
+        element: Customer,
+        title: "Vendor",
+        layout: MAIN,
+        breadcrumb: ["Management", "Vendor"]
+    },
+    {
         path: '/customer/add',
-        element: CustomerAdd,
+        element: CustomerAdd, 
         title: "Customer Add",
         layout: MAIN,
         breadcrumb: ["Management", "Customer", "Add"]
+    },
+    {
+        path: '/vendor/add',
+        element: CustomerAdd,
+        title: "Vendor Add",
+        layout: MAIN,
+        breadcrumb: ["Management", "Vendor", "Add"]
     },
     {
         path: '/roles-permission',

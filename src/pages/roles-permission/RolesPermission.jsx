@@ -236,7 +236,7 @@ const RolesPermission = () => {
                                 </div>
                             ),
                         }))}
-                        data={usersData || []}
+                        data={usersData}
                         tableClass="stock-table"
                         currentPage={currentPage}
                         totalPages={totalPages}

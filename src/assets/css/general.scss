@@ -101,3 +101,10 @@
     background-color: rgb(206 204 204);
     border-radius: 10px;
 }
+
+.tbl-address {
+    width: 300px; /* You can adjust the width */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
