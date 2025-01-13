@@ -2,8 +2,12 @@ import React, { useState } from "react";
 import { logo, backArrow } from "../../../assets/utils/images.js";
 import { useForm } from "react-hook-form";
 import axiosClient from "api/AxiosClient.js";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ForgotPassword = () => {
+    const navigate = useNavigate();
+
     const [message, setMessage] = useState("");
     const { register, handleSubmit, formState: { errors }, watch } = useForm();
 
@@ -13,10 +17,11 @@ const ForgotPassword = () => {
                 email: data.email
             });
             if (response.status === 200) {
-                window.location.href = "/";
+                toast.success(response?.data?.message);
+                navigate("/login");
             }
         } catch (error) {
-            setMessage(error.response?.data?.message);
+            toast.error(error.response?.data?.message);
         }
     };
 

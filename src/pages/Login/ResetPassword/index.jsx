@@ -4,6 +4,7 @@ import { openEye, closeEye, backArrow } from "../../../assets/utils/images.js";
 import axiosClient from 'api/AxiosClient';
 import { useForm } from 'react-hook-form';
 import { logo } from 'assets/utils/images';
+import { toast } from 'react-toastify';
 
 const ResetPassword = () => {
     const location = useLocation();
@@ -14,7 +15,6 @@ const ResetPassword = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [token, setToken] = useState('');
     const [id, setId] = useState('');
-    const [error, setError] = useState('');
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
@@ -42,10 +42,11 @@ const ResetPassword = () => {
             });
 
             if (response.status === 200) {
-                window.location.href = "/login";
+                toast.success(response?.data?.message);
+                navigate("/login");
             }
         } catch (error) {
-            setMessage(error.response?.data?.message);
+            toast.error(error.response?.data?.message);
         }
     };
 

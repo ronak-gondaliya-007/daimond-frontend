@@ -5,11 +5,14 @@ import SelectField from 'components/FormFields/SelectField';
 import TextAreaField from 'components/FormFields/TextAreaField';
 import React from 'react'
 import { useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { customerForm, vendorForm } from 'static/form-data/customer-form';
 
 const CustomerAdd = () => {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const routeTitle = location.pathname.slice();
 
     const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
@@ -78,18 +81,16 @@ const CustomerAdd = () => {
                 { headers: { 'Content-Type': 'application/json' } }
             );
 
-            if (response.data.status !== 'Success') {
-                throw new Error('Failed to create customer.');
-            }
-
-            if (data.userType === 'Customer') {
-                window.location.href = '/customer';
-            } else {
-                window.location.href = '/vendor';
+            if (response.status === 201) {
+                toast.success(response?.data?.message);
+                if (data.userType === 'Customer') {
+                    navigate('/customer');
+                } else {
+                    navigate('/vendor');
+                }
             }
         } catch (error) {
-            console.log(error);
-            console.error('Error handling image operations:', error.message);
+            toast.error(error?.response?.data?.message);
         }
     }
 

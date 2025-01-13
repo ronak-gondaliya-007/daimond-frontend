@@ -9,6 +9,7 @@ import axiosClient from 'api/AxiosClient';
 import { arrowDown, arrowUp } from 'assets/utils/images';
 import Loader from 'components/loader';
 import NoDataFound from 'components/no-data-found';
+import { toast } from 'react-toastify';
 
 const RolesPermission = () => {
     const navigate = useNavigate();
@@ -17,7 +18,6 @@ const RolesPermission = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Asc' });
 
@@ -41,13 +41,13 @@ const RolesPermission = () => {
             );
 
             if (response.status === 200) {
+                toast.success(response?.data?.data?.message);
                 setUsersData(response.data.data.docs);
                 setTotalPages(response.data.data.totalPages);
                 setCurrentPage(page);
             }
         } catch (err) {
-            setError('Failed to fetch users');
-            console.error(err);
+            toast.error(error?.response?.data?.message);
         } finally {
             setLoading(false);
             isFetchingRef.current = false;
@@ -90,10 +90,11 @@ const RolesPermission = () => {
             );
 
             if (response.status === 200) {
+                toast.success(response?.data?.data?.message);
                 onStatusChange('update', userId, response.data.data.isActive);
             }
         } catch (error) {
-            console.error('Error toggling status:', error);
+            toast.error(error?.response?.data?.message);
         }
     };
 
@@ -105,10 +106,11 @@ const RolesPermission = () => {
             );
 
             if (response.status === 200) {
+                toast.success(response?.data?.data?.message);
                 onStatusChange('delete', userId);
             }
         } catch (error) {
-            console.error('Error deleting user:', error);
+            toast.error(error?.response?.data?.message);
         }
     };
 
@@ -196,10 +198,6 @@ const RolesPermission = () => {
 
     if (loading) {
         return <Loader />;;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
     }
 
     return (

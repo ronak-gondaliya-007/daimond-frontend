@@ -1,5 +1,4 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
@@ -31,7 +30,6 @@ axiosClient.interceptors.response.use(
             window.location.reload();
             window.location.href = '/login';
         }
-        console.error("Looks like there was a problem. Status Code:" + res?.status);
         return Promise.reject(error);
     }
 );

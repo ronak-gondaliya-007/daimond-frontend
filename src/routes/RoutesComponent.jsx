@@ -4,11 +4,9 @@ import NotFound from "pages/404/NotFound";
 import { privateRoutes, publicRoutes } from "routes";
 import PublicRouter from "./publicRouter";
 import PrivateRouter from "./privateRouter";
-import Cookies from "universal-cookie";
+import { ToastContainer } from "react-toastify";
 
 function RoutesComponent() {
-    const cookies = new Cookies();
-
     const isAuthenticated = () => {
         const authDetails = JSON.parse(localStorage.getItem("authDetails"));
         const token = localStorage.getItem("token");
@@ -51,7 +49,7 @@ function RoutesComponent() {
 
     const router = createBrowserRouter(createRoutesFromElements(render()));
 
-    return <RouterProvider router={router} />
+    return <> <ToastContainer /><RouterProvider router={router} /></>
 
 }
 

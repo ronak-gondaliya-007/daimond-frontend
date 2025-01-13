@@ -5,6 +5,7 @@ import logo from "assets/images/logo.svg";
 import axiosClient from "../../api/AxiosClient.js";
 import { useNavigate } from "react-router-dom";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import { toast } from "react-toastify";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -57,16 +58,15 @@ const Login = () => {
             });
 
             if (response.status === 200) {
+                toast.success(response?.data?.message);
                 localStorage.setItem("token", response?.data?.data?.accessToken);
                 localStorage.setItem("authDetails", JSON.stringify(response?.data?.data?.user));
-                window.location.href = "/";
+                navigate("/");
             }
         } catch (error) {
-            setMessage(error.response?.data?.message);
+            toast.error(error?.response?.data?.message);
         }
     };
-
-    console.log("Email Watch : ", watch('email'));
 
     return (
         <div className="login-container p-[24px]">

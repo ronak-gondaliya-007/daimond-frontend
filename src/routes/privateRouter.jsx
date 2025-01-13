@@ -15,6 +15,10 @@ const PrivateRouter = ({
 }) => {
     const location = useLocation();
 
+    if (!auth) {
+        auth = localStorage.getItem('token') ?? false;
+    }
+
     const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
     function getLayout() {

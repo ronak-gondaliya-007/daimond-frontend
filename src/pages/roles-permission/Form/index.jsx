@@ -7,8 +7,11 @@ import { userForm } from 'static/form-data/user-form';
 import PhoneInputField from 'components/FormFields/PhoneInputField/PhoneInputField';
 import addIcon from 'assets/images/add.svg';
 import axiosClient from 'api/AxiosClient';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const RolesPermissionForm = () => {
+    const navigate = useNavigate();
 
     const { register, handleSubmit, control, formState: { errors }, reset, setValue, watch, getValues } = useForm();
     const profileImg = watch("profileImage");
@@ -79,13 +82,12 @@ const RolesPermissionForm = () => {
                 },
             });
 
-            if (response.data.status !== 'Success') {
-                throw new Error('Failed to upload the image');
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                return response.data.data;
             }
-
-            return response.data.data;
         } catch (error) {
-            throw new Error('Failed to upload the image');
+            toast.error(error?.response?.data?.message);
         }
     };
 
@@ -106,13 +108,12 @@ const RolesPermissionForm = () => {
                 }
             });
 
-            if (response.data.status !== 'Success') {
-                throw new Error('Failed to create user.');
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                navigate('/roles-permission');
             }
-
-            window.location.href = '/roles-permission';
         } catch (error) {
-            console.error('Error handling image operations:', error.message);
+            toast.error(error?.response?.data?.message);
         }
     };
 

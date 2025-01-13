@@ -6,6 +6,7 @@ import axiosClient from 'api/AxiosClient';
 import NoDataFound from 'components/no-data-found';
 import Loader from 'components/loader';
 import searchIcon from 'assets/images/search.svg';
+import { toast } from 'react-toastify';
 
 const Customer = () => {
     const navigate = useNavigate();
@@ -33,8 +34,8 @@ const Customer = () => {
     const fetchCustomers = async (userType, page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
-
         setLoading(true);
+
         try {
             const response = await axiosClient.post('/customer/all-customer',
                 {
@@ -49,12 +50,13 @@ const Customer = () => {
             );
 
             if (response.status === 200) {
+                toast.success(response?.data?.message);
                 setCustomerData(response.data.data.docs);
                 setTotalPages(response.data.data.totalPages);
                 setCurrentPage(page);
             }
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
         } finally {
             setLoading(false);
             isFetchingRef.current = false;
@@ -96,10 +98,11 @@ const Customer = () => {
             );
 
             if (response.status === 200) {
+                toast.success(response?.data?.message);
                 onStatusChange(userId);
             }
         } catch (error) {
-            console.error('Error deleting user:', error);
+            toast.error(error?.response?.data?.message);
         }
     };
 
