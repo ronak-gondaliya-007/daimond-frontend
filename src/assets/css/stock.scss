@@ -3,7 +3,7 @@
         position: relative;
         width: 100%;
         margin-bottom: 27px;
-        
+
         label {
             position: absolute;
             font-size: 12px;
@@ -12,9 +12,12 @@
             top: 5px;
             left: 10px;
             text-transform: capitalize;
+            z-index: 1;
         }
-        
-        input, textarea, select {
+
+        input,
+        textarea,
+        select {
             height: 54px;
             background-color: #EFF1F999;
             padding-top: 25px;

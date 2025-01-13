@@ -44,7 +44,7 @@ const Table = ({
                 </thead>
                 <tbody>
                     {
-                        data.map((item, index) => (
+                        data?.map((item, index) => (
                             <tr key={index}>
                                 {
                                     columns.map((col) => {

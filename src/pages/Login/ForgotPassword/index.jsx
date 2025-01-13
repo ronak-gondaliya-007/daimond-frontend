@@ -33,7 +33,7 @@ const ForgotPassword = () => {
                             <label className="label">Email</label>
                             <input
                                 className={`input ${errors.email || message ? "error" : ""} ${watch('email') ? '' : ''}`}
-                                type="email"
+                                type="text"
                                 placeholder="Enter your email"
                                 {...register("email", {
                                     required: "*Email is required",

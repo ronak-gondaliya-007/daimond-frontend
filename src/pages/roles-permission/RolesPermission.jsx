@@ -218,8 +218,8 @@ const RolesPermission = () => {
                 }}
             />
             <div className="my-[30px] stock-table">
-                {usersData.length === 0 ? (
-                    <NoDataFound message="Oops! No users found."/>
+                {usersData?.length === 0 ? (
+                    <NoDataFound message="Oops! No users found." />
                 ) : (
                     <Table
                         columns={columns.map(column => ({

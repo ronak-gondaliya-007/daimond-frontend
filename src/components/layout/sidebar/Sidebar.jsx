@@ -34,7 +34,7 @@ const Sidebar = () => {
                                 key={item.name}
                                 className={`
                                     flex items-center p-[10px] cursor-pointer transition-all duration-200 ease-in-out 
-                                    rounded-[12px] hover:bg-[#cecccc] hover:font-bold
+                                    rounded-[12px] hover:bg-[#cecccc] hover:font-bold mb-[5px]
                                     ${isCurrentTag(item.slug) ? 'bg-[#cecccc] font-bold' : ''}
                                 `}
                                 onClick={() => navigate(item.slug)}

@@ -39,7 +39,7 @@ const Login = () => {
         setShowPassword(!showPassword);
     };
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
 
     const onSubmit = async (data) => {
         try {
@@ -66,6 +66,8 @@ const Login = () => {
         }
     };
 
+    console.log("Email Watch : ", watch('email'));
+
     return (
         <div className="login-container p-[24px]">
             <div className="w-full h-[57px] flex items-start justify-start">
@@ -79,7 +81,8 @@ const Login = () => {
                             <label className="label">Email</label>
                             <input
                                 className={`input ${errors.email || message ? "error" : ""}`}
-                                type="email"
+                                type="text"
+                                name="email"
                                 placeholder="Enter your email"
                                 {...register("email", {
                                     required: "*Email is required",
@@ -88,6 +91,7 @@ const Login = () => {
                                         message: "*Please enter a valid email address",
                                     },
                                 })}
+                                onInput={(e) => setValue('email', e.target.value)}
                                 onChange={() => { setMessage("") }}
                             />
                             {!!errors?.email && <span className="error-text">{errors.email.message}</span>}
@@ -101,6 +105,7 @@ const Login = () => {
                                 <input
                                     className={`input ${errors.password || message ? "error" : ""}`}
                                     type={showPassword ? "text" : "password"}
+                                    name="password"
                                     placeholder="Enter your password"
                                     {...register("password", {
                                         required: "*Password is required",
@@ -109,6 +114,7 @@ const Login = () => {
                                             message: "*Password must be at least 6 characters",
                                         },
                                     })}
+                                    onInput={(e) => setValue('password', e.target.value)}
                                     onChange={() => { setMessage("") }}
                                 />
                                 <span className="password-eye" onClick={togglePasswordVisibility}>

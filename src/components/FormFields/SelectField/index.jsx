@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 const SelectField = ({
     id,
@@ -9,22 +9,27 @@ const SelectField = ({
     register,
     rule = { required: true },
     errors,
-    placeholder = "Select Role"
+    placeholder = "Select Role",
+    watch
 }) => {
+    useEffect(() => {
+        console.log("options.value", watch(name));
+    }, [watch(name)]);
+
     return (
         <div className={`form-group mb-[16px] ${formGroup}`}>
             <label htmlFor={id}>{label}</label>
             <select
                 id={id}
                 {...register(name, rule)}
-                className={`select-field ${errors?.[name] ? "error" : ""}`}
+                className={`select-field ${errors?.[name] ? "error" : ""} ${watch(name) ? '' : ' select-placeholder'}`}
             >
                 <option value="" key="placeholder" disabled selected>
                     {placeholder}
                 </option>
                 {
                     options.map((option) => (
-                        <option value={option.value}>{option.label}</option>
+                        <option className='select-option' value={option.value}>{option.label}</option>
                     ))
                 }
             </select>

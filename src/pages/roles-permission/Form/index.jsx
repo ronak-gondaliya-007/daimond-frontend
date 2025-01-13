@@ -10,7 +10,7 @@ import axiosClient from 'api/AxiosClient';
 
 const RolesPermissionForm = () => {
 
-    const { register, handleSubmit, control, formState: { errors }, reset, setValue, watch } = useForm();
+    const { register, handleSubmit, control, formState: { errors }, reset, setValue, watch, getValues } = useForm();
     const profileImg = watch("profileImage");
 
     const getComponent = (field) => {
@@ -51,6 +51,7 @@ const RolesPermissionForm = () => {
                         {...field}
                         register={register}
                         errors={errors}
+                        watch={watch}
                     />
                 )
 
@@ -77,7 +78,7 @@ const RolesPermissionForm = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            
+
             if (response.data.status !== 'Success') {
                 throw new Error('Failed to upload the image');
             }
@@ -95,16 +96,16 @@ const RolesPermissionForm = () => {
                 data.profilePic = uploadedImageUrl;
             }
 
-            if(data.role) delete data.role;
-            if(data.Role) delete data.Role;
-            if(data.profileImage) delete data.profileImage;
+            if (data.role) delete data.role;
+            if (data.Role) delete data.Role;
+            if (data.profileImage) delete data.profileImage;
 
             const response = await axiosClient.post('/user/register', data, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
             });
-            
+
             if (response.data.status !== 'Success') {
                 throw new Error('Failed to create user.');
             }

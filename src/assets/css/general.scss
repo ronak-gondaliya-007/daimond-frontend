@@ -103,7 +103,7 @@
 }
 
 .tbl-address {
-    width: 400px; 
+    width: 400px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -124,4 +124,12 @@
     color: red;
     font-size: 12px;
     margin-top: 4px;
+}
+
+.select-placeholder {
+    color: gray;
+}
+
+.select-option {
+    color: black;
 }

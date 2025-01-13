@@ -212,7 +212,7 @@ const Customer = () => {
                 </div>
             </div>
             <div className="my-[30px] stock-table">
-                {customerData.length === 0 ? (
+                {customerData?.length === 0 ? (
                     <NoDataFound message={`Oops! No ${selectedTab}s found.`} />
                 ) : (
                     <Table
