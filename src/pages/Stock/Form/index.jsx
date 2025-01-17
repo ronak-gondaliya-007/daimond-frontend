@@ -15,7 +15,7 @@ import MultiInputField from 'components/FormFields/MultiInputField';
 const StockForm = () => {
     const { stockId } = useParams();
 
-    const { register, handleSubmit, formState: { errors }, reset, control } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset, control, getValues, setValue } = useForm();
 
     const [loading, setLoading] = useState(false);
     const [stockForm, setStockForm] = useState(initialStockForm);
@@ -106,6 +106,7 @@ const StockForm = () => {
                         images={images}
                         setImages={setImages}
                         register={register}
+                        setValue={setValue}
                         errors={errors}
                     />
                 )
@@ -168,57 +169,79 @@ const BasicImage = ({
     setImages,
     name,
     register,
+    setValue,
+    errors,
     rule,
-    errors
 }) => {
+    const handleChange = (e) => {
+        const imgList = e.target.files;
+        const list = Array.from(imgList).map((file) => URL.createObjectURL(file));
 
-    const handleChange = (element) => {
-        console.log(element);
-        const imgList = element.target.files;
-        const list = [];
-
-        Array.from(imgList).forEach((ele) => list.push(URL.createObjectURL(ele)))
-        setImages([...images, ...list]);
-    }
+        setImages([...images, ...list]); // Update the preview images
+        setValue(name, imgList); // Update the form value
+    };
 
     const handleDelete = (index) => {
         const newImgList = images.filter((_, i) => i !== index);
         setImages(newImgList);
-    }
+    };
 
     return (
-        <div className='w-full flex flex-col mb-[10px]'>
-            <div className={`w-full h-[120px] bg-[#eff1f9] px-[10px] py-[5px] border-[1px] border-[#d1e9ff] border-dashed rounded-[8px] ${errors?.[name] ? 'border-[#ef4444]' : 'mb-[16px]'}`}>
-                <label className='text-[12px] text-[#717680] mb-[5px]' style={{ 'fontWeight': '500' }}>{label}</label>
-                <div className='flex gap-[10px]'>
-                    {
-                        images.length > 0 &&
+        <div className="w-full flex flex-col mb-[10px]">
+            <div className={`w-full h-[120px] bg-[#eff1f9] px-[10px] py-[5px] border-[1px] border-[#d1e9ff] border-dashed rounded-[8px] ${errors?.[name] ? "border-[#ef4444]" : "mb-[16px]"}`}>
+                <label
+                    className="text-[12px] text-[#717680] mb-[5px]"
+                    style={{ fontWeight: "500" }}
+                >
+                    {label}
+                </label>
+                <div className="flex gap-[10px]">
+                    {images.length > 0 &&
                         images.map((src, index) => (
-                            <div key={index} className='relative w-[96px] h-[80px] rounded-[8px] bg-[#eff1f9] border-[1px] border-[#d1e9ff] border-dashed'>
-                                <img src={src} alt='' className='w-full h-full object-cover rounded-[8px]' />
-                                <span className='cursor-pointer absolute top-[3px] right-[3px]' onClick={() => handleDelete(index)}>
-                                    <img src={deleteIcon} alt='delete' className='w-[25px] h-[25px] rounded-[12px]' />
+                            <div
+                                key={index}
+                                className="relative w-[96px] h-[80px] rounded-[8px] bg-[#eff1f9] border-[1px] border-[#d1e9ff] border-dashed"
+                            >
+                                <img
+                                    src={src}
+                                    alt=""
+                                    className="w-full h-full object-cover rounded-[8px]"
+                                />
+                                <span
+                                    className="cursor-pointer absolute top-[3px] right-[3px]"
+                                    onClick={() => handleDelete(index)}
+                                >
+                                    <img
+                                        src={deleteIcon}
+                                        alt="delete"
+                                        className="w-[25px] h-[25px] rounded-[12px]"
+                                    />
                                 </span>
                             </div>
-                        ))
-                    }
-                    <div className='relative w-[96px] h-[80px] rounded-[8px] bg-[#f5f5f5] border-[1px] border-[#d1e9ff] border-dashed'>
-                        <img src={addIcon} alt='image-upload' className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' />
+                        ))}
+                    <div className="relative w-[96px] h-[80px] rounded-[8px] bg-[#f5f5f5] border-[1px] border-[#d1e9ff] border-dashed">
+                        <img
+                            src={addIcon}
+                            alt="image-upload"
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                        />
                         <input
-                            type={"file"}
-                            className={`w-full h-full opacity-0 cursor-pointer ${errors?.[name] ? "error" : ""}`}
-                            accept='.jpeg, .png, .jpeg'
-                            onChange={(element) => handleChange(element)}
-                            value={""}
+                            type="file"
+                            className={`w-full h-full opacity-0 cursor-pointer ${errors?.[name] ? "error" : ""
+                                }`}
+                            accept=".jpeg, .png, .jpg"
                             multiple
-                            {...register(name, rule)}
+                            onChange={handleChange}
+                        // {...register(name, rule)}
                         />
                     </div>
                 </div>
-            </div >
-            {!!errors[name] && <span className="error-text">{errors[name].message}</span>}
+            </div>
+            {!!errors[name] && (
+                <span className="error-text">{errors[name].message}</span>
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default StockForm;
