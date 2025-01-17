@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 const RolesPermissionForm = () => {
     const navigate = useNavigate();
 
-    const { register, handleSubmit, control, formState: { errors }, reset, setValue, watch, getValues } = useForm();
+    const { register, handleSubmit, control, formState: { errors }, reset, setValue, watch } = useForm();
     const profileImg = watch("profileImage");
 
     const getComponent = (field) => {
@@ -52,9 +52,8 @@ const RolesPermissionForm = () => {
                 return (
                     <SelectField
                         {...field}
-                        register={register}
                         errors={errors}
-                        watch={watch}
+                        control={control}
                     />
                 )
 
@@ -137,9 +136,6 @@ const RolesPermissionForm = () => {
                                                     id='profile-image'
                                                     className='absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer'
                                                     accept='.jpeg, .png, .jpeg'
-                                                    // {...register('profileImage', { required: "*Profile Image is required" }, {
-                                                    //     onChange: (element) => handleChange(element)
-                                                    // })}
                                                     {...register('profileImage')}
                                                     onChange={handleChange}
                                                 />
@@ -153,9 +149,6 @@ const RolesPermissionForm = () => {
                                                 id='profile-image'
                                                 className='!w-full !h-full outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px] opacity-0 cursor-pointer z-10'
                                                 accept='.jpeg, .png, .jpeg'
-                                                // {...register('profileImage', { required: "*Profile Image is required" }, {
-                                                //     onChange: (element) => handleChange(element)
-                                                // })}
                                                 {...register('profileImage')}
                                                 onChange={handleChange}
                                             />

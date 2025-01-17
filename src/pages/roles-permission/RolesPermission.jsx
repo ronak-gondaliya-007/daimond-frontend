@@ -41,12 +41,12 @@ const RolesPermission = () => {
             );
 
             if (response.status === 200) {
-                toast.success(response?.data?.data?.message);
+                toast.success(response?.data?.message);
                 setUsersData(response.data.data.docs);
                 setTotalPages(response.data.data.totalPages);
                 setCurrentPage(page);
             }
-        } catch (err) {
+        } catch (error) {
             toast.error(error?.response?.data?.message);
         } finally {
             setLoading(false);
@@ -90,7 +90,7 @@ const RolesPermission = () => {
             );
 
             if (response.status === 200) {
-                toast.success(response?.data?.data?.message);
+                toast.success(response?.data?.message);
                 onStatusChange('update', userId, response.data.data.isActive);
             }
         } catch (error) {
@@ -106,7 +106,7 @@ const RolesPermission = () => {
             );
 
             if (response.status === 200) {
-                toast.success(response?.data?.data?.message);
+                toast.success(response?.data?.message);
                 onStatusChange('delete', userId);
             }
         } catch (error) {

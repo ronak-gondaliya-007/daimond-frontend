@@ -48,8 +48,8 @@ const CustomerAdd = () => {
                 return (
                     <SelectField
                         {...field}
-                        register={register}
                         errors={errors}
+                        control={control}
                     />
                 )
 

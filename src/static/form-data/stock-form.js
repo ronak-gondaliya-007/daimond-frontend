@@ -31,6 +31,41 @@ export const stockForm = [
         childrens: [
             {
                 id: 5,
+                name: "vendorId",
+                label: "Vendor",
+                type: "SELECT",
+                placeholder: "Select Vendor",
+                isSearchable: true,
+                rule: {
+                    required: "*Vendor is required"
+                },
+                options: []
+            },
+            {
+                id: 6,
+                name: "location",
+                label: "Location",
+                type: "SELECT",
+                placeholder: "Select Location",
+                isSearchable: true,
+                rule: {
+                    required: "*Location is required"
+                },
+                options: [
+                    { value: "New York", label: "New York" },
+                    { value: "Mumbai", label: "Mumbai" },
+                    { value: "Surat", label: "Surat" },
+                    { value: "Custom", label: "Custom" },
+                ]
+            },
+        ],
+    },
+    {
+        id: 7,
+        type: "ROW",
+        childrens: [
+            {
+                id: 8,
                 name: "carat",
                 label: "Carat",
                 type: "INPUT",
@@ -40,7 +75,7 @@ export const stockForm = [
                 }
             },
             {
-                id: 6,
+                id: 9,
                 name: "color",
                 label: "color",
                 type: "INPUT",
@@ -52,12 +87,12 @@ export const stockForm = [
         ],
     },
     {
-        id: 7,
+        id: 10,
         type: "ROW",
         childrens: [
 
             {
-                id: 8,
+                id: 11,
                 name: "shape",
                 label: "shape",
                 type: "INPUT",
@@ -67,7 +102,7 @@ export const stockForm = [
                 }
             },
             {
-                id: 9,
+                id: 12,
                 name: "size",
                 label: "size",
                 type: "INPUT",
@@ -79,12 +114,12 @@ export const stockForm = [
         ],
     },
     {
-        id: 10,
+        id: 13,
         type: "ROW",
         childrens: [
 
             {
-                id: 11,
+                id: 14,
                 name: "clarity",
                 label: "clarity",
                 type: "INPUT",
@@ -94,7 +129,7 @@ export const stockForm = [
                 }
             },
             {
-                id: 12,
+                id: 15,
                 name: "polish",
                 label: "polish",
                 type: "INPUT",
@@ -106,11 +141,11 @@ export const stockForm = [
         ],
     },
     {
-        id: 13,
+        id: 16,
         type: "ROW",
         childrens: [
             {
-                id: 14,
+                id: 17,
                 name: "symmetry",
                 label: "symmetry",
                 type: "INPUT",
@@ -120,7 +155,7 @@ export const stockForm = [
                 }
             },
             {
-                id: 15,
+                id: 18,
                 name: "fl",
                 label: "fl",
                 type: "INPUT",
@@ -132,12 +167,12 @@ export const stockForm = [
         ],
     },
     {
-        id: 16,
+        id: 19,
         type: "ROW",
         childrens: [
 
             {
-                id: 17,
+                id: 20,
                 name: "depth",
                 label: "depth",
                 type: "INPUT",
@@ -147,7 +182,7 @@ export const stockForm = [
                 }
             },
             {
-                id: 18,
+                id: 21,
                 name: "table",
                 label: "table",
                 type: "INPUT",
@@ -159,11 +194,11 @@ export const stockForm = [
         ],
     },
     {
-        id: 19,
+        id: 22,
         type: "ROW",
         childrens: [
             {
-                id: 20,
+                id: 23,
                 name: "measurement",
                 label: "measurement",
                 type: "INPUT",
@@ -173,7 +208,7 @@ export const stockForm = [
                 }
             },
             {
-                id: 21,
+                id: 24,
                 name: "ratio",
                 label: "ratio",
                 type: "INPUT",
@@ -185,11 +220,11 @@ export const stockForm = [
         ],
     },
     {
-        id: 22,
+        id: 25,
         type: "ROW",
         childrens: [
             {
-                id: 23,
+                id: 26,
                 name: "cartId",
                 label: "cart ID",
                 type: "INPUT",
@@ -199,7 +234,7 @@ export const stockForm = [
                 }
             },
             {
-                id: 24,
+                id: 27,
                 name: "certificateNo",
                 label: "certificate No",
                 type: "INPUT",
@@ -211,11 +246,11 @@ export const stockForm = [
         ],
     },
     {
-        id: 25,
+        id: 28,
         type: "ROW",
         childrens: [
             {
-                id: 26,
+                id: 29,
                 name: "images",
                 label: "Diamond Images",
                 type: "IMAGE"
@@ -223,11 +258,11 @@ export const stockForm = [
         ],
     },
     {
-        id: 27,
+        id: 30,
         type: "ROW",
         childrens: [
             {
-                id: 28,
+                id: 31,
                 name: "remarks",
                 label: "Remarks",
                 type: "TEXTAREA",
@@ -237,5 +272,5 @@ export const stockForm = [
                 }
             },
         ],
-    },
+    }
 ]
