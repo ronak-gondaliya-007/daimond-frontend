@@ -9,6 +9,8 @@ import { useParams } from 'react-router-dom';
 import SelectField from 'components/FormFields/SelectField';
 import axiosClient from 'api/AxiosClient';
 import { toast } from 'react-toastify';
+import LocationField from 'components/FormFields/LocationField';
+import MultiInputField from 'components/FormFields/MultiInputField';
 
 const StockForm = () => {
     const { stockId } = useParams();
@@ -79,6 +81,15 @@ const StockForm = () => {
                     />
                 )
 
+            case "MULTI_INPUT":
+                return (
+                    <MultiInputField
+                        {...field}
+                        register={register}
+                        errors={errors}
+                    />
+                )
+
             case "TEXTAREA":
                 return (
                     <TextAreaField
@@ -94,12 +105,23 @@ const StockForm = () => {
                         {...field}
                         images={images}
                         setImages={setImages}
+                        register={register}
+                        errors={errors}
                     />
                 )
 
             case "SELECT":
                 return (
                     <SelectField
+                        {...field}
+                        errors={errors}
+                        control={control}
+                    />
+                )
+
+            case "LOCATION":
+                return (
+                    <LocationField
                         {...field}
                         errors={errors}
                         control={control}
@@ -133,7 +155,7 @@ const StockForm = () => {
 };
 
 const Row = ({ row, getComponent }) => (
-    <div key={row.id} className='w-full flex items-center gap-[10px]'>
+    <div key={row.id} className='w-full flex gap-[10px]'>
         {
             row.childrens.map((field) => getComponent(field))
         }
@@ -143,15 +165,20 @@ const Row = ({ row, getComponent }) => (
 const BasicImage = ({
     label,
     images,
-    setImages
+    setImages,
+    name,
+    register,
+    rule,
+    errors
 }) => {
 
     const handleChange = (element) => {
+        console.log(element);
         const imgList = element.target.files;
         const list = [];
 
         Array.from(imgList).forEach((ele) => list.push(URL.createObjectURL(ele)))
-        setImages([...images, ...list])
+        setImages([...images, ...list]);
     }
 
     const handleDelete = (index) => {
@@ -160,32 +187,36 @@ const BasicImage = ({
     }
 
     return (
-        <div className='w-full h-[120px] bg-[#eff1f9] px-[10px] py-[5px] border-[1px] border-[#d1e9ff] border-dashed rounded-[8px] mb-[16px]'>
-            <label className='text-[12px] text-[#717680] mb-[5px]'>{label}</label>
-
-            <div className='flex gap-[10px]'>
-                {
-                    !!images.length &&
-                    images.map((src, index) => (
-                        <div key={index} className='relative w-[96px] h-[80px] rounded-[8px] bg-[#eff1f9] border-[1px] border-[#d1e9ff] border-dashed'>
-                            <img src={src} alt='' className='w-full h-full object-cover rounded-[8px]' />
-                            <span className='cursor-pointer absolute top-[3px] right-[3px]' onClick={() => handleDelete(index)}>
-                                <img src={deleteIcon} alt='delete' className='w-[25px] h-[25px] rounded-[12px]' />
-                            </span>
-                        </div>
-                    ))
-                }
-                <div className='relative w-[96px] h-[80px] rounded-[8px] bg-[#f5f5f5] border-[1px] border-[#d1e9ff] border-dashed'>
-                    <img src={addIcon} alt='image-upload' className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' />
-                    <input
-                        type={"file"}
-                        className='w-full h-full opacity-0 cursor-pointer'
-                        accept='.jpeg, .png, .jpeg'
-                        onChange={(element) => handleChange(element)}
-                        value={""}
-                    />
+        <div className='w-full flex flex-col mb-[10px]'>
+            <div className={`w-full h-[120px] bg-[#eff1f9] px-[10px] py-[5px] border-[1px] border-[#d1e9ff] border-dashed rounded-[8px] ${errors?.[name] ? 'border-[#ef4444]' : 'mb-[16px]'}`}>
+                <label className='text-[12px] text-[#717680] mb-[5px]' style={{ 'fontWeight': '500' }}>{label}</label>
+                <div className='flex gap-[10px]'>
+                    {
+                        images.length > 0 &&
+                        images.map((src, index) => (
+                            <div key={index} className='relative w-[96px] h-[80px] rounded-[8px] bg-[#eff1f9] border-[1px] border-[#d1e9ff] border-dashed'>
+                                <img src={src} alt='' className='w-full h-full object-cover rounded-[8px]' />
+                                <span className='cursor-pointer absolute top-[3px] right-[3px]' onClick={() => handleDelete(index)}>
+                                    <img src={deleteIcon} alt='delete' className='w-[25px] h-[25px] rounded-[12px]' />
+                                </span>
+                            </div>
+                        ))
+                    }
+                    <div className='relative w-[96px] h-[80px] rounded-[8px] bg-[#f5f5f5] border-[1px] border-[#d1e9ff] border-dashed'>
+                        <img src={addIcon} alt='image-upload' className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2' />
+                        <input
+                            type={"file"}
+                            className={`w-full h-full opacity-0 cursor-pointer ${errors?.[name] ? "error" : ""}`}
+                            accept='.jpeg, .png, .jpeg'
+                            onChange={(element) => handleChange(element)}
+                            value={""}
+                            multiple
+                            {...register(name, rule)}
+                        />
+                    </div>
                 </div>
-            </div>
+            </div >
+            {!!errors[name] && <span className="error-text">{errors[name].message}</span>}
         </div>
     )
 }

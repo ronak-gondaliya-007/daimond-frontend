@@ -65,7 +65,18 @@
     & .error {
         border-color: $error-color;
     }
+
+    .error {
+        .css-1dg83kn-control {
+            border-color: $error-color;
+
+            &:hover {
+                border-color: $error-color;
+            }
+        }
+    }
 }
+
 
 .w_50 {
     width: 50% !important;
@@ -110,20 +121,24 @@
 }
 
 .input-error {
-    border-color: red !important;
+    border-color: #ef4444 !important;
     border-radius: 4px;
 }
 
 .input-box-error {
-    border-color: red !important;
+    border-color: #ef4444 !important;
     border-width: 2px;
     border-radius: 4px;
 }
 
 .error-text {
-    color: red;
+    color: #ef4444;
     font-size: 12px;
     margin-top: 4px;
+
+    &.vendorId {
+        top: 50px;
+    }
 }
 
 .select-placeholder {
@@ -145,8 +160,7 @@
 
 .custom-location {
     .custom-label {
-        position: absolute;
-        top: 57%;
+        top: 57% !important;
     }
 
     display: flex;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
 
@@ -34,27 +34,6 @@ const SelectField = ({
     placeholder = "Select Options",
     isSearchable = false,
 }) => {
-    const [customLocation, setCustomLocation] = useState('');
-    const [customOptions, setCustomOptions] = useState(options);
-    const [currentOption, setCurrentOption] = useState('');
-
-    const handleCustomLocationChange = (inputValue) => {
-        setCustomLocation(inputValue);
-    };
-
-    const handleAddCustomLocation = () => {
-        if (customLocation.trim() && !customOptions.some(option => option.value === customLocation)) {
-            const newLocation = { label: customLocation, value: customLocation };
-            setCustomOptions(prevOptions => [...prevOptions, newLocation]);
-        }
-    };
-
-    const handleCustomOptionSelection = (selectedOption) => {
-        if (selectedOption && selectedOption.value === 'Custom') {
-            setCustomLocation('');
-        }
-    };
-
     return (
         <div className={`form-group mb-[16px] ${formGroup}`}>
             <label htmlFor={id}>{label}</label>
@@ -63,48 +42,19 @@ const SelectField = ({
                 control={control}
                 rules={rule}
                 render={({ field: { onChange, value } }) => (
-                    // <Select
-                    //     id={id}
-                    //     value={value}
-                    //     onChange={onChange}
-                    //     className='custom-select'
-                    //     styles={customStyles}
-                    //     options={options}
-                    //     placeholder={placeholder}
-                    //     isSearchable={isSearchable}
-                    // />
-                    <>
-                        <Select
-                            id={id}
-                            value={value}
-                            onChange={(selectedOption) => {
-                                onChange();
-                                setCurrentOption(selectedOption.value)
-                                handleCustomOptionSelection(selectedOption);
-                            }}
-                            className='custom-select'
-                            styles={customStyles}
-                            options={options}
-                            placeholder={placeholder}
-                            isSearchable={isSearchable}
-                        />
-
-                        {currentOption === 'Custom' && (
-                            <div className='custom-location'>
-                                <label className='custom-label'>Custom Location</label>
-                                <input
-                                    type="text"
-                                    value={customLocation}
-                                    onChange={(e) => handleCustomLocationChange(e.target.value)}
-                                    placeholder="Enter custom location"
-                                    onBlur={handleAddCustomLocation}
-                                />
-                            </div>
-                        )}
-                    </>
+                    <Select
+                        id={id}
+                        value={value}
+                        onChange={onChange}
+                        className={`custom-select ${errors?.[name] ? 'error' : ''}`}
+                        styles={customStyles}
+                        options={options}
+                        placeholder={placeholder}
+                        isSearchable={isSearchable}
+                    />
                 )}
             />
-            {!!errors?.[name] && <span className="error-text">{errors[name].message}</span>}
+            {!!errors?.[name] && <span className={`error-text ${errors?.[name] ? `${name}` : ''}`}>{errors[name].message}</span>}
         </div>
     )
 }

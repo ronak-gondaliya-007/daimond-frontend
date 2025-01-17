@@ -5,10 +5,10 @@ export const stockForm = [
         childrens: [
             {
                 id: 2,
-                name: "diamondNameId",
-                label: "Diamond name and Id",
+                name: "diamondName",
+                label: "Diamond name",
                 type: "INPUT",
-                placeholder: "Enter Diamond name and Id",
+                placeholder: "Enter Diamond name",
                 rule: {
                     required: "*Diamond name is required"
                 }
@@ -45,7 +45,7 @@ export const stockForm = [
                 id: 6,
                 name: "location",
                 label: "Location",
-                type: "SELECT",
+                type: "LOCATION",
                 placeholder: "Select Location",
                 isSearchable: true,
                 rule: {
@@ -90,7 +90,6 @@ export const stockForm = [
         id: 10,
         type: "ROW",
         childrens: [
-
             {
                 id: 11,
                 name: "shape",
@@ -117,7 +116,6 @@ export const stockForm = [
         id: 13,
         type: "ROW",
         childrens: [
-
             {
                 id: 14,
                 name: "clarity",
@@ -170,7 +168,6 @@ export const stockForm = [
         id: 19,
         type: "ROW",
         childrens: [
-
             {
                 id: 20,
                 name: "depth",
@@ -201,11 +198,8 @@ export const stockForm = [
                 id: 23,
                 name: "measurement",
                 label: "measurement",
-                type: "INPUT",
-                placeholder: "Enter measurement",
-                rule: {
-                    required: "*Measurement is required"
-                }
+                type: "MULTI_INPUT",
+                placeholder: "Enter measurement"
             },
             {
                 id: 24,
@@ -253,7 +247,10 @@ export const stockForm = [
                 id: 29,
                 name: "images",
                 label: "Diamond Images",
-                type: "IMAGE"
+                type: "IMAGE",
+                rule: {
+                    required: "*Images are required."
+                }
             },
         ],
     },
