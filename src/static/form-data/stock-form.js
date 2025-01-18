@@ -15,7 +15,7 @@ export const stockForm = [
             },
             {
                 id: 3,
-                name: "refno",
+                name: "refNo",
                 label: "RefNo",
                 type: "INPUT",
                 placeholder: "Enter refNo",
@@ -31,7 +31,7 @@ export const stockForm = [
         childrens: [
             {
                 id: 5,
-                name: "vendorId",
+                name: "vendor",
                 label: "Vendor",
                 type: "SELECT",
                 placeholder: "Select Vendor",
@@ -71,7 +71,11 @@ export const stockForm = [
                 type: "INPUT",
                 placeholder: "Enter carat",
                 rule: {
-                    required: "*Carat is required"
+                    required: "*Carat is required",
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Carat"
+                    }
                 }
             },
             {
@@ -175,7 +179,11 @@ export const stockForm = [
                 type: "INPUT",
                 placeholder: "Enter depth",
                 rule: {
-                    required: "*Depth is required"
+                    required: "*Depth is required",
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Depth"
+                    }
                 }
             },
             {
@@ -185,7 +193,11 @@ export const stockForm = [
                 type: "INPUT",
                 placeholder: "Enter table",
                 rule: {
-                    required: "*Table is required"
+                    required: "*Table is required",
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Table"
+                    }
                 }
             },
         ],
@@ -208,7 +220,11 @@ export const stockForm = [
                 type: "INPUT",
                 placeholder: "Enter ratio",
                 rule: {
-                    required: "*Ratio is required"
+                    required: "*Ratio is required",
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Ratio"
+                    }
                 }
             },
         ],
@@ -247,10 +263,7 @@ export const stockForm = [
                 id: 29,
                 name: "images",
                 label: "Diamond Images",
-                type: "IMAGE",
-                rule: {
-                    required: "*Images are required."
-                }
+                type: "IMAGE"
             },
         ],
     },

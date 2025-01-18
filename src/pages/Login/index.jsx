@@ -40,7 +40,7 @@ const Login = () => {
         setShowPassword(!showPassword);
     };
 
-    const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
 
     const onSubmit = async (data) => {
         try {

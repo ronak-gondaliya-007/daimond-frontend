@@ -1,100 +1,86 @@
 import React from "react";
-import "../../../assets/css/popup.css";
-
-import { diamondDetail } from "../../../constant";
 import closeIcon from "../../../assets/images/close.svg";
 
-const DetailPopup = ({ data, onClose }) => {
-    const item = diamondDetail;
-    if (!data) return null;
-
+const DetailPopup = ({ item, onClose }) => {
     return (
-        <div className="popup-overlay">
-            <div className="popup-content">
-                <div className="popup-header">
-                    <h2>Details</h2>
-                    <button className="popup-close">
-                        <img src={closeIcon} alt="Close Icon" onClick={onClose} />
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
+            <div className={`bg-white p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto relative`}>
+                {/* Header */}
+                <div className={`flex justify-between items-center mb-6 sticky top-0 bg-white z-10`}>
+                    <h2 className="text-lg font-semibold">Details</h2>
+                    <button
+                        className="bg-transparent border-none cursor-pointer"
+                        onClick={onClose}
+                    >
+                        <img src={closeIcon} alt="Close Icon" />
                     </button>
                 </div>
-                <div className="popup-details">
-                    <div className="rows-detail">
-                        <div className="item-detail">
-                            <div className="key">Diamond name</div>
-                            <div className="value">{item.name}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">ID</div>
-                            <div className="value">{item.id}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Carat</div>
-                            <div className="value">{item.carat}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Color</div>
-                            <div className="value">{item.color}</div>
-                        </div>
+
+                {/* Details Section */}
+                <div className="space-y-8">
+                    {/* First Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
+                        <DetailItem label="Diamond Name" value={item.diamondName} />
+                        <DetailItem label="ID" value={item.diamondId} />
+                        <DetailItem label="Carat" value={item.carat} />
+                        <DetailItem label="Color" value={item.color} />
                     </div>
 
-                    <div className="rows-detail">
-                        <div className="item-detail">
-                            <div className="key">Clarity</div>
-                            <div className="value">{item.clarity}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Polish</div>
-                            <div className="value">{item.polish}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Symmetry</div>
-                            <div className="value">{item.symmetry}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Depth</div>
-                            <div className="value">{item.depth}</div>
-                        </div>
+                    {/* Second Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
+                        <DetailItem label="Clarity" value={item.clarity} />
+                        <DetailItem label="Polish" value={item.polish} />
+                        <DetailItem label="Symmetry" value={item.symmetry} />
+                        <DetailItem label="Depth" value={item.depth} />
                     </div>
 
-                    <div className="rows-detail">
-                        <div className="item-detail">
-                            <div className="key">Fluorescence</div>
-                            <div className="value">{item.fluorescence}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Table</div>
-                            <div className="value">{item.table}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Ratio</div>
-                            <div className="value">{item.ratio}</div>
-                        </div>
-                        <div className="item-detail">
-                            <div className="key">Certificate No</div>
-                            <div className="value">{item.certificateNo}</div>
-                        </div>
+                    {/* Third Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
+                        <DetailItem label="Fluorescence" value={item.fl} />
+                        <DetailItem label="Table" value={item.table} />
+                        <DetailItem label="Ratio" value={item.ratio} />
+                        <DetailItem label="Certificate No" value={item.certificateNo} />
                     </div>
 
-                    {item.images && item.images.length > 0 && (
-                        <div className="popup-images">
-                            <div className="key">Images</div>
-                            <div className="value">
-                                {item.images.map((img, index) => (
-                                    <img key={index} src={img} alt={`diamond-img-${index}`} />
+                    {/* Images Section */}
+                    {item.diamondImages && item.diamondImages.length > 0 && (
+                        <div>
+                            <div className="text-sm text-gray-500 font-medium mb-2">
+                                Images
+                            </div>
+                            <div className="flex flex-wrap gap-4">
+                                {item.diamondImages.map((img, index) => (
+                                    <img
+                                        key={index}
+                                        src={`${process.env.REACT_APP_IMAGE_URL}${img}`}
+                                        alt={`diamond-img-${index}`}
+                                        className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded"
+                                    />
                                 ))}
                             </div>
                         </div>
                     )}
 
-                    <div className="remark-detail">
-                        <div className="remark-key">Remark</div>
-                        <div className="remark-value">{item.remark}</div>
+                    {/* Remarks Section */}
+                    <div>
+                        <div className="text-sm text-gray-500 font-medium mb-2">
+                            Remark
+                        </div>
+                        <div className="text-sm text-gray-900 font-medium">
+                            {item.remarks}
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
     );
 };
+
+const DetailItem = ({ label, value }) => (
+    <div>
+        <div className="text-sm text-gray-500 font-medium mb-2">{label}</div>
+        <div className="text-sm text-gray-900 font-medium">{value}</div>
+    </div>
+);
 
 export default DetailPopup;

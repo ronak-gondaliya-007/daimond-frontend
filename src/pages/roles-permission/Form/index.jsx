@@ -71,7 +71,7 @@ const RolesPermissionForm = () => {
     }
 
     const handleImageUpload = async (file) => {
-        try {
+        try {            
             const formData = new FormData();
             formData.append('ProfilePic', file);
 
@@ -100,6 +100,7 @@ const RolesPermissionForm = () => {
             if (data.role) delete data.role;
             if (data.Role) delete data.Role;
             if (data.profileImage) delete data.profileImage;
+            data.userType = data.userType.value
 
             const response = await axiosClient.post('/user/register', data, {
                 headers: {
@@ -107,9 +108,9 @@ const RolesPermissionForm = () => {
                 }
             });
 
-            if (response.status === 200) {
-                toast.success(response?.data?.message);
+            if (response.status === 201) {
                 navigate('/roles-permission');
+                toast.success(response?.data?.message);
             }
         } catch (error) {
             toast.error(error?.response?.data?.message);
@@ -118,7 +119,7 @@ const RolesPermissionForm = () => {
 
     return (
         <div className='px-[100px] py-[50px]'>
-            <form className="stock-add" onSubmit={handleSubmit(onSubmit)}>
+            <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
 
                 <div className='w-full flex items-center gap-[10px]'>
                     <div className='form-group mb-[16px] w-1/2 h-[134px] outline-none rounded-[12px] border border-[#d1e9ff] bg-[#eff1f999]'>
@@ -159,13 +160,11 @@ const RolesPermissionForm = () => {
                         {!!errors?.["profileImage"] && <span className="error-text">{errors["profileImage"].message}</span>}
                     </div>
                 </div>
-
                 {
                     userForm.map((field) => (
                         getComponent(field)
                     ))
                 }
-
                 <div className='w-full flex items-center justify-end gap-[20px]'>
                     <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>
                     <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>

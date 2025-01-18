@@ -6,22 +6,23 @@ const MultiInputField = ({
     type = "text",
     name,
     register,
-    errors
+    errors,
+    getValues
 }) => {
     const [lengthValue, setLengthValue] = useState(0);
     const [widthValue, setWidthValue] = useState(0);
     const [heightValue, setHeightValue] = useState(0);
 
     const handleLengthChange = (e) => {
-        setLengthValue(e.target.value != "" ? e.target.value : 0);
+        setLengthValue(e.target.value !== "" ? e.target.value : 0);
     };
 
     const handleWidthChange = (e) => {
-        setWidthValue(e.target.value != "" ? e.target.value : 0);
+        setWidthValue(e.target.value !== "" ? e.target.value : 0);
     };
 
     const handleHeightChange = (e) => {
-        setHeightValue(e.target.value != "" ? e.target.value : 0);
+        setHeightValue(e.target.value !== "" ? e.target.value : 0);
     };
 
     return (
@@ -35,7 +36,7 @@ const MultiInputField = ({
                         className={`input-field ${errors?.[name]?.measurement ? 'error' : ''}`}
                         type={type}
                         disabled={true}
-                        value={`${lengthValue} x ${widthValue} x ${heightValue}`}
+                        value={`${lengthValue === 0 ? getValues(`${name}.length`) : lengthValue} x ${widthValue === 0 ? getValues(`${name}.width`) : widthValue} x ${heightValue === 0 ? getValues(`${name}.height`) : heightValue}`}
                     />
                     <span className='text-[#717680] font-medium'>=</span>
                 </div>
@@ -47,7 +48,7 @@ const MultiInputField = ({
                             placeholder="Enter Length"
                             className={`input-field ${errors?.[name]?.length ? 'error' : ''}`}
                             type={type}
-                            onInput={handleLengthChange}
+                            name={'length'}
                             {...register(`${name}.length`, {
                                 required: "*Length is required",
                                 pattern: {
@@ -55,6 +56,7 @@ const MultiInputField = ({
                                     message: "*Invalid Length"
                                 }
                             })}
+                            onInput={(e) => handleLengthChange(e)}
                         />
                         {/* Length Error */}
                         {errors?.[name]?.length && (
@@ -71,7 +73,7 @@ const MultiInputField = ({
                             placeholder="Enter Width"
                             className={`input-field ${errors?.[name]?.width ? 'error' : ''}`}
                             type={type}
-                            onInput={handleWidthChange}
+                            name={'width'}
                             {...register(`${name}.width`, {
                                 required: "*Width is required",
                                 pattern: {
@@ -79,6 +81,7 @@ const MultiInputField = ({
                                     message: "*Invalid Width"
                                 }
                             })}
+                            onInput={(e) => handleWidthChange(e)}
                         />
                         {/* Width Error */}
                         {errors?.[name]?.width && (
@@ -95,7 +98,7 @@ const MultiInputField = ({
                             placeholder="Enter Height"
                             className={`input-field ${errors?.[name]?.height ? 'error' : ''}`}
                             type={type}
-                            onInput={handleHeightChange}
+                            name={'height'}
                             {...register(`${name}.height`, {
                                 required: "*Height is required",
                                 pattern: {
@@ -103,6 +106,7 @@ const MultiInputField = ({
                                     message: "*Invalid Height"
                                 }
                             })}
+                            onInput={(e) => handleHeightChange(e)}
                         />
                         {/* Height Error */}
                         {errors?.[name]?.height && (

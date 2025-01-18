@@ -34,24 +34,35 @@ const LocationField = ({
     placeholder = "Select Options",
     isSearchable = false,
 }) => {
-    const [customLocation, setCustomLocation] = useState('');
+    const [inputVisible, setInputVisible] = useState(false);
     const [customOptions, setCustomOptions] = useState(options);
-    const [currentOption, setCurrentOption] = useState('');
+    const [customLocation, setCustomLocation] = useState('');
 
     const handleCustomLocationChange = (inputValue) => {
         setCustomLocation(inputValue);
     };
 
-    const handleAddCustomLocation = () => {
+    const handleAddCustomLocation = (onChange) => {
         if (customLocation.trim() && !customOptions.some(option => option.value === customLocation)) {
             const newLocation = { label: customLocation, value: customLocation };
-            setCustomOptions(prevOptions => [...prevOptions, newLocation]);
+            setCustomOptions(prevOptions => [newLocation, ...prevOptions]);
+            onChange(customLocation);
         }
+        setCustomLocation('');
+        setInputVisible(false);
     };
 
     const handleCustomOptionSelection = (selectedOption) => {
-        if (selectedOption && selectedOption.value === 'Custom') {
+        if (selectedOption && selectedOption.value === 'Custom' ) {
             setCustomLocation('');
+            setInputVisible(true);
+        }
+    };
+
+    const handleKeyPress = (e, onChange) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleAddCustomLocation(onChange);
         }
     };
 
@@ -69,7 +80,6 @@ const LocationField = ({
                             value={customOptions.find(option => option.value === value) || null}
                             onChange={(selectedOption) => {
                                 onChange(selectedOption ? selectedOption.value : '');
-                                setCurrentOption(selectedOption ? selectedOption.value : '')
                                 handleCustomOptionSelection(selectedOption);
                             }}
                             className={`custom-select ${errors?.[name] ? 'error' : ''}`}
@@ -79,17 +89,18 @@ const LocationField = ({
                             isSearchable={isSearchable}
                         />
 
-                        {currentOption === 'Custom' && (
-                            <div className='custom-location'>
-                                <label className='custom-label'>Custom Location</label>
+                        {inputVisible && (
+                            <div className='custom-location relative flex flex-row items-center'>
+                                <label className='custom-label mr-4 text-lg'>Custom Location</label>
                                 <input
-                                    className={`input-field ${customLocation === '' ? "error" : ""}`}
+                                    className={`input-field w-full py-2 px-3 rounded-md border ${customLocation === '' ? "error" : ""}`}
                                     type="text"
                                     value={customLocation}
                                     onChange={(e) => handleCustomLocationChange(e.target.value)}
+                                    onKeyDown={(e) => handleKeyPress(e, onChange)}
                                     placeholder="Enter custom location"
-                                    onBlur={handleAddCustomLocation}
                                 />
+                                <button className='absolute right-2 px-4 py-1 bg-blue-500 text-white rounded-md' onClick={() => handleAddCustomLocation(onChange)}>Add</button>
                                 {customLocation === '' && (
                                     <span className="error-text">*Custom location is required</span>
                                 )}

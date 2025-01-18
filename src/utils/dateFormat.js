@@ -1,7 +1,6 @@
 export const getDate = (date) => {           // Jun 24, 2024
     const options = { month: 'short', day: 'numeric', year: 'numeric' };
     const formattedDate = new Date(date).toLocaleDateString('en-US', options);
-    console.log(formattedDate);
     return formattedDate;
 }
 

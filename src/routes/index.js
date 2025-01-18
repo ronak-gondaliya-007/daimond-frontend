@@ -80,6 +80,13 @@ export const privateRoutes = [
         breadcrumb: ["Management", "Stock", "Add"]
     },
     {
+        path: '/stock/edit',
+        element: StockForm,
+        title: "StockEdit",
+        layout: MAIN,
+        breadcrumb: ["Management", "Stock", "Edit"]
+    },
+    {
         path: '/stock/edit/:stockId',
         element: StockForm,
         title: "StockEdit",
@@ -119,14 +126,14 @@ export const privateRoutes = [
         element: RolesPermission,
         title: "Roles & Permission",
         layout: DASHBOARD_LAYOUT,
-        breadcrumb: ["Management", "Users"]
+        breadcrumb: ["Management", "Roles & Permission"]
     },
     {
         path: '/roles-permission/add',
         element: RolesPermissionForm,
         title: "Roles & Permission",
         layout: MAIN,
-        breadcrumb: ["Management", "Users", "Add"]
+        breadcrumb: ["Management", "Roles & Permission", "Add"]
     },
 
     // Other

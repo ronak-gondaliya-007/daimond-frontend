@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import Pagination from '../pagination';
-import DetailPopup from '../popup/Detail';
-import DeletePopup from '../popup/delete';
-import StockForm from '../../pages/Stock/Form';
 
 const Table = ({
     columns,
@@ -13,12 +10,6 @@ const Table = ({
     totalPages,
     onPageChange
 }) => {
-    const [selectedItem, setSelectedItem] = useState(null);
-
-    const handleClosePopup = () => {
-        setSelectedItem(null);
-    };
-
     return (
         <div className={`table-container ${tableClass}`}>
             <table className="common-table">
@@ -80,9 +71,6 @@ const Table = ({
                 onPageChange={onPageChange}
             />
 
-            {selectedItem && selectedItem.action === 'view' && <DetailPopup data={selectedItem} onClose={handleClosePopup} />}
-            {selectedItem && selectedItem.action === 'delete' && <DeletePopup data={selectedItem} onClose={handleClosePopup} />}
-            {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
         </div>
     );
 };

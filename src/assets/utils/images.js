@@ -10,6 +10,9 @@ import arrowRight from '../images/arrow-right.svg';
 import arrowDown from '../images/arrow-down.svg';
 import arrowUp from '../images/arrow-up.svg';
 import noDataFound from '../images/no-data.svg';
+import exportIcon from '../images/export.svg';
+import importIcon from '../images/import.svg';
+import exclamationIcon from '../images/exclamation.svg';
 
 export {
     logo,
@@ -23,5 +26,8 @@ export {
     arrowRight,
     arrowDown,
     arrowUp,
-    noDataFound
+    noDataFound,
+    exportIcon,
+    importIcon,
+    exclamationIcon
 };
