@@ -36,7 +36,7 @@ const MultiInputField = ({
                         className={`input-field ${errors?.[name]?.measurement ? 'error' : ''}`}
                         type={type}
                         disabled={true}
-                        value={`${lengthValue === 0 ? getValues(`${name}.length`) : lengthValue} x ${widthValue === 0 ? getValues(`${name}.width`) : widthValue} x ${heightValue === 0 ? getValues(`${name}.height`) : heightValue}`}
+                        value={`${getValues(`${name}.length`) === "" ? lengthValue : getValues(`${name}.length`)} x ${getValues(`${name}.length`) === "" ? widthValue : getValues(`${name}.width`)} x ${getValues(`${name}.height`) === "" ? heightValue : getValues(`${name}.height`)}`}
                     />
                     <span className='text-[#717680] font-medium'>=</span>
                 </div>

@@ -19,11 +19,11 @@ const RolesPermission = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Asc' });
+    const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
 
     const isFetchingRef = useRef(false);
 
-    const fetchUsers = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
+    const fetchUsers = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Desc") => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 

@@ -8,12 +8,14 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import axiosClient from "api/AxiosClient";
 import { toast } from "react-toastify";
-import { exportIcon, importIcon } from "assets/utils/images";
+import { arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
 
 import DetailPopup from 'components/popup/Detail';
 import DeletePopup from "components/popup/Delete";
 import StockForm from "./Form";
 import Loader from "components/loader";
+import NoDataFound from "components/no-data-found";
+import { getDate, getTime } from "utils/dateFormat";
 
 const Stock = () => {
     const navigate = useNavigate();
@@ -23,7 +25,7 @@ const Stock = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Asc' });
+    const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
     const [selectedItem, setSelectedItem] = useState(null);
 
     const isFetchingRef = useRef(false);
@@ -37,7 +39,7 @@ const Stock = () => {
         },
         {
             label: 'Diamond name and Id',
-            key: 'name',
+            key: 'diamondName',
             type: 'custom',
             render: (item) => {
                 return <div className="flex items-center gap-[10px]">
@@ -47,35 +49,52 @@ const Stock = () => {
                         <span className="text-[12px] font-medium text-[#0A112F]">{item.diamondId}</span>
                     </div>
                 </div>
-            }
+            },
+            sortable: true
         },
         {
             label: 'Ref No',
             key: 'refNo',
+            sortable: true
         },
         {
             label: 'Carat',
             key: 'carat',
+            sortable: true
         },
         {
             label: 'Shape',
             key: 'shape',
+            sortable: true
         },
         {
             label: 'Size',
             key: 'size',
+            sortable: true
         },
         {
             label: 'Color',
             key: 'color',
+            sortable: true
         },
         {
             label: 'Clarity',
             key: 'clarity',
+            sortable: true
         },
         {
             label: 'Polish',
             key: 'polish',
+            sortable: true
+        },
+        {
+            label: 'Date',
+            key: 'createdAt',
+            type: 'custom',
+            render: ({ createdAt }) => {
+                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)} {getTime(createdAt)}</span>
+            },
+            sortable: true
         },
         {
             label: '',
@@ -103,10 +122,21 @@ const Stock = () => {
         setSelectedItem(null);
     };
 
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        fetchStocks(1, query);
+    };
+
     useEffect(() => {
         if (isFetchingRef.current) return;
         fetchStocks(currentPage, searchQuery, sortConfig.key, sortConfig.direction);
     }, [currentPage, searchQuery, sortConfig]);
+
+    const handleSort = (key) => {
+        const direction = sortConfig.key === key && sortConfig.direction === 'Asc' ? 'Desc' : 'Asc';
+        setSortConfig({ key, direction });
+        fetchStocks(1, searchQuery, key, direction);
+    };
 
     const fetchStocks = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
         if (isFetchingRef.current) return;
@@ -226,6 +256,7 @@ const Stock = () => {
                     <button
                         className="bg-[#1E1E1E] text-white rounded-[10px] text-white rounded-md flex flex-row px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
                         onClick={() => document.getElementById("csvInput").click()}
+                        disabled
                     >
                         <img src={importIcon} alt="Import CSV" className="h-6 w-6" />
                         <p>Import CSV</p>
@@ -233,6 +264,7 @@ const Stock = () => {
                     <button
                         className="bg-[#1E1E1E] text-white rounded-[10px] text-white rounded-md flex flex-row  px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
                         onClick={() => document.getElementById("csvInput").click()}
+                        disabled
                     >
                         <img src={exportIcon} alt="Import CSV" className="h-6 w-6" />
                         <p>Export CSV</p>
@@ -240,22 +272,41 @@ const Stock = () => {
                 </div>
             </div>
             <Search
-                placeholder="Search by: diamond ID, customer name, etc..."
+                placeholder="Search by: diamond ID, diamond name, etc..."
+                searchQuery={searchQuery}
+                onSearch={handleSearch}
                 addBtn={{
                     title: '+ Add New',
                     onClick: () => navigate('/stock/add')
                 }}
             />
             <div className="my-[30px] stock-table">
-                <Table
-                    columns={columns}
-                    data={stockData}
-                    tableClass="stock-table"
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                    onActionClick={handleActionClick}
-                />
+                {stockData?.length === 0 ? (
+                    <NoDataFound message="Oops! No stocks found." />
+                ) : (
+                    <Table
+                        columns={columns.map(column => ({
+                            ...column,
+                            label: (
+                                <div
+                                    className="flex items-center cursor-pointer gap-[5px]"
+                                    onClick={() => column.sortable && handleSort(column.key)}
+                                >
+                                    {column.label}
+                                    {column.sortable && sortConfig.key === column.key && (
+                                        <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
+                                    )}
+                                </div>
+                            ),
+                        }))}
+                        data={stockData}
+                        tableClass="stock-table"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                        onActionClick={handleActionClick}
+                    />
+                )};
             </div>
 
             {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}

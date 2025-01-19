@@ -22,18 +22,43 @@ const StockForm = () => {
     const [newImages, setNewImages] = useState([]);
     const [oldImages, setOldImages] = useState([]);
     const [removedImages, setRemovedImages] = useState([]);
+    const [stockDetail, setStockDetail] = useState(null);
 
     const isFetchingRef = useRef(false);
 
     useEffect(() => {
         if (isFetchingRef.current) return;
         fetchOptions();
-
-        if (params.stockId) {
-            console.log("Params Stockk Id : ", params.stockId);
-            fetchStockDetail(params.stockId);
-        }
+        if (params.stockId) fetchStockDetail(params.stockId);
     }, [params.stockId]);
+
+    useEffect(() => {
+        if (stockDetail != null) {
+            const updatedForm = stockForm.map((field) => {
+                if (field.type === "ROW") {
+                    return {
+                        ...field,
+                        childrens: field.childrens.map((child) => {
+                            if (child.name === "location") {
+                                const updatedOptions = child.options.map(option => option.value);
+                                if (!updatedOptions.includes(stockDetail.location)) {
+                                    child.options.unshift({ value: stockDetail.location, label: stockDetail.location });
+                                }
+                                if (child.options.length > 4 && child.options[0].value !== stockDetail.location) {
+                                    child.options.shift();
+                                }
+                                return { ...child };
+                            }
+                            return child;
+                        }),
+                    };
+                }
+                return field;
+            });
+
+            setStockForm(updatedForm);
+        }
+    }, [stockDetail]);
 
     const fetchOptions = async () => {
         if (isFetchingRef.current) return;
@@ -50,28 +75,32 @@ const StockForm = () => {
                     value: vendor._id,
                 }));
 
-                const updatedForm = stockForm.map((field) => {
-                    if (field.type === "ROW") {
-                        return {
-                            ...field,
-                            childrens: field.childrens.map((child) => {
-                                if (child.name === "vendor") {
-                                    return { ...child, options: vendorOptions };
-                                }
-                                return child;
-                            }),
-                        };
-                    }
-                    return field;
-                });
-
-                setStockForm(updatedForm);
+                updateStockFormVendorOptions(vendorOptions);
             }
         } catch (error) {
             toast.error(error?.response?.data?.message);
         } finally {
             isFetchingRef.current = false;
         }
+    };
+
+    const updateStockFormVendorOptions = (vendorOptions) => {
+        const updatedForm = stockForm.map((field) => {
+            if (field.type === "ROW") {
+                return {
+                    ...field,
+                    childrens: field.childrens.map((child) => {
+                        if (child.name === "vendor") {
+                            return { ...child, options: vendorOptions };
+                        }
+                        return child;
+                    }),
+                };
+            }
+            return field;
+        });
+
+        setStockForm(updatedForm);
     };
 
     const fetchStockDetail = async (stockId) => {
@@ -82,8 +111,8 @@ const StockForm = () => {
 
             if (response.status === 200) {
                 toast.success(response?.data?.message);
-
                 let stockData = response.data.data;
+                setStockDetail(stockData);
 
                 stockData.vendor = { value: stockData.vendor._id, label: stockData.vendor.name };
 
@@ -93,34 +122,9 @@ const StockForm = () => {
                 }));
                 setOldImages(mappedOldImages);
 
-                const updatedForm = stockForm.map((field) => {
-                    if (field.type === "ROW") {
-                        return {
-                            ...field,
-                            childrens: field.childrens.map((child) => {
-                                if (child.name === "location") {
-                                    const updatedOptions = child.options.map(option => option.value);
-                                    if (!updatedOptions.includes(stockData.location)) {
-                                        child.options.push({ value: stockData.location, label: stockData.location })
-                                    };
-                                    return { ...child, options: updatedOptions };
-                                }
-                                return child;
-                            }),
-                        };
-                    }
-                    return field;
-                });
-
-                setStockForm(updatedForm);
-
                 for (const key in stockData) {
                     if (stockData.hasOwnProperty(key)) {
-                        if (key === 'diamondImages') {
-                            setValue('images', [...newImages, ...oldImages]);
-                        } else {
-                            setValue(key, stockData[key]);
-                        }
+                        setValue(key, stockData[key]);
                     }
                 }
             }
@@ -172,6 +176,8 @@ const StockForm = () => {
                         handleDeleteImage={handleDeleteImage}
                         register={register}
                         errors={errors}
+                        setValue={setValue}
+                        getValues={getValues}
                     />
                 )
 
@@ -242,12 +248,15 @@ const StockForm = () => {
 
     const handleRemovedImage = async () => {
         try {
+            console.log("removedImages function : ",removedImages);
+            
             const response = await axiosClient.post('/stock/remove-image', { url: removedImages }, {
                 headers: { 'Content-Type': 'application/json' },
             });
 
             if (response.status === 200) {
                 toast.success(response?.data?.message);
+                setRemovedImages([]);
             }
         } catch (error) {
             toast.error(error?.response?.data?.message);
@@ -256,42 +265,56 @@ const StockForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            console.log(data);
+            // Remove deleted old images
+            if (removedImages.length > 0) {
+                await handleRemovedImage();
+            }
 
             // Upload new images first
-            // const uploadedImageUrls = await handleImageUpload();
+            if (newImages.length > 0) {
+                const uploadedImageUrls = await handleImageUpload();
 
-            // // Combine new and remaining old image URLs
-            // const allImageUrls = [
-            //     ...oldImages.map((img) => img.preview),
-            //     ...uploadedImageUrls,
-            // ];
+                // Combine new and remaining old image URLs
+                const allImageUrls = [
+                    ...(stockDetail ? stockDetail.diamondImages : []),
+                    ...uploadedImageUrls,
+                ];
+                data.diamondImages = allImageUrls;
+                
+                setRemovedImages(uploadedImageUrls);
+            }
 
+            delete data.images;
 
-            // data.diamondImages = allImageUrls;
+            const endPoint = params?.stockId ? '/stock/update' : '/stock/add-new';
 
-            // // Remove deleted old images
-            // if (removedImages.length > 0) {
-            //     await handleRemovedImage();
-            // }
+            if (params.stockId) {
+                data.stockId = params.stockId;
+                delete data._id;
+                delete data.diamondId;
+                delete data.status;
+                delete data.isDeleted;
+                delete data.deletedAt;
+                delete data.createdBy;
+                delete data.createdAt;
+                delete data.updatedAt;
+                delete data.__v;
+            };
 
-            // const response = await axiosClient.post('/stock/add-new', data, {
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     }
-            // });
+            const response = await axiosClient.post(endPoint, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
 
-            // if (response.status === 201) {
-            //     navigate('/stock');
-            //     toast.success(response?.data?.message);
-            // }
+            if (response.status === 201 || response.status === 200) {
+                navigate('/stock');
+                toast.success(response?.data?.message);
+            }
         } catch (error) {
-            // await handleRemovedImage();
             toast.error(error?.response?.data?.message);
         }
     };
-
-    console.log("Errors : ", errors);
 
     return (
         <div className='px-[100px] py-[50px]'>
@@ -322,20 +345,24 @@ const Row = ({ row, getComponent }) => (
 const BasicImage = ({
     name,
     label,
+    rule,
     newImages,
     oldImages,
     handleNewImageUpload,
     handleDeleteImage,
     register,
-    errors
+    errors,
+    setValue,
+    getValues
 }) => {
+    setValue(name, oldImages);
 
-    const isVerified = oldImages.length > 0 || newImages.length > 0;
+    const isVerified = getValues(name)?.length > 0 || newImages.length > 0;
 
     return (
         <div className="w-full flex flex-col mb-[10px]">
             <div className={`w-full h-[120px] bg-[#eff1f9] px-[10px] py-[5px] border-[1px] border-[#d1e9ff] border-dashed rounded-[8px] 
-            ${!!errors[name] && !isVerified ? "border-[#ef4444] mb-[16px]" : "mb-[16px]"}`}>
+            ${errors[name] && !isVerified ? "border-[#ef4444] mb-[16px]" : "mb-[16px]"}`}>
                 <label
                     className="text-[12px] text-[#717680] mb-[5px]"
                     style={{ fontWeight: "500" }}
@@ -378,16 +405,21 @@ const BasicImage = ({
                             accept=".jpeg, .png, .jpg"
                             multiple
                             {...register(name, {
-                                required: "At least one image is required.",
-                                validate: () => isVerified || "At least one image must be selected.",
+                                required: rule?.required && rule.message,
+                                validate: (value) => {
+                                    if (value.length === 0 && newImages.length === 0) {
+                                        return rule?.message || 'At least one image is required.';
+                                    }
+                                    return true;
+                                },
                             })}
                             onChange={handleNewImageUpload}
                         />
                     </div>
                 </div>
             </div>
-            {!!errors[name] && !isVerified && (
-                <span className="error-text" style={{ marginTop: '-12px' }}>At least one image must be selected.</span>
+            {errors[name] && !isVerified && (
+                <span className="error-text" style={{ marginTop: '-12px' }}>{errors[name].message}</span>
             )}
         </div>
     );

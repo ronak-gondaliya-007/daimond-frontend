@@ -31,7 +31,7 @@ const Customer = () => {
     }, [location.pathname]);
 
 
-    const fetchCustomers = async (userType, page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
+    const fetchCustomers = async (userType, page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Desc") => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
         setLoading(true);
