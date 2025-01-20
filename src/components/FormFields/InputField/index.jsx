@@ -4,6 +4,7 @@ const InputField = ({
     type = "text",
     name,
     placeholder = "",
+    readOnly = false,
     register,
     rule,
     errors
@@ -15,6 +16,7 @@ const InputField = ({
             id={id}
             placeholder={placeholder}
             className={`input-field ${errors?.[name] ? "error" : ""}`}
+            readOnly={readOnly}
             {...register(name, rule)}
         />
         {!!errors?.[name] && <span className="error-text">{errors[name].message}</span>}

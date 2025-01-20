@@ -44,10 +44,7 @@ export const customerForm = [
                 name: "email",
                 label: "Email Address",
                 type: "INPUT",
-                placeholder: "Enter Email",
-                rule: {
-                    required: "*Email is required"
-                },
+                placeholder: "Enter Email"
             },
         ]
     },
@@ -115,10 +112,7 @@ export const vendorForm = [
                 name: "email",
                 label: "Email Address",
                 type: "INPUT",
-                placeholder: "Enter Email",
-                rule: {
-                    required: "*Email is required"
-                },
+                placeholder: "Enter Email"
             },
         ]
     },

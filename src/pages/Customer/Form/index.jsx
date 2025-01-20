@@ -69,6 +69,7 @@ const CustomerAdd = () => {
 
     const onSubmit = async (data) => {
         try {
+
             const response = await axiosClient.post('/customer/register',
                 {
                     userType: data.userType,

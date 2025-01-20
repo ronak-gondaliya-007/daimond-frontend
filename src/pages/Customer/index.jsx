@@ -184,7 +184,7 @@ const Customer = () => {
                         value={searchQuery}
                         onChange={handleSearchChange}
                         onSearch={handleSearch}
-                        placeholder={`Search by: ${selectedTab} name, email, etc...`}
+                        placeholder={`Search by: ${selectedTab} name, contact number, etc...`}
                         className='w-full h-full outline-none text-[16px] md-2:text-[16px] text-[black]'
                     />
                     <div className='flex items-center gap-[16px] mx-[6px]'>

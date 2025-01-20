@@ -48,10 +48,7 @@ export const userForm = [
                 name: "phone",
                 label: "Phone",
                 type: "PHONE_INPUT",
-                placeholder: "Enter Phone",
-                rules: {
-                    required: "Phone number is required",
-                }
+                placeholder: "Enter Phone"
             },
         ]
     },

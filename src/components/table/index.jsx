@@ -10,6 +10,17 @@ const Table = ({
     totalPages,
     onPageChange
 }) => {
+    // Helper to format phone numbers
+    const formatPhoneNumber = (phone) => {
+        if (!phone) return "--";
+        return phone.startsWith("91") ? phone.slice(2) : phone;
+    };
+
+    // Helper to check and replace missing values
+    const getValueOrPlaceholder = (value) => {
+        return value ? value : "--";
+    };
+
     return (
         <div className={`table-container ${tableClass}`}>
             <table className="common-table">
@@ -54,7 +65,20 @@ const Table = ({
                                                 return col.render(item, index);
                                             }
                                             default: {
-                                                return <td><span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{item[col.key]}</span></td>
+                                                const value = item[col.key];
+
+                                                // Check if the key is 'phone' to apply formatting
+                                                const formattedValue = col.key === "phone"
+                                                    ? formatPhoneNumber(value)
+                                                    : getValueOrPlaceholder(value);
+
+                                                return (
+                                                    <td>
+                                                        <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">
+                                                            {formattedValue}
+                                                        </span>
+                                                    </td>
+                                                );
                                             }
                                         }
                                     })

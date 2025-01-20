@@ -71,7 +71,7 @@ const RolesPermissionForm = () => {
     }
 
     const handleImageUpload = async (file) => {
-        try {            
+        try {
             const formData = new FormData();
             formData.append('ProfilePic', file);
 
@@ -92,15 +92,14 @@ const RolesPermissionForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            if (profileImg && profileImg !== undefined) {
+            if (profileImg && profileImg !== undefined && profileImg.length > 0) {
                 const uploadedImageUrl = await handleImageUpload(profileImg.file);
                 data.profilePic = uploadedImageUrl;
             }
 
-            if (data.role) delete data.role;
-            if (data.Role) delete data.Role;
-            if (data.profileImage) delete data.profileImage;
+            delete data.profileImage
             data.userType = data.userType.value
+            if (data.phone && data.phone === undefined) delete data.phone;
 
             const response = await axiosClient.post('/user/register', data, {
                 headers: {

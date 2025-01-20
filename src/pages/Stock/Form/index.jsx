@@ -142,6 +142,7 @@ const StockForm = () => {
                 return (
                     <InputField
                         {...field}
+                        readOnly={field.readOnly}
                         register={register}
                         errors={errors}
                     />
@@ -248,8 +249,6 @@ const StockForm = () => {
 
     const handleRemovedImage = async () => {
         try {
-            console.log("removedImages function : ",removedImages);
-            
             const response = await axiosClient.post('/stock/remove-image', { url: removedImages }, {
                 headers: { 'Content-Type': 'application/json' },
             });
@@ -280,7 +279,7 @@ const StockForm = () => {
                     ...uploadedImageUrls,
                 ];
                 data.diamondImages = allImageUrls;
-                
+
                 setRemovedImages(uploadedImageUrls);
             }
 
@@ -404,23 +403,12 @@ const BasicImage = ({
                             className={`w-full h-full opacity-0 cursor-pointer`}
                             accept=".jpeg, .png, .jpg"
                             multiple
-                            {...register(name, {
-                                required: rule?.required && rule.message,
-                                validate: (value) => {
-                                    if (value.length === 0 && newImages.length === 0) {
-                                        return rule?.message || 'At least one image is required.';
-                                    }
-                                    return true;
-                                },
-                            })}
+                            {...register(name)}
                             onChange={handleNewImageUpload}
                         />
                     </div>
                 </div>
             </div>
-            {errors[name] && !isVerified && (
-                <span className="error-text" style={{ marginTop: '-12px' }}>{errors[name].message}</span>
-            )}
         </div>
     );
 };

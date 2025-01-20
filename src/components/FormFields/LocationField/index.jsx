@@ -53,7 +53,7 @@ const LocationField = ({
     };
 
     const handleCustomOptionSelection = (selectedOption) => {
-        if (selectedOption && selectedOption.value === 'Custom' ) {
+        if (selectedOption && selectedOption.value === 'Custom') {
             setCustomLocation('');
             setInputVisible(true);
         }
@@ -109,7 +109,7 @@ const LocationField = ({
                     </>
                 )}
             />
-            {!!errors?.[name] && <span className="error-text">{errors[name].message}</span>}
+            {!!errors?.[name] && <span className="error-text" style={{ bottom: '75px' }}>{errors[name].message}</span>}
         </div>
     )
 }

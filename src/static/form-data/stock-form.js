@@ -25,41 +25,41 @@ export const stockForm = [
             },
         ],
     },
-    {
-        id: 4,
-        type: "ROW",
-        childrens: [
-            {
-                id: 5,
-                name: "vendor",
-                label: "Vendor",
-                type: "SELECT",
-                placeholder: "Select Vendor",
-                isSearchable: true,
-                rule: {
-                    required: "*Vendor is required"
-                },
-                options: []
-            },
-            {
-                id: 6,
-                name: "location",
-                label: "Location",
-                type: "LOCATION",
-                placeholder: "Select Location",
-                isSearchable: true,
-                rule: {
-                    required: "*Location is required"
-                },
-                options: [
-                    { value: "New York", label: "New York" },
-                    { value: "Mumbai", label: "Mumbai" },
-                    { value: "Surat", label: "Surat" },
-                    { value: "Custom", label: "Custom" },
-                ]
-            },
-        ],
-    },
+    // {
+    //     id: 4,
+    //     type: "ROW",
+    //     childrens: [
+    //         {
+    //             id: 5,
+    //             name: "vendor",
+    //             label: "Vendor",
+    //             type: "SELECT",
+    //             placeholder: "Select Vendor",
+    //             isSearchable: true,
+    //             rule: {
+    //                 required: "*Vendor is required"
+    //             },
+    //             options: []
+    //         },
+    //         {
+    //             id: 6,
+    //             name: "location",
+    //             label: "Location",
+    //             type: "LOCATION",
+    //             placeholder: "Select Location",
+    //             isSearchable: true,
+    //             rule: {
+    //                 required: "*Location is required"
+    //             },
+    //             options: [
+    //                 { value: "New York", label: "New York" },
+    //                 { value: "Mumbai", label: "Mumbai" },
+    //                 { value: "Surat", label: "Surat" },
+    //                 { value: "Custom", label: "Custom" },
+    //             ]
+    //         },
+    //     ],
+    // },
     {
         id: 7,
         type: "ROW",
@@ -88,6 +88,33 @@ export const stockForm = [
                     required: "*Color is required"
                 }
             },
+        ],
+    },
+    {
+        id: 4,
+        type: "ROW",
+        childrens: [
+            {
+                id: 5,
+                name: "pricePerCarat",
+                label: "Price Per Carat",
+                type: "INPUT",
+                placeholder: "Enter Price Per Carat",
+                rule: {
+                    required: "*Price Per Carat is required"
+                }
+            },
+            {
+                id: 6,
+                name: "price",
+                label: "Daimond Price",
+                type: "INPUT",
+                placeholder: "Enter Daimond Price",
+                readOnly: true,
+                rule: {
+                    required: "*Daimond Price is required"
+                }
+            }
         ],
     },
     {
@@ -261,25 +288,39 @@ export const stockForm = [
         childrens: [
             {
                 id: 29,
-                name: "images",
-                label: "Diamond Images",
-                type: "IMAGE"
+                name: "location",
+                label: "Location",
+                type: "LOCATION",
+                placeholder: "Select Location",
+                isSearchable: true,
+                rule: {
+                    required: "*Location is required"
+                },
+                options: [
+                    { value: "New York", label: "New York" },
+                    { value: "Mumbai", label: "Mumbai" },
+                    { value: "Surat", label: "Surat" },
+                    { value: "Custom", label: "Custom" },
+                ]
+            },
+            {
+                id: 30,
+                name: "remarks",
+                label: "Remarks",
+                type: "TEXTAREA",
+                placeholder: "Enter remarks"
             },
         ],
     },
     {
-        id: 30,
+        id: 31,
         type: "ROW",
         childrens: [
             {
-                id: 31,
-                name: "remarks",
-                label: "Remarks",
-                type: "TEXTAREA",
-                placeholder: "Enter remarks",
-                rule: {
-                    required: "*Remarks is required"
-                }
+                id: 32,
+                name: "images",
+                label: "Diamond Images",
+                type: "IMAGE"
             },
         ],
     }
