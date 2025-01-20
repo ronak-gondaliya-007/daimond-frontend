@@ -6,8 +6,6 @@ const SkipDataPopup = ({ onClose, data }) => {
         ? Object.keys(data.skippedStocks[0])
         : [];
 
-    data.skippedStocks = [...data.skippedStocks, ...data.skippedStocks, ...data.skippedStocks]
-
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl w-full relative">
@@ -31,43 +29,47 @@ const SkipDataPopup = ({ onClose, data }) => {
                 </div>
 
                 {/* Table content */}
-                <div className="max-h-[300px] overflow-y-auto">
+                <div className="overflow-x-auto">
                     <table className="min-w-full table-auto border-collapse rounded-lg border border-[#E9EAEB]">
-                        <thead className="bg-[#FAFAFA] rounded-t-lg">
+                        {/* Header */}
+                        <thead className="bg-[#FAFAFA] sticky top-0 z-10">
                             <tr>
                                 {headers.map((header, index) => (
                                     <th key={index} className="px-4 py-2 text-[12px] text-[#0A112F] font-semibold text-left border-b">{header}</th>
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="max-h-[300px] overflow-y-auto">
-                            {data.skippedStocks && data.skippedStocks.length > 0 ? (
-                                data.skippedStocks.map((record, index) => (
-                                    <tr key={index} className="bg-[#fff]">
-                                        {Object.values(record).map((value, idx) => (
-                                            <td key={idx} className="px-4 py-2 text-[12px] border-b">{value}</td>
-                                        ))}
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={headers.length} className="px-4 py-2 text-sm text-gray-500">
-                                        No skipped records.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
                     </table>
+
+                    {/* Scrollable Body */}
+                    <div className="max-h-[300px] overflow-y-auto">
+                        <table className="min-w-full table-auto border-collapse rounded-lg border border-[#E9EAEB]">
+                            <tbody>
+                                {/* Table Body */}
+                                {data.skippedStocks && data.skippedStocks.length > 0 ? (
+                                    data.skippedStocks.map((record, index) => (
+                                        <tr key={index} className="bg-[#fff]">
+                                            {Object.values(record).map((value, idx) => (
+                                                <td key={idx} className="px-4 py-2 text-[12px] border-b">{value}</td>
+                                            ))}
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={headers.length} className="px-4 py-2 text-sm text-gray-500">
+                                            No skipped records.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
 
                 {/* Buttons */}
                 <div className="flex justify-center mt-4 gap-[4rem]">
-                    <button
-                        className={`px-4 py-2 rounded-lg flex items-center justify-center`}
-                    // onClick={handleUpload}
-                    >
-                        Download
-                    </button>
+                    <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Download</button>
                 </div>
             </div>
         </div >

@@ -6,7 +6,7 @@ const DetailPopup = ({ item, onClose }) => {
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
             <div className={`bg-white p-6 sm:p-8 rounded-lg shadow-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto relative`}>
                 {/* Header */}
-                <div className={`flex justify-between items-center mb-6 sticky top-0 bg-white z-10`}>
+                <div className={`flex justify-between items-center mb-6 sticky top-0 bg-white z-99`}>
                     <h2 className="text-lg font-semibold">Details</h2>
                     <button
                         className="bg-transparent border-none cursor-pointer"
