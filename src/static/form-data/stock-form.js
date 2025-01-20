@@ -101,7 +101,11 @@ export const stockForm = [
                 type: "INPUT",
                 placeholder: "Enter Price Per Carat",
                 rule: {
-                    required: "*Price Per Carat is required"
+                    required: "*Price Per Carat is required",
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Price Per Carat"
+                    }
                 }
             },
             {
@@ -110,7 +114,7 @@ export const stockForm = [
                 label: "Daimond Price",
                 type: "INPUT",
                 placeholder: "Enter Daimond Price",
-                readOnly: true,
+                disabled: true,
                 rule: {
                     required: "*Daimond Price is required"
                 }

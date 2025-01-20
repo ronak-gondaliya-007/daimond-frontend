@@ -16,7 +16,7 @@ const StockForm = () => {
     const navigate = useNavigate();
     const params = useParams();
 
-    const { register, handleSubmit, formState: { errors }, reset, control, getValues, setValue } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset, control, watch, getValues, setValue } = useForm();
 
     const [stockForm, setStockForm] = useState(initialStockForm);
     const [newImages, setNewImages] = useState([]);
@@ -59,6 +59,18 @@ const StockForm = () => {
             setStockForm(updatedForm);
         }
     }, [stockDetail]);
+
+    const caratValue = watch('carat');
+    const pricePerCaratValue = watch('pricePerCarat');
+
+    useEffect(() => {
+        if (caratValue && pricePerCaratValue) {
+            const price = (caratValue * pricePerCaratValue);
+            setValue('price', isNaN(price) ? '0' : price?.toString());
+        } else {
+            setValue('price', '0');
+        }
+    }, [caratValue, pricePerCaratValue, setValue]);
 
     const fetchOptions = async () => {
         if (isFetchingRef.current) return;
@@ -114,7 +126,7 @@ const StockForm = () => {
                 let stockData = response.data.data;
                 setStockDetail(stockData);
 
-                stockData.vendor = { value: stockData.vendor._id, label: stockData.vendor.name };
+                // stockData.vendor = { value: stockData.vendor._id, label: stockData.vendor.name };
 
                 const mappedOldImages = stockData.diamondImages?.map((img) => ({
                     file: {},
@@ -360,8 +372,7 @@ const BasicImage = ({
 
     return (
         <div className="w-full flex flex-col mb-[10px]">
-            <div className={`w-full h-[120px] bg-[#eff1f9] px-[10px] py-[5px] border-[1px] border-[#d1e9ff] border-dashed rounded-[8px] 
-            ${errors[name] && !isVerified ? "border-[#ef4444] mb-[16px]" : "mb-[16px]"}`}>
+            <div className={`w-full h-[120px] bg-[#eff1f9] px-[10px] py-[5px] border-[1px] border-[#d1e9ff] border-dashed rounded-[8px] mb-[16px]`}>
                 <label
                     className="text-[12px] text-[#717680] mb-[5px]"
                     style={{ fontWeight: "500" }}

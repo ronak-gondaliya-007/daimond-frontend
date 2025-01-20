@@ -1,5 +1,5 @@
+import { closeIcon } from "assets/utils/images";
 import React from "react";
-import closeIcon from "../../../assets/images/close.svg";
 
 const DetailPopup = ({ item, onClose }) => {
     return (
@@ -42,6 +42,14 @@ const DetailPopup = ({ item, onClose }) => {
                         <DetailItem label="Certificate No" value={item.certificateNo} />
                     </div>
 
+                    {/* Fourth Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
+                        <DetailItem label="Price Per Carat" value={item.pricePerCarat} />
+                        <DetailItem label="Price" value={item.price} />
+                        <DetailItem label="Status" value={item.status} />
+                        <DetailItem label="Measurement" value={`${item.measurement.length} x ${item.measurement.width} x ${item.measurement.height}`} />
+                    </div>
+
                     {/* Images Section */}
                     {item.diamondImages && item.diamondImages.length > 0 && (
                         <div>
@@ -67,7 +75,7 @@ const DetailPopup = ({ item, onClose }) => {
                             Remark
                         </div>
                         <div className="text-sm text-gray-900 font-medium">
-                            {item.remarks}
+                            {item.remarks !== "" ? item.remarks : '--'}
                         </div>
                     </div>
                 </div>

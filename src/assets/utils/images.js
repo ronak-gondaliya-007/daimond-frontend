@@ -13,6 +13,12 @@ import noDataFound from '../images/no-data.svg';
 import exportIcon from '../images/export.svg';
 import importIcon from '../images/import.svg';
 import exclamationIcon from '../images/exclamation.svg';
+import uploadCSVIcon from '../images/uploadCSVIcon.svg';
+import closeIcon from '../images/close.svg';
+import diamondIcon from '../images/daimond.svg';
+import button from '../images/button.svg';
+import button1 from '../images/button-1.svg';
+import button2 from '../images/button-2.svg';
 
 export {
     logo,
@@ -29,5 +35,11 @@ export {
     noDataFound,
     exportIcon,
     importIcon,
-    exclamationIcon
+    exclamationIcon,
+    uploadCSVIcon,
+    closeIcon,
+    diamondIcon,
+    button,
+    button1,
+    button2
 };

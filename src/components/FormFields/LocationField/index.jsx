@@ -100,7 +100,7 @@ const LocationField = ({
                                     onKeyDown={(e) => handleKeyPress(e, onChange)}
                                     placeholder="Enter custom location"
                                 />
-                                <button className='absolute right-2 px-4 py-1 bg-blue-500 text-white rounded-md' onClick={() => handleAddCustomLocation(onChange)}>Add</button>
+                                <button className='absolute right-2 px-4 py-1 bg-[#1E1E1E] text-white rounded-md' onClick={() => handleAddCustomLocation(onChange)}>Add</button>
                                 {customLocation === '' && (
                                     <span className="error-text">*Custom location is required</span>
                                 )}

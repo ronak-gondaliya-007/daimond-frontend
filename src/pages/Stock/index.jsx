@@ -1,21 +1,19 @@
-import Search from "components/search";
-import Table from "components/table";
-import diamondIcon from 'assets/images/daimond.svg';
-import button from 'assets/images/button.svg';
-import button1 from 'assets/images/button-1.svg';
-import button2 from 'assets/images/button-2.svg';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import axiosClient from "api/AxiosClient";
 import { toast } from "react-toastify";
-import { arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
 
+import axiosClient from "api/AxiosClient";
+import { getDate, getTime } from "utils/dateFormat";
+import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
+import Search from "components/search";
+import Table from "components/table";
 import DetailPopup from 'components/popup/Detail';
 import DeletePopup from "components/popup/Delete";
 import StockForm from "./Form";
 import Loader from "components/loader";
 import NoDataFound from "components/no-data-found";
-import { getDate, getTime } from "utils/dateFormat";
+import ImportPopup from "components/popup/Import";
+import SkipDataPopup from "components/popup/Skip";
 
 const Stock = () => {
     const navigate = useNavigate();
@@ -27,6 +25,8 @@ const Stock = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
     const [selectedItem, setSelectedItem] = useState(null);
+    const [skippedStocks, setSkippedStocks] = useState([]);
+    const [showSkippedPopup, setShowSkippedPopup] = useState(false);
 
     const isFetchingRef = useRef(false);
 
@@ -215,6 +215,38 @@ const Stock = () => {
         }
     }
 
+    const handleImportExcel = async (file) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        setLoading(true);
+        try {
+            const formData = new FormData();
+
+            formData.append('StockExcel', file);
+
+            const response = await axiosClient.post(`/stock/import-excel`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } });
+
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                if (response.data.data.skippedStockCount > 0) {
+                    setSkippedStocks(response.data.data);
+                    setShowSkippedPopup(true);
+                } else {
+                    fetchStocks();
+                }
+                handleClosePopup();
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            setLoading(false);
+            isFetchingRef.current = false;
+        }
+    }
+
     const onStatusChange = (action, stockId) => {
         if (action === 'delete') {
             setStockData((prevData) => prevData.filter(item => item._id !== stockId));
@@ -232,6 +264,12 @@ const Stock = () => {
             case 'delete':
                 setSelectedItem({ action, item });
                 break;
+            case 'import':
+                setSelectedItem({ action });
+                break;
+            case 'export':
+                setSelectedItem({ action });
+                break;
             default:
                 break;
         }
@@ -246,28 +284,20 @@ const Stock = () => {
             <div className="w-full flex justify-between items-center mb-[24px]">
                 <h6 className="text-[16px]">Overview</h6>
                 <div className="flex flex-row gap-[20px] w-[25%]">
-                    <input
-                        id="csvInput"
-                        type="file"
-                        accept=".csv"
-                        className="hidden"
-                    // onChange={handleImportCSV}
-                    />
                     <button
                         className="bg-[#1E1E1E] text-white rounded-[10px] text-white rounded-md flex flex-row px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
-                        onClick={() => document.getElementById("csvInput").click()}
-                        disabled
+                        onClick={() => handleActionClick('import')}
                     >
-                        <img src={importIcon} alt="Import CSV" className="h-6 w-6" />
-                        <p>Import CSV</p>
+                        <img src={importIcon} alt="Import Excel" className="h-6 w-6" />
+                        <p>Import Excel</p>
                     </button>
                     <button
                         className="bg-[#1E1E1E] text-white rounded-[10px] text-white rounded-md flex flex-row  px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
-                        onClick={() => document.getElementById("csvInput").click()}
+                        onClick={() => handleActionClick('export')}
                         disabled
                     >
-                        <img src={exportIcon} alt="Import CSV" className="h-6 w-6" />
-                        <p>Export CSV</p>
+                        <img src={exportIcon} alt="Import Excel" className="h-6 w-6" />
+                        <p>Export Excel</p>
                     </button>
                 </div>
             </div>
@@ -306,12 +336,14 @@ const Stock = () => {
                         onPageChange={setCurrentPage}
                         onActionClick={handleActionClick}
                     />
-                )};
+                )}
             </div>
 
             {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => deleteStock(selectedItem.action, selectedItem.item)} />)}
             {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
+            {selectedItem && selectedItem.action === 'import' && <ImportPopup onClose={handleClosePopup} onUpload={handleImportExcel} />}
+            {showSkippedPopup && <SkipDataPopup onClose={handleClosePopup} data={skippedStocks} />}
         </div>
     );
 };
