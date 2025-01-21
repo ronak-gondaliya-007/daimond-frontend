@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import axiosClient from "api/AxiosClient";
 
 import StockForm from "./Form";
+
 import Search from "components/search";
 import Table from "components/table";
 import DetailPopup from 'components/popup/Detail';
@@ -15,8 +16,9 @@ import ImportPopup from "components/popup/Import";
 import SkipDataPopup from "components/popup/Skip";
 
 import { getDate, getTime } from "utils/dateFormat";
-import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
 import { downloadExcel } from "utils";
+
+import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
 
 const Stock = () => {
     const navigate = useNavigate();

@@ -66,6 +66,13 @@ export const privateRoutes = [
         breadcrumb: ["Management", "Memo"]
     },
     {
+        path: '/memo/add',
+        element: Memo,
+        title: "MemoAdd",
+        layout: MAIN,
+        breadcrumb: ["Management", "Memo", "Add"]
+    },
+    {
         path: '/stock',
         element: Stock,
         title: "Stock",
