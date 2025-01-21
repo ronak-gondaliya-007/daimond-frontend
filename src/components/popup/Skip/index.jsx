@@ -1,5 +1,6 @@
-import { closeIcon, exclamationIcon } from "assets/utils/images";
 import React from "react";
+import { closeIcon, exclamationIcon } from "assets/utils/images";
+import { downloadExcel } from "utils";
 
 const SkipDataPopup = ({ onClose, data }) => {
     const headers = data.skippedStocks && data.skippedStocks.length > 0
@@ -69,7 +70,13 @@ const SkipDataPopup = ({ onClose, data }) => {
 
                 {/* Buttons */}
                 <div className="flex justify-center mt-4 gap-[4rem]">
-                    <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Download</button>
+                    <button
+                        type='submit'
+                        className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'
+                        onClick={() => downloadExcel(data.csvUrl)}
+                    >
+                        Download
+                    </button>
                 </div>
             </div>
         </div >

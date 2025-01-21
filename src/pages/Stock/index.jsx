@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 import axiosClient from "api/AxiosClient";
 import { getDate, getTime } from "utils/dateFormat";
-import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
+import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon, search } from "assets/utils/images";
 import Search from "components/search";
 import Table from "components/table";
 import DetailPopup from 'components/popup/Detail';
@@ -14,6 +14,7 @@ import Loader from "components/loader";
 import NoDataFound from "components/no-data-found";
 import ImportPopup from "components/popup/Import";
 import SkipDataPopup from "components/popup/Skip";
+import { downloadExcel } from "utils";
 
 const Stock = () => {
     const navigate = useNavigate();
@@ -120,6 +121,7 @@ const Stock = () => {
 
     const handleClosePopup = () => {
         setSelectedItem(null);
+        setShowSkippedPopup(false);
     };
 
     const handleSearch = (query) => {
@@ -237,7 +239,33 @@ const Stock = () => {
                 } else {
                     fetchStocks();
                 }
-                handleClosePopup();
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            setLoading(false);
+            isFetchingRef.current = false;
+        }
+    }
+
+    const handleExportExcel = async () => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        setLoading(true);
+        try {
+            const response = await axiosClient.post(`/stock/export-excel`,
+                {
+                    search: searchQuery
+                },
+                { headers: { 'Content-Type': 'application/json' } });
+
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                const fileUrl = response?.data?.data;
+                if (fileUrl) {
+                    downloadExcel(fileUrl);
+                }
             }
         } catch (error) {
             toast.error(error?.response?.data?.message);
@@ -268,7 +296,7 @@ const Stock = () => {
                 setSelectedItem({ action });
                 break;
             case 'export':
-                setSelectedItem({ action });
+                handleExportExcel();
                 break;
             default:
                 break;
@@ -294,7 +322,6 @@ const Stock = () => {
                     <button
                         className="bg-[#1E1E1E] text-white rounded-[10px] text-white rounded-md flex flex-row  px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
                         onClick={() => handleActionClick('export')}
-                        disabled
                     >
                         <img src={exportIcon} alt="Import Excel" className="h-6 w-6" />
                         <p>Export Excel</p>

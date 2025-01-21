@@ -3,3 +3,12 @@ export function getCurrency(amount) {
 
     return formattedAmount
 }
+
+export function downloadExcel(url) {
+    if (!url) return;
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    link.click();
+};
