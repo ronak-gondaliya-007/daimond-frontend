@@ -19,6 +19,8 @@ import diamondIcon from '../images/daimond.svg';
 import button from '../images/button.svg';
 import button1 from '../images/button-1.svg';
 import button2 from '../images/button-2.svg';
+import wrongIcon from '../images/cancel.png';
+import writeIcon from '../images/checkmark.png';
 
 export {
     logo,
@@ -41,5 +43,7 @@ export {
     diamondIcon,
     button,
     button1,
-    button2
+    button2,
+    wrongIcon,
+    writeIcon
 };

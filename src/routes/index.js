@@ -10,6 +10,7 @@ const ResetPassword = lazy(() => import("../pages/Login/ResetPassword"));
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const SellInvoice = lazy(() => import("../pages/sell-invoice"));
 const Memo = lazy(() => import("../pages/memo"));
+const CreateMemo = lazy(() => import("../pages/memo/create-memo"));
 const Stock = lazy(() => import("../pages/Stock"));
 const StockForm = lazy(() => import("../pages/Stock/Form"));
 const Customer = lazy(() => import("../pages/Customer"));
@@ -64,6 +65,13 @@ export const privateRoutes = [
         title: "Memo",
         layout: MAIN,
         breadcrumb: ["Management", "Memo"]
+    },
+    {
+        path: '/create-memo',
+        element: CreateMemo,
+        title: "Create Memo",
+        layout: MAIN,
+        breadcrumb: ["Management", "Create Memo"]
     },
     {
         path: '/stock',
