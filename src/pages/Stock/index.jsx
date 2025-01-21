@@ -3,17 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 import axiosClient from "api/AxiosClient";
-import { getDate, getTime } from "utils/dateFormat";
-import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon, search } from "assets/utils/images";
+
+import StockForm from "./Form";
 import Search from "components/search";
 import Table from "components/table";
 import DetailPopup from 'components/popup/Detail';
 import DeletePopup from "components/popup/Delete";
-import StockForm from "./Form";
 import Loader from "components/loader";
 import NoDataFound from "components/no-data-found";
 import ImportPopup from "components/popup/Import";
 import SkipDataPopup from "components/popup/Skip";
+
+import { getDate, getTime } from "utils/dateFormat";
+import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
 import { downloadExcel } from "utils";
 
 const Stock = () => {

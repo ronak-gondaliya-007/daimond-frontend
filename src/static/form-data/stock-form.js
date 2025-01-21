@@ -329,3 +329,42 @@ export const stockForm = [
         ],
     }
 ]
+
+export const stockFilterForm = [
+    {
+        id: 1,
+        name: "carat",
+        label: "Carat",
+        type: "INPUT",
+        placeholder: "Enter carat"
+    },
+    {
+        id: 2,
+        name: "shape",
+        label: "shape",
+        type: "SELECT",
+        placeholder: "Enter shape"
+    },
+    {
+        id: 3,
+        name: "location",
+        label: "Location",
+        type: "SELECT",
+        placeholder: "Select Location",
+        isSearchable: true,
+        options: []
+    },
+    {
+        id: 4,
+        name: "status",
+        label: "Status",
+        type: "SELECT",
+        placeholder: "Select status",
+        isSearchable: true,
+        options: [
+            { value: "Available", label: "Available" },
+            { value: "On Memo", label: "On Memo" },
+            { value: "Sold", label: "Sold" },
+        ]
+    },
+];
