@@ -19,6 +19,11 @@ import { getDate, getTime } from "utils/dateFormat";
 import { downloadExcel } from "utils";
 
 import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
+import SelectField from "components/FormFields/SelectField";
+import InputField from "components/FormFields/InputField";
+import { useForm } from "react-hook-form";
+import { stockFilterForm } from "static/form-data/stock-form";
+import RangeSlider from 'react-range-slider-input';
 
 const Stock = () => {
     const navigate = useNavigate();
@@ -32,6 +37,8 @@ const Stock = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [skippedStocks, setSkippedStocks] = useState([]);
     const [showSkippedPopup, setShowSkippedPopup] = useState(false);
+    const [range, setRange] = useState([1, 100]);
+    const [isOpen, setIsOpen] = useState(false)
 
     const isFetchingRef = useRef(false);
 
@@ -307,8 +314,13 @@ const Stock = () => {
         }
     };
 
+    const handleFilter = (data) => {
+        console.log({ ...data, range })
+        setIsOpen(q => !q)
+    }
+
     if (loading) {
-        return <Loader />;;
+        return <Loader />;
     }
 
     return (
@@ -317,14 +329,14 @@ const Stock = () => {
                 <h6 className="text-[16px]">Overview</h6>
                 <div className="flex flex-row gap-[20px] w-[25%]">
                     <button
-                        className="bg-[#1E1E1E] text-white rounded-[10px] text-white rounded-md flex flex-row px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
+                        className="bg-[#1E1E1E] text-white rounded-md flex flex-row px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
                         onClick={() => handleActionClick('import')}
                     >
                         <img src={importIcon} alt="Import Excel" className="h-6 w-6" />
                         <p>Import Excel</p>
                     </button>
                     <button
-                        className="bg-[#1E1E1E] text-white rounded-[10px] text-white rounded-md flex flex-row  px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
+                        className="bg-[#1E1E1E] text-white rounded-md flex flex-row  px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
                         onClick={() => handleActionClick('export')}
                     >
                         <img src={exportIcon} alt="Import Excel" className="h-6 w-6" />
@@ -340,6 +352,10 @@ const Stock = () => {
                     title: '+ Add New',
                     onClick: () => navigate('/stock/add')
                 }}
+                handleFilterClick={() => setIsOpen(q => !q)}
+                filterComponent={
+                    isOpen ? <FilterPopup range={range} setRange={setRange} onSubmit={handleFilter} /> : <></>
+                }
             />
             <div className="my-[30px] stock-table">
                 {stockData?.length === 0 ? (
@@ -378,5 +394,82 @@ const Stock = () => {
         </div>
     );
 };
+
+const Row = ({ row, getComponent }) => (
+    <div key={row.id} className='w-full flex gap-[10px]'>
+        {
+            row.childrens.map((field) => getComponent(field))
+        }
+    </div>
+)
+
+const FilterPopup = ({ range, setRange, onSubmit }) => {
+
+    const { register, handleSubmit, formState: { errors }, control } = useForm({
+        defaultValues: {
+            location: { value: "All", label: "All" },
+            shape: { value: "All", label: "All" },
+            status: { value: "All", label: "All" }
+        }
+    });
+
+    const getComponent = (field) => {
+        switch (field.type) {
+            case "ROW":
+                return <Row row={field} getComponent={getComponent} />
+
+            case "INPUT":
+                return (
+                    <InputField
+                        {...field}
+                        readOnly={field.readOnly}
+                        register={register}
+                        errors={errors}
+                    />
+                )
+
+
+            case "SELECT":
+                return (
+                    <SelectField
+                        {...field}
+                        errors={errors}
+                        control={control}
+                    />
+                )
+
+            default:
+                return <></>
+        }
+    }
+
+    return (
+        <div className="absolute top-[58px] right-[-1px] z-10 max-w-[500px] w-full max-h-max bg-white border border-[#F1F2F4] rounded-[3px] p-[10px]">
+            <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                {
+                    stockFilterForm.map((field) => (
+                        getComponent(field)
+                    ))
+                }
+
+                <div className='w-full flex flex-col'>
+                    <RangeSlider
+                        value={range}
+                        step={1}
+                        min={20}
+                        max={80}
+                        onInput={setRange}
+                    />
+                    <div className="flex items-center justify-between mt-3">
+                        <span>Min: {range[0]}</span>
+                        <span>Max: {range[1]}</span>
+                    </div>
+                </div>
+
+                <button className='text-[16px] px-[40px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] mt-3'>Submit</button>
+            </form>
+        </div>
+    )
+}
 
 export default Stock;

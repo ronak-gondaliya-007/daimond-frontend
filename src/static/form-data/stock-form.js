@@ -330,7 +330,7 @@ export const stockForm = [
     }
 ]
 
-export const stockFilterForm = [
+export const stockFilterForms = [
     {
         id: 1,
         name: "carat",
@@ -368,3 +368,66 @@ export const stockFilterForm = [
         ]
     },
 ];
+
+export const stockFilterForm = [
+    {
+        id: 101,
+        type: "ROW",
+        childrens: [
+            {
+                id: 102,
+                name: "location",
+                label: "Location",
+                type: "SELECT",
+                placeholder: "Select Location",
+                isSearchable: true,
+                formGroup: "!mb-2",
+                options: [
+                    { value: "All", label: "All" },     
+                    { value: "New York", label: "New York" },
+                    { value: "Mumbai", label: "Mumbai" },
+                    { value: "Surat", label: "Surat" }
+                ]
+            },
+        ],
+    },
+    {
+        id: 103,
+        type: "ROW",
+        childrens: [
+            {
+                id: 104,
+                name: "shape",
+                label: "Shape",
+                type: "SELECT",
+                placeholder: "Select Shape",
+                isSearchable: true,
+                formGroup: "!mb-2",
+                options: [
+                    { value: "All", label: "All" },
+                    { value: "Round", label: "Round" },
+                    { value: "Round 1", label: "Round 2" }
+                ]
+            },
+        ],
+    },
+    {
+        id: 105,
+        type: "ROW",
+        childrens: [
+            {
+                id: 106,
+                name: "status",
+                label: "Status",
+                type: "SELECT",
+                placeholder: "Select Status",
+                isSearchable: true,
+                formGroup: "!mb-5",
+                options: [
+                    { value: "All", label: "All" },
+                    { value: "Draft", label: "Draft" },
+                ]
+            },
+        ],
+    },
+]

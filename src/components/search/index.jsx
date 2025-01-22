@@ -11,7 +11,9 @@ const Search = ({
     onSearch,
     searchQuery,
     loading,
-    showButtons = true
+    showButtons = true,
+    filterComponent = <></>,
+    handleFilterClick = () => { }
 }) => {
     const [query, setQuery] = useState(searchQuery);
     const timeoutRef = useRef(null);
@@ -33,7 +35,7 @@ const Search = ({
 
     return (
         <div className="w-full flex items-center gap-[16px] md:flex-nowrap flex-wrap">
-            <div className="w-full py-[7px] md-2:py-[5px] h-full flex items-center border-[1px] border-[#E4E5E8] rounded-[10px]">
+            <div className="relative w-full py-[7px] md-2:py-[5px] h-full flex items-center border-[1px] border-[#E4E5E8] rounded-[10px]">
                 <img src={searchIcon} alt='Search' className='w-[24px] h-[24px] mx-[16px]' />
                 <input
                     type="text"
@@ -45,11 +47,12 @@ const Search = ({
                 <div className='flex items-center gap-[16px] mx-[6px]'>
                     <button
                         className={`w-max px-[18px] py-[10px] bg-[#F1F2F4] rounded-[4px] text-[14px] font-medium text-[#18191C] flex items-center gap-[12px] ${!showButtons && 'opacity-0'}`}
-                    // onClick={handleFilterButtonClick}
+                        onClick={handleFilterClick}
                     >
                         <img src={slidersIcon} alt="Filters" className='w-[24px] h-[24px] mr-[2px]' />
                         <p>Filters</p>
                     </button>
+                    {filterComponent}
                 </div>
             </div>
             <div className="w-[250px] h-full">
