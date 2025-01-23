@@ -8,16 +8,16 @@ const ResetPassword = lazy(() => import("../pages/Login/ResetPassword"));
 
 // common routes
 const Dashboard = lazy(() => import("../pages/Dashboard"));
-const SellInvoice = lazy(() => import("../pages/sell-invoice"));
-const Memo = lazy(() => import("../pages/memo"));
-const CreateMemo = lazy(() => import("../pages/memo/create-memo"));
+const SellInvoice = lazy(() => import("../pages/Sell-Invoice"));
+const Memo = lazy(() => import("../pages/Memo"));
+const CreateMemo = lazy(() => import("../pages/Memo/Create-Memo"));
 const Stock = lazy(() => import("../pages/Stock"));
 const StockForm = lazy(() => import("../pages/Stock/Form"));
 const Customer = lazy(() => import("../pages/Customer"));
 const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
-const RolesPermission = lazy(() => import("../pages/roles-permission/RolesPermission"));
-const RolesPermissionForm = lazy(() => import("../pages/roles-permission/Form"));
-const ReportsAnalytics = lazy(() => import("../pages/reports-analytics/ReportsAnalytics"));
+const RolesPermission = lazy(() => import("../pages/Roles-Permission/RolesPermission"));
+const RolesPermissionForm = lazy(() => import("../pages/Roles-Permission/Form"));
+const ReportsAnalytics = lazy(() => import("../pages/Reports-Analytics/ReportsAnalytics"));
 
 const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -68,7 +68,7 @@ export const privateRoutes = [
     },
     {
         path: '/memo/add',
-        element: Memo,
+        element: CreateMemo,
         title: "MemoAdd",
         layout: MAIN,
         breadcrumb: ["Management", "Memo", "Add"]

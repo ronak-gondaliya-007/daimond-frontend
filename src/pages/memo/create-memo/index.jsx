@@ -1,47 +1,48 @@
 import PhoneInputField from 'components/FormFields/PhoneInputField/PhoneInputField';
 import SelectField from 'components/FormFields/SelectField';
 import Table from 'components/table';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getCurrency } from 'utils';
 import { button, button1, button2, writeIcon, wrongIcon } from "assets/utils/images";
 
-const memoItems = [
-    {
-        _id: "101",
-        refNo: "123456",
-        description: "1.5",
-        pcs: "10",
-        carats: "1.5",
-        pricePerCarat: "1000",
-        returnInCarats: "1.5",
-        soldInCarats: "1.5",
-        isEdit: false
-    },
-    {
-        _id: "102",
-        refNo: "123457",
-        description: "1.5",
-        pcs: "10",
-        carats: "1.5",
-        pricePerCarat: "1000",
-        returnInCarats: "1.5",
-        soldInCarats: "1.5",
-        isEdit: false
-    },
-    {
-        _id: "103",
-        refNo: "123458",
-        description: "1.5",
-        pcs: "10",
-        carats: "1.5",
-        pricePerCarat: "1000",
-        returnInCarats: "1.5",
-        soldInCarats: "1.5",
-        isEdit: false
-    },
-]
+// const memoItems = [
+//     {
+//         _id: "101",
+//         refNo: "123456",
+//         description: "1.5",
+//         pcs: "10",
+//         carats: "1.5",
+//         pricePerCarat: "1000",
+//         returnInCarats: "1.5",
+//         soldInCarats: "1.5",
+//         isEdit: false
+//     },
+//     {
+//         _id: "102",
+//         refNo: "123457",
+//         description: "1.5",
+//         pcs: "10",
+//         carats: "1.5",
+//         pricePerCarat: "1000",
+//         returnInCarats: "1.5",
+//         soldInCarats: "1.5",
+//         isEdit: false
+//     },
+//     {
+//         _id: "103",
+//         refNo: "123458",
+//         description: "1.5",
+//         pcs: "10",
+//         carats: "1.5",
+//         pricePerCarat: "1000",
+//         returnInCarats: "1.5",
+//         soldInCarats: "1.5",
+//         isEdit: false
+//     },
+// ]
+
 
 const CreateMemo = () => {
     const navigate = useNavigate();
@@ -50,7 +51,25 @@ const CreateMemo = () => {
         defaultValues: {}
     });
 
-    const [rowData, setRowData] = useState(memoItems);
+    const defaultRow = {
+        _id: "101",
+        refNo: "",
+        description: "",
+        pcs: "",
+        carats: "",
+        pricePerCarat: "",
+        returnInCarats: "",
+        soldInCarats: "",
+        isEdit: true
+    };
+
+    const [rowData, setRowData] = useState([]);
+
+    useEffect(() => {
+        if (rowData.length === 0) {
+            setRowData([defaultRow]);
+        }
+    }, [rowData]);
 
     function handleChange(e, id) {
         const { name, value } = e.target;
@@ -116,7 +135,7 @@ const CreateMemo = () => {
                         {
                             isEdit
                                 ? <input
-                                    type="number"
+                                    type="text"
                                     name="refNo"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
                                     value={refNo}
@@ -138,7 +157,7 @@ const CreateMemo = () => {
                         {
                             isEdit
                                 ? <input
-                                    type="number"
+                                    type="text"
                                     name="description"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
                                     value={description}
@@ -160,7 +179,7 @@ const CreateMemo = () => {
                         {
                             isEdit
                                 ? <input
-                                    type="number"
+                                    type="text"
                                     name="pcs"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
                                     value={pcs}
@@ -204,7 +223,7 @@ const CreateMemo = () => {
                         {
                             isEdit
                                 ? <input
-                                    type="number"
+                                    type="text"
                                     name="pricePerCarat"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
                                     value={pricePerCarat}
@@ -226,7 +245,7 @@ const CreateMemo = () => {
                         {
                             isEdit
                                 ? <input
-                                    type="number"
+                                    type="text"
                                     name="returnInCarats"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
                                     value={returnInCarats}
@@ -248,7 +267,7 @@ const CreateMemo = () => {
                         {
                             isEdit
                                 ? <input
-                                    type="number"
+                                    type="text"
                                     name="soldInCarats"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
                                     value={soldInCarats}
@@ -295,7 +314,6 @@ const CreateMemo = () => {
         },
     ];
 
-
     return (
         <div className="w-full h-full p-[20px] max-w-[100rem] flex flex-col mx-auto">
             <div className="w-full flex justify-between items-center mb-[24px]">
@@ -304,7 +322,6 @@ const CreateMemo = () => {
             <div className='flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
                 <div className='w-full flex justify-between items-center mb-[20px]'>
                     <h6 className='text-[16px]'>Customer Details</h6>
-                    <button className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651]' onClick={handleAddItemsClick}>Add Items</button>
                 </div>
 
                 <form className="stock-add" onSubmit={handleSubmit(onSubmit)}>
@@ -344,6 +361,7 @@ const CreateMemo = () => {
                 <div>
                     <div className='w-full block md:flex items-center justify-between'>
                         <h2>Memo Conversion </h2>
+                        <button className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none' onClick={handleAddItemsClick}>Add Items</button>
                     </div>
 
                     <div className="my-[30px] stock-table">
@@ -359,4 +377,4 @@ const CreateMemo = () => {
     )
 }
 
-export default CreateMemo
+export default CreateMemo;
