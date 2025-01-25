@@ -434,7 +434,7 @@ const Row = ({ row, getComponent }) => (
     </div>
 )
 
-const FilterPopup = ({ range, setRange, onSubmit }) => {
+export const FilterPopup = ({ range, setRange, onSubmit }) => {
     const { register, handleSubmit, formState: { errors }, control } = useForm({
         defaultValues: {
             location: { value: "All", label: "All" },

@@ -5,9 +5,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getCurrency } from 'utils';
-import { button, button1, button2, writeIcon, wrongIcon } from "assets/utils/images";
+import { button, button1, button2, writeIcon, wrongIcon, diamondIcon, arrowDown, arrowUp, } from "assets/utils/images";
 import axiosClient from 'api/AxiosClient';
 import { toast } from 'react-toastify';
+import Search from 'components/search';
+import { FilterPopup } from 'pages/Stock';
+import NoDataFound from 'components/no-data-found';
+import { getDate, getTime } from 'utils/dateFormat';
 
 const defaultRow = {
     _id: "",
@@ -29,6 +33,7 @@ const CreateMemo = () => {
     const [rowData, setRowData] = useState([]);
     const [customerOptions, setCustomerOptions] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
 
     const isFetchingRef = useRef(false);
 
@@ -78,7 +83,7 @@ const CreateMemo = () => {
     };
 
     const handleStockTable = () => {
-        navigate('/stock');
+        setIsOpen(q => !q);
     };
 
     async function handleChange(e, id) {
@@ -329,7 +334,7 @@ const CreateMemo = () => {
             <div className="w-full flex justify-between items-center mb-[24px]">
                 <h6 className="text-[16px]">Create Memo</h6>
             </div>
-            <div className='flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
+            <div className='relative flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
                 <div className='w-full flex justify-between items-center mb-[20px]'>
                     <h6 className='text-[16px]'>Customer Details</h6>
                 </div>
@@ -371,7 +376,7 @@ const CreateMemo = () => {
 
                 <div>
                     <div className='w-full block md:flex items-center justify-between'>
-                        <h2>Memo Conversion</h2> 
+                        <h2>Memo Conversion</h2>
                         <div className='max-w-[40%] flex gap-[20px]'>
                             <button
                                 className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none'
@@ -393,6 +398,239 @@ const CreateMemo = () => {
                             tableClass="stock-table"
                         />
                     </div>
+                </div>
+
+                {
+                    isOpen && <SelectStock setIsOpenSelectStock={setIsOpen} />
+                }
+            </div>
+        </div>
+    )
+}
+
+function SelectStock({ setIsOpenSelectStock }) {
+
+    const isFetchingRef = useRef(false);
+
+    const [stockData, setStockData] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isOpen, setIsOpen] = useState(false)
+    const [range, setRange] = useState([1, 100]);
+    const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
+
+    const columns = [
+        {
+            label: '',
+            key: 'diamondId',
+            isCheckbox: true,
+            type: 'checkbox'
+        },
+        {
+            label: 'Diamond name and Id',
+            key: 'diamondName',
+            type: 'custom',
+            render: (item) => {
+                return <div className="flex items-center gap-[10px]">
+                    <img src={diamondIcon} alt="Diamond" />
+                    <div className="flex flex-col items-start">
+                        <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{item.diamondName}</span>
+                        <span className="text-[12px] font-medium text-[#0A112F]">{item.diamondId}</span>
+                    </div>
+                </div>
+            },
+            sortable: true
+        },
+        {
+            label: 'Ref No',
+            key: 'refNo',
+            sortable: true
+        },
+        {
+            label: 'Carat',
+            key: 'carat',
+            sortable: true
+        },
+        {
+            label: 'Shape',
+            key: 'shape',
+            sortable: true
+        },
+        {
+            label: 'Size',
+            key: 'size',
+            sortable: true
+        },
+        {
+            label: 'Color',
+            key: 'color',
+            sortable: true
+        },
+        {
+            label: 'Clarity',
+            key: 'clarity',
+            sortable: true
+        },
+        {
+            label: 'Polish',
+            key: 'polish',
+            sortable: true
+        },
+        {
+            label: 'Date',
+            key: 'createdAt',
+            type: 'custom',
+            render: ({ createdAt }) => {
+                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)} {getTime(createdAt)}</span>
+            },
+            sortable: true
+        },
+        {
+            label: 'Status',
+            key: 'status',
+            type: 'custom',
+            render: ({ status }) => {
+                let statusLabel = '';
+                let statusColor = '';
+
+                switch (status) {
+                    case 'Available':
+                        statusLabel = 'Available';
+                        statusColor = 'bg-[#00C241]';
+                        break;
+                    case 'On Memo':
+                        statusLabel = 'On Memo';
+                        statusColor = 'bg-[#FFEB3B]';
+                        break;
+                    case 'Sold':
+                        statusLabel = 'Sold';
+                        statusColor = 'bg-[#FF0000]';
+                        break;
+                    default:
+                        statusLabel = 'Unknown';
+                        statusColor = 'bg-[#D5D7DA]';
+                }
+                return <div className="flex items-center gap-[10px] border border-[#D5D7DA] rounded-[6px] px-[10px] py-[5px] max-w-[110px]">
+                    <span className={`block w-[10px] h-[10px] rounded-full ${statusColor}`}></span>
+                    <span className="text-[14px] font-medium text-[#0A112F]">{statusLabel}</span>
+                </div>
+            },
+            sortable: true
+        },
+        // {
+        //     label: '',
+        //     key: 'actions',
+        //     type: 'action',
+        //     render: (item) => {
+        //         return <td className="tbl-action">
+        //             <div className="flex items-center justify-end gap-[10px]">
+        //                 <button onClick={() => handleActionClick('view', item)}>
+        //                     <img src={button} alt="View" />
+        //                 </button>
+        //                 <button onClick={() => handleActionClick('delete', item)}>
+        //                     <img src={button1} alt="Delete" />
+        //                 </button>
+        //                 <button className="mr-[5px]" onClick={() => handleActionClick('edit', item)}>
+        //                     <img src={button2} alt="Edit" />
+        //                 </button>
+        //             </div>
+        //         </td>
+        //     }
+        // },
+    ];
+
+    const fetchStocks = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        setLoading(true);
+        try {
+            const response = await axiosClient.post('/stock/all-stocks',
+                {
+                    page: page,
+                    limit: 5,
+                    search: searchQuery,
+                    sortingKey: sortKey,
+                    sortingOrder: sortDirection
+                },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                setStockData(response.data.data.docs);
+                setTotalPages(response.data.data.totalPages);
+                setCurrentPage(page);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            setLoading(false);
+            isFetchingRef.current = false;
+        }
+    };
+
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        console.log({ query });
+    };
+
+    const handleFilter = (data) => {
+        console.log({ ...data, range })
+        setIsOpen(q => !q)
+    }
+
+    const handleSort = (key) => {
+        const direction = sortConfig.key === key && sortConfig.direction === 'Asc' ? 'Desc' : 'Asc';
+        setSortConfig({ key, direction });
+        fetchStocks(1, searchQuery, key, direction);
+    };
+
+    return (
+        <div className='absolute top-0 left-0 w-full h-full bg-white p-[30px] pt-[55px] rounded-[12px] z-10'>
+            <span className='absolute top-[10px] right-[15px] cursor-pointer text-red-500 text-[25px]' tabIndex={0} role='button' onClick={() => setIsOpenSelectStock(q => !q)}>X</span>
+            <div>
+                <Search
+                    placeholder="Search by: diamond ID, diamond name, etc..."
+                    searchQuery={searchQuery}
+                    onSearch={handleSearch}
+                    isShowButton={false}
+                    handleFilterClick={() => setIsOpen(q => !q)}
+                />
+                {isOpen && <FilterPopup range={range} setRange={setRange} onSubmit={handleFilter} />}
+                <div className="my-[30px] stock-table">
+
+                    {
+                        stockData?.length === 0
+                            ? (
+                                <NoDataFound message="Oops! No stocks found." />
+                            ) : (
+                                <Table
+                                    columns={columns.map(column => ({
+                                        ...column,
+                                        label: (
+                                            <div
+                                                className="flex items-center cursor-pointer gap-[5px]"
+                                                onClick={() => column.sortable && handleSort(column.key)}
+                                            >
+                                                {column.label}
+                                                {column.sortable && sortConfig.key === column.key && (
+                                                    <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
+                                                )}
+                                            </div>
+                                        ),
+                                    }))}
+                                    data={stockData}
+                                    tableClass="stock-table"
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onPageChange={setCurrentPage}
+                                // onActionClick={handleActionClick}
+                                />
+                            )
+                    }
                 </div>
             </div>
         </div>

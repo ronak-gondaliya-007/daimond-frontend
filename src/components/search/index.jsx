@@ -13,7 +13,8 @@ const Search = ({
     loading,
     showButtons = true,
     filterComponent = <></>,
-    handleFilterClick = () => { }
+    handleFilterClick = () => { },
+    isShowButton = true
 }) => {
     const [query, setQuery] = useState(searchQuery);
     const timeoutRef = useRef(null);
@@ -55,15 +56,18 @@ const Search = ({
                     {filterComponent}
                 </div>
             </div>
-            <div className="w-[250px] h-full">
-                <button
-                    className='w-full h-full py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
-                    onClick={addBtn.onClick}
-                >
-                    {addBtn.title}
-                </button>
-                {loading && <span className="ml-[10px] text-[16px]">Searching...</span>}
-            </div>
+            {
+                isShowButton &&
+                <div className="w-[250px] h-full">
+                    <button
+                        className='w-full h-full py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                        onClick={addBtn.onClick}
+                    >
+                        {addBtn.title}
+                    </button>
+                    {loading && <span className="ml-[10px] text-[16px]">Searching...</span>}
+                </div>
+            }
         </div>
     );
 };
