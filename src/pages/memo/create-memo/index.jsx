@@ -591,19 +591,28 @@ function SelectStock({ setIsOpenSelectStock }) {
     };
 
     const handleSelectAll = (event) => {
+
+        const item = stockData.map(({ _id }) => _id);
+        let selectedItem = selectItem
+
         if (event.target.checked) {
-            setSelectItem(stockData.map(({ _id }) => _id))
+            selectedItem = [...selectedItem, ...item];
         } else {
-            setSelectItem([])
+            selectedItem = selectItem.filter(e => !item.includes(e));
         }
+
+        selectedItem = [...new Set(selectedItem)];
+        setSelectItem(selectedItem);
     }
 
     const handleCheck = (event, { _id }) => {
+        let item = selectItem
         if (event.target.checked) {
-            setSelectItem([...selectItem, _id])
+            item = [...item, _id]
         } else {
-            setSelectItem(selectItem.filter((id) => id !== _id))
+            item = item.filter((id) => id !== _id)
         }
+        setSelectItem(item)
     }
 
     return (
@@ -654,7 +663,6 @@ function SelectStock({ setIsOpenSelectStock }) {
                                     onPageChange={setCurrentPage}
                                     handleSelectAll={handleSelectAll}
                                     handleCheck={handleCheck}
-                                    isAllSelected={stockData.length === selectItem.length}
                                     selectItem={selectItem}
                                 />
                             )

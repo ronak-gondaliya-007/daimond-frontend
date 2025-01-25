@@ -4,15 +4,14 @@ import Pagination from '../pagination';
 
 const Table = ({
     columns,
-    data,
+    data = [],
     tableClass,
     currentPage,
     totalPages,
     onPageChange,
     handleSelectAll,
-    handleCheck,
-    isAllSelected = false,
-    selectItem
+    handleCheck = () => { },
+    selectItem = []
 }) => {
     // Helper to format phone numbers
     const formatPhoneNumber = (phone) => {
@@ -24,6 +23,14 @@ const Table = ({
     const getValueOrPlaceholder = (value) => {
         return value ? value : "--";
     };
+
+    const allPresent = () => {
+        if (data.length === 0 || selectItem.length === 0) return false;
+
+        const items = data.map(({ _id }) => _id)
+        const isCheck = items.every(item => selectItem.includes(item));
+        return isCheck
+    }
 
     return (
         <div className={`table-container ${tableClass}`}>
@@ -40,7 +47,7 @@ const Table = ({
                                     `}
                                 >
                                     <div className={`custom-checkbox ${!isCheckbox ? 'flex item-center' : ''}`}>
-                                        {isCheckbox && <input type="checkbox" className='checkmark' checked={isAllSelected} onChange={handleSelectAll} />}                                        <span className='text-[14px] font-medium text-[#0A112F]'>{label}</span>
+                                        {isCheckbox && <input type="checkbox" className='checkmark' checked={allPresent()} onChange={handleSelectAll} />}                                        <span className='text-[14px] font-medium text-[#0A112F]'>{label}</span>
                                     </div>
                                 </th>
                             ))
