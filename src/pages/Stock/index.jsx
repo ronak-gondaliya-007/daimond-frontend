@@ -9,7 +9,7 @@ import StockForm from "./Form";
 import Search from "components/search";
 import Table from "components/table";
 import DetailPopup from 'components/popup/Detail';
-import DeletePopup from "components/popup/delete";
+import DeletePopup from "components/popup/Delete";
 import Loader from "components/loader";
 import NoDataFound from "components/no-data-found";
 import ImportPopup from "components/popup/Import";
@@ -412,7 +412,6 @@ const Stock = () => {
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}
-                        onActionClick={handleActionClick}
                     />
                 )}
             </div>

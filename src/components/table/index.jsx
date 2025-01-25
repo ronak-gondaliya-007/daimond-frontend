@@ -8,7 +8,11 @@ const Table = ({
     tableClass,
     currentPage,
     totalPages,
-    onPageChange
+    onPageChange,
+    handleSelectAll,
+    handleCheck,
+    isAllSelected = false,
+    selectItem
 }) => {
     // Helper to format phone numbers
     const formatPhoneNumber = (phone) => {
@@ -36,8 +40,7 @@ const Table = ({
                                     `}
                                 >
                                     <div className={`custom-checkbox ${!isCheckbox ? 'flex item-center' : ''}`}>
-                                        {isCheckbox && <input type="checkbox" className='checkmark' />}
-                                        <span className='text-[14px] font-medium text-[#0A112F]'>{label}</span>
+                                        {isCheckbox && <input type="checkbox" className='checkmark' checked={isAllSelected} onChange={handleSelectAll} />}                                        <span className='text-[14px] font-medium text-[#0A112F]'>{label}</span>
                                     </div>
                                 </th>
                             ))
@@ -54,8 +57,7 @@ const Table = ({
                                             case "checkbox": {
                                                 return <td className='custom-checkbox w-[80px] min-w-[80px]'>
                                                     <div className='flex items-center justify-center'>
-                                                        <input type="checkbox" className='checkmark' />
-                                                    </div>
+                                                        <input type="checkbox" className='checkmark' checked={selectItem?.includes(item._id)} onChange={(e) => handleCheck(e, item)} />                                                    </div>
                                                 </td>;
                                             }
                                             case "custom": {

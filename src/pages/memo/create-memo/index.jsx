@@ -12,6 +12,7 @@ import Search from 'components/search';
 import { FilterPopup } from 'pages/Stock';
 import NoDataFound from 'components/no-data-found';
 import { getDate, getTime } from 'utils/dateFormat';
+import DetailPopup from 'components/popup/Detail';
 
 const defaultRow = {
     _id: "",
@@ -419,7 +420,41 @@ function SelectStock({ setIsOpenSelectStock }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false)
     const [range, setRange] = useState([1, 100]);
+    const [selectedItem, setSelectedItem] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
+    const [selectItem, setSelectItem] = useState([])
+
+    const handleActionClick = async (action, item) => {
+        switch (action) {
+            case 'view':
+                fetchStockDetail(action, item);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const fetchStockDetail = async (action, item) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        setLoading(true);
+        try {
+            const response = await axiosClient.post(`/stock/detail`,
+                { stockId: item._id },
+                { headers: { 'Content-Type': 'application/json' } });
+
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                setSelectedItem({ action, item: response.data.data });
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            setLoading(false);
+            isFetchingRef.current = false;
+        }
+    }
 
     const columns = [
         {
@@ -474,72 +509,35 @@ function SelectStock({ setIsOpenSelectStock }) {
             sortable: true
         },
         {
-            label: 'Polish',
-            key: 'polish',
+            label: 'Price Per Carat',
+            key: 'pricePerCarat',
             sortable: true
         },
         {
-            label: 'Date',
-            key: 'createdAt',
-            type: 'custom',
-            render: ({ createdAt }) => {
-                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)} {getTime(createdAt)}</span>
-            },
+            label: 'Price',
+            key: 'price',
             sortable: true
         },
         {
-            label: 'Status',
-            key: 'status',
-            type: 'custom',
-            render: ({ status }) => {
-                let statusLabel = '';
-                let statusColor = '';
-
-                switch (status) {
-                    case 'Available':
-                        statusLabel = 'Available';
-                        statusColor = 'bg-[#00C241]';
-                        break;
-                    case 'On Memo':
-                        statusLabel = 'On Memo';
-                        statusColor = 'bg-[#FFEB3B]';
-                        break;
-                    case 'Sold':
-                        statusLabel = 'Sold';
-                        statusColor = 'bg-[#FF0000]';
-                        break;
-                    default:
-                        statusLabel = 'Unknown';
-                        statusColor = 'bg-[#D5D7DA]';
-                }
-                return <div className="flex items-center gap-[10px] border border-[#D5D7DA] rounded-[6px] px-[10px] py-[5px] max-w-[110px]">
-                    <span className={`block w-[10px] h-[10px] rounded-full ${statusColor}`}></span>
-                    <span className="text-[14px] font-medium text-[#0A112F]">{statusLabel}</span>
-                </div>
-            },
-            sortable: true
-        },
-        // {
-        //     label: '',
-        //     key: 'actions',
-        //     type: 'action',
-        //     render: (item) => {
-        //         return <td className="tbl-action">
-        //             <div className="flex items-center justify-end gap-[10px]">
-        //                 <button onClick={() => handleActionClick('view', item)}>
-        //                     <img src={button} alt="View" />
-        //                 </button>
-        //                 <button onClick={() => handleActionClick('delete', item)}>
-        //                     <img src={button1} alt="Delete" />
-        //                 </button>
-        //                 <button className="mr-[5px]" onClick={() => handleActionClick('edit', item)}>
-        //                     <img src={button2} alt="Edit" />
-        //                 </button>
-        //             </div>
-        //         </td>
-        //     }
-        // },
+            label: '',
+            key: 'actions',
+            type: 'action',
+            render: (item) => {
+                return <td className="tbl-action">
+                    <div className="flex items-center justify-center gap-[10px]">
+                        <button onClick={() => handleActionClick('view', item)}>
+                            <img src={button} alt="View" />
+                        </button>
+                    </div>
+                </td>
+            }
+        }
     ];
+
+    useEffect(() => {
+        if (isFetchingRef.current) return;
+        fetchStocks(currentPage, searchQuery, sortConfig.key, sortConfig.direction);
+    }, [currentPage, searchQuery, sortConfig]);
 
     const fetchStocks = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
         if (isFetchingRef.current) return;
@@ -547,7 +545,7 @@ function SelectStock({ setIsOpenSelectStock }) {
 
         setLoading(true);
         try {
-            const response = await axiosClient.post('/stock/all-stocks',
+            const response = await axiosClient.post('/memo/all-stocks',
                 {
                     page: page,
                     limit: 5,
@@ -588,15 +586,42 @@ function SelectStock({ setIsOpenSelectStock }) {
         fetchStocks(1, searchQuery, key, direction);
     };
 
+    const handleClosePopup = () => {
+        setSelectedItem(null);
+    };
+
+    const handleSelectAll = (event) => {
+        if (event.target.checked) {
+            setSelectItem(stockData.map(({ _id }) => _id))
+        } else {
+            setSelectItem([])
+        }
+    }
+
+    const handleCheck = (event, { _id }) => {
+        if (event.target.checked) {
+            setSelectItem([...selectItem, _id])
+        } else {
+            setSelectItem(selectItem.filter((id) => id !== _id))
+        }
+    }
+
     return (
-        <div className='absolute top-0 left-0 w-full h-full bg-white p-[30px] pt-[55px] rounded-[12px] z-10'>
-            <span className='absolute top-[10px] right-[15px] cursor-pointer text-red-500 text-[25px]' tabIndex={0} role='button' onClick={() => setIsOpenSelectStock(q => !q)}>X</span>
+        <div className='absolute top-0 left-0 w-full h-full bg-white p-[30px] pt-[35px] rounded-[12px] z-10'>
+            <div className='w-full flex justify-between items-center mb-[20px]'>
+                <h6 className='text-[16px]'>Current Stocks</h6>
+            </div>
             <div>
                 <Search
                     placeholder="Search by: diamond ID, diamond name, etc..."
                     searchQuery={searchQuery}
                     onSearch={handleSearch}
-                    isShowButton={false}
+                    addBtn={{
+                        title: 'Add Item',
+                        onClick: () => console.log('Add Item'),
+                        isCancel: true,
+                        onCancel: () => setIsOpenSelectStock(q => !q),
+                    }}
                     handleFilterClick={() => setIsOpen(q => !q)}
                 />
                 {isOpen && <FilterPopup range={range} setRange={setRange} onSubmit={handleFilter} />}
@@ -627,12 +652,17 @@ function SelectStock({ setIsOpenSelectStock }) {
                                     currentPage={currentPage}
                                     totalPages={totalPages}
                                     onPageChange={setCurrentPage}
-                                // onActionClick={handleActionClick}
+                                    handleSelectAll={handleSelectAll}
+                                    handleCheck={handleCheck}
+                                    isAllSelected={stockData.length === selectItem.length}
+                                    selectItem={selectItem}
                                 />
                             )
                     }
                 </div>
             </div>
+
+            {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}
         </div>
     )
 }

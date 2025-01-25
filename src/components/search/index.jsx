@@ -6,7 +6,9 @@ const Search = ({
     placeholder = 'Search...',
     addBtn = {
         title: '+ Add New',
-        onClick: () => { }
+        onClick: () => { },
+        isCancel: false,
+        onCancel: () => { },
     },
     onSearch,
     searchQuery,
@@ -58,13 +60,22 @@ const Search = ({
             </div>
             {
                 isShowButton &&
-                <div className="w-[250px] h-full">
+                <div className="w-[250px] flex gap-[10px] h-full">
                     <button
-                        className='w-full h-full py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                        className='w-full h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
                         onClick={addBtn.onClick}
                     >
                         {addBtn.title}
                     </button>
+                    {
+                        addBtn.isCancel &&
+                        <button
+                            className='w-full h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                            onClick={addBtn.onCancel}
+                        >
+                            {"Cancel"}
+                        </button>
+                    }
                     {loading && <span className="ml-[10px] text-[16px]">Searching...</span>}
                 </div>
             }
