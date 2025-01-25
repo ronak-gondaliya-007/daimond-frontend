@@ -24,6 +24,7 @@ import InputField from "components/FormFields/InputField";
 import { useForm } from "react-hook-form";
 import { stockFilterForm } from "static/form-data/stock-form";
 import RangeSlider from 'react-range-slider-input';
+import RangeInputField from "components/FormFields/RangeInputField";
 
 const Stock = () => {
     const navigate = useNavigate();
@@ -105,6 +106,38 @@ const Stock = () => {
             type: 'custom',
             render: ({ createdAt }) => {
                 return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)} {getTime(createdAt)}</span>
+            },
+            sortable: true
+        },
+        {
+            label: 'Status',
+            key: 'status',
+            type: 'custom',
+            render: ({ status }) => {
+                let statusLabel = '';
+                let statusColor = '';
+
+                switch (status) {
+                    case 'Available':
+                        statusLabel = 'Available';
+                        statusColor = 'bg-[#00C241]';
+                        break;
+                    case 'On Memo':
+                        statusLabel = 'On Memo';
+                        statusColor = 'bg-[#FFEB3B]';
+                        break;
+                    case 'Sold':
+                        statusLabel = 'Sold';
+                        statusColor = 'bg-[#FF0000]';
+                        break;
+                    default:
+                        statusLabel = 'Unknown';
+                        statusColor = 'bg-[#D5D7DA]';
+                }
+                return <div className="flex items-center gap-[10px] border border-[#D5D7DA] rounded-[6px] px-[10px] py-[5px] max-w-[110px]">
+                    <span className={`block w-[10px] h-[10px] rounded-full ${statusColor}`}></span>
+                    <span className="text-[14px] font-medium text-[#0A112F]">{statusLabel}</span>
+                </div>
             },
             sortable: true
         },
@@ -353,10 +386,8 @@ const Stock = () => {
                     onClick: () => navigate('/stock/add')
                 }}
                 handleFilterClick={() => setIsOpen(q => !q)}
-                filterComponent={
-                    isOpen ? <FilterPopup range={range} setRange={setRange} onSubmit={handleFilter} /> : <></>
-                }
             />
+            {isOpen ? <FilterPopup range={range} setRange={setRange} onSubmit={handleFilter} /> : <></>}
             <div className="my-[30px] stock-table">
                 {stockData?.length === 0 ? (
                     <NoDataFound message="Oops! No stocks found." />
@@ -404,7 +435,6 @@ const Row = ({ row, getComponent }) => (
 )
 
 const FilterPopup = ({ range, setRange, onSubmit }) => {
-
     const { register, handleSubmit, formState: { errors }, control } = useForm({
         defaultValues: {
             location: { value: "All", label: "All" },
@@ -416,18 +446,17 @@ const FilterPopup = ({ range, setRange, onSubmit }) => {
     const getComponent = (field) => {
         switch (field.type) {
             case "ROW":
-                return <Row row={field} getComponent={getComponent} />
+                return <Row row={field} getComponent={getComponent} />;
 
-            case "INPUT":
+            case "RANGE_INPUT":
                 return (
-                    <InputField
+                    <RangeInputField
                         {...field}
                         readOnly={field.readOnly}
                         register={register}
                         errors={errors}
                     />
-                )
-
+                );
 
             case "SELECT":
                 return (
@@ -436,40 +465,73 @@ const FilterPopup = ({ range, setRange, onSubmit }) => {
                         errors={errors}
                         control={control}
                     />
-                )
+                );
 
             default:
-                return <></>
+                return <></>;
         }
-    }
+    };
 
     return (
-        <div className="absolute top-[58px] right-[-1px] z-10 max-w-[500px] w-full max-h-max bg-white border border-[#F1F2F4] rounded-[3px] p-[10px]">
-            <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-                {
-                    stockFilterForm.map((field) => (
-                        getComponent(field)
-                    ))
-                }
+        <div className="relative">
+            <div className="flex items-center gap-[5px] cursor-pointer">
+                <div className="mt-[20px] top-[58px] right-[-1px] z-10 w-full max-h-max bg-white border border-[#F1F2F4] rounded-[10px] p-[10px]">
+                    <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
 
-                <div className='w-full flex flex-col'>
-                    <RangeSlider
-                        value={range}
-                        step={1}
-                        min={20}
-                        max={80}
-                        onInput={setRange}
-                    />
-                    <div className="flex items-center justify-between mt-3">
-                        <span>Min: {range[0]}</span>
-                        <span>Max: {range[1]}</span>
-                    </div>
+                        {/* Filters in a row */}
+                        <div className="flex flex-row gap-4">
+                            {/* Location Filter */}
+                            <div className="flex-1">
+                                {getComponent({ type: 'SELECT', name: 'location', label: 'Location' })}
+                            </div>
+
+                            {/* Shape Filter */}
+                            <div className="flex-1">
+                                {getComponent({ type: 'SELECT', name: 'shape', label: 'Shape' })}
+                            </div>
+
+                            {/* Status Filter */}
+                            <div className="flex-1">
+                                {getComponent({ type: 'SELECT', name: 'status', label: 'Status' })}
+                            </div>
+                           
+                            {/* Range Filter */}
+                            <div className="flex-1">
+                                {getComponent({ type: 'RANGE_INPUT', name: 'carat', label: 'Carat' })}
+                            </div>
+                        </div>
+
+                        {/* Range Slider */}
+                        <div className="max-w-[500px] w-full flex flex-col mt-4">
+                            <RangeSlider
+                                value={range}
+                                step={1}
+                                min={20}
+                                max={80}
+                                onInput={setRange}
+                            />
+                            <div className="flex items-center justify-between mt-3">
+                                <span>Min: {range[0]}</span>
+                                <span>Max: {range[1]}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-[20px]">
+                            {/* Reset Button */}
+                            <button className='text-[16px] px-[40px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] mt-3'>
+                                Reset
+                            </button>
+
+                            {/* Submit Button */}
+                            <button className='text-[16px] px-[40px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] mt-3'>
+                                Submit
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                <button className='text-[16px] px-[40px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] mt-3'>Submit</button>
-            </form>
+            </div>
         </div>
-    )
-}
+    );
+};
 
 export default Stock;

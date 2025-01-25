@@ -430,4 +430,19 @@ export const stockFilterForm = [
             },
         ],
     },
+    {
+        id: 105,
+        type: "ROW",
+        childrens: [
+            {
+                id: 106,
+                name: "carat",
+                label: "Carat",
+                type: "INPUT",
+                placeholder: "Enter Range",
+                isSearchable: true,
+                formGroup: "!mb-5"
+            },
+        ],
+    },
 ]

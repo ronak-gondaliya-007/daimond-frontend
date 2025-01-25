@@ -1,69 +1,50 @@
 import PhoneInputField from 'components/FormFields/PhoneInputField/PhoneInputField';
 import SelectField from 'components/FormFields/SelectField';
 import Table from 'components/table';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getCurrency } from 'utils';
 import { button, button1, button2, writeIcon, wrongIcon } from "assets/utils/images";
+import axiosClient from 'api/AxiosClient';
+import { toast } from 'react-toastify';
 
-// const memoItems = [
-//     {
-//         _id: "101",
-//         refNo: "123456",
-//         description: "1.5",
-//         pcs: "10",
-//         carats: "1.5",
-//         pricePerCarat: "1000",
-//         returnInCarats: "1.5",
-//         soldInCarats: "1.5",
-//         isEdit: false
-//     },
-//     {
-//         _id: "102",
-//         refNo: "123457",
-//         description: "1.5",
-//         pcs: "10",
-//         carats: "1.5",
-//         pricePerCarat: "1000",
-//         returnInCarats: "1.5",
-//         soldInCarats: "1.5",
-//         isEdit: false
-//     },
-//     {
-//         _id: "103",
-//         refNo: "123458",
-//         description: "1.5",
-//         pcs: "10",
-//         carats: "1.5",
-//         pricePerCarat: "1000",
-//         returnInCarats: "1.5",
-//         soldInCarats: "1.5",
-//         isEdit: false
-//     },
-// ]
-
+const defaultRow = {
+    _id: "",
+    refNo: "",
+    description: "",
+    pcs: "",
+    carats: "",
+    pricePerCarat: "",
+    returnInCarats: "",
+    soldInCarats: "",
+    isEdit: true
+};
 
 const CreateMemo = () => {
     const navigate = useNavigate();
 
-    const { handleSubmit, control, formState: { errors } } = useForm({
-        defaultValues: {}
-    });
-
-    const defaultRow = {
-        _id: "101",
-        refNo: "",
-        description: "",
-        pcs: "",
-        carats: "",
-        pricePerCarat: "",
-        returnInCarats: "",
-        soldInCarats: "",
-        isEdit: true
-    };
+    const { handleSubmit, control, formState: { errors }, watch, setValue } = useForm({ defaultValues: {} });
 
     const [rowData, setRowData] = useState([]);
+    const [customerOptions, setCustomerOptions] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const isFetchingRef = useRef(false);
+
+    const selectedCustomer = watch("customerName");
+
+    useEffect(() => {
+        if (isFetchingRef.current) return;
+        handleCustomerList();
+        // if (params.stockId) fetchStockDetail(params.stockId);
+    }, []);
+
+    useEffect(() => {
+        if (selectedCustomer) {
+            setValue('contactInfo', selectedCustomer?.phone);
+        }
+    }, [selectedCustomer, setValue]);
 
     useEffect(() => {
         if (rowData.length === 0) {
@@ -71,7 +52,36 @@ const CreateMemo = () => {
         }
     }, [rowData]);
 
-    function handleChange(e, id) {
+    const handleCustomerList = async () => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        try {
+            const response = await axiosClient.get('/memo/all-customer', {
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (response.status === 200) {
+                const customerOptions = response?.data?.data?.map(customer => ({
+                    label: customer.name,
+                    value: customer._id,
+                    phone: customer.phone
+                }));
+
+                setCustomerOptions(customerOptions);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            isFetchingRef.current = false;
+        }
+    };
+
+    const handleStockTable = () => {
+        navigate('/stock');
+    };
+
+    async function handleChange(e, id) {
         const { name, value } = e.target;
 
         const updatedData = rowData.map(item => item._id === id ? { ...item, [name]: value } : item);
@@ -137,7 +147,7 @@ const CreateMemo = () => {
                                 ? <input
                                     type="text"
                                     name="refNo"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={refNo}
                                     onChange={(e) => handleChange(e, _id)}
                                 />
@@ -159,7 +169,7 @@ const CreateMemo = () => {
                                 ? <input
                                     type="text"
                                     name="description"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={description}
                                     onChange={(e) => handleChange(e, _id)}
                                 />
@@ -181,7 +191,7 @@ const CreateMemo = () => {
                                 ? <input
                                     type="text"
                                     name="pcs"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={pcs}
                                     onChange={(e) => handleChange(e, _id)}
                                 />
@@ -203,7 +213,7 @@ const CreateMemo = () => {
                                 ? <input
                                     type="text"
                                     name="carats"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={carats}
                                     onChange={(e) => handleChange(e, _id)}
                                 />
@@ -225,7 +235,7 @@ const CreateMemo = () => {
                                 ? <input
                                     type="text"
                                     name="pricePerCarat"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={pricePerCarat}
                                     onChange={(e) => handleChange(e, _id)}
                                 />
@@ -247,7 +257,7 @@ const CreateMemo = () => {
                                 ? <input
                                     type="text"
                                     name="returnInCarats"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={returnInCarats}
                                     onChange={(e) => handleChange(e, _id)}
                                 />
@@ -269,7 +279,7 @@ const CreateMemo = () => {
                                 ? <input
                                     type="text"
                                     name="soldInCarats"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[12px] px-[10px] py-[10px]"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={soldInCarats}
                                     onChange={(e) => handleChange(e, _id)}
                                 />
@@ -343,6 +353,7 @@ const CreateMemo = () => {
                             }}
                             errors={errors}
                             control={control}
+                            options={customerOptions}
                         />
                         <PhoneInputField
                             {...{
@@ -360,8 +371,19 @@ const CreateMemo = () => {
 
                 <div>
                     <div className='w-full block md:flex items-center justify-between'>
-                        <h2>Memo Conversion </h2>
-                        <button className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none' onClick={handleAddItemsClick}>Add Items</button>
+                        <h2>Memo Conversion</h2> 
+                        <div className='max-w-[40%] flex gap-[20px]'>
+                            <button
+                                className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none'
+                                onClick={handleStockTable}>
+                                Select Stock
+                            </button>
+                            <button
+                                className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none'
+                                onClick={handleAddItemsClick}>
+                                Add Items
+                            </button>
+                        </div>
                     </div>
 
                     <div className="my-[30px] stock-table">
