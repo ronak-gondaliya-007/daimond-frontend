@@ -12,6 +12,7 @@ const SellInvoice = lazy(() => import("../pages/Sell-Invoice"));
 const SellInvoiceAdd = lazy(() => import("../pages/Sell-Invoice/Form"));
 const Memo = lazy(() => import("../pages/Memo"));
 const CreateMemo = lazy(() => import("../pages/Memo/Create-Memo"));
+const ManageInvoices = lazy(() => import("../pages/sell-invoice/manage-invoice"));
 const Stock = lazy(() => import("../pages/Stock"));
 const StockForm = lazy(() => import("../pages/Stock/Form"));
 const Customer = lazy(() => import("../pages/Customer"));
@@ -64,6 +65,13 @@ export const privateRoutes = [
         title: "Sell / Invoice - Add",
         layout: MAIN,
         breadcrumb: ["Management", "Sell / Invoice", "Add"]
+    },
+    {
+        path: '/sell-invoice/manage-invoices',
+        element: ManageInvoices,
+        title: "Sell / Manage invoices",
+        layout: MAIN,
+        breadcrumb: ["Management", "Manage Invoices"]
     },
 
     // --> Management
