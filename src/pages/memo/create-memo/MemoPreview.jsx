@@ -40,7 +40,7 @@ const MemoPreview = ({
     return (
         <div id='element-to-print' className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white  rounded-lg shadow-lg max-w-[1024px] w-full max-h-[90vh] overflow-auto">
-                <div className='mt-[5px] pr-[20px] flex justify-end gap-2'>
+                <div className='mt-[10px] pr-[20px] flex justify-end gap-2'>
                     <button
                         type='button'
                         className='px-8 py-4 bg-[#18191C] rounded-[4px] text-[14px] font-semibold text-[#F1F2F4]'
@@ -79,11 +79,11 @@ const MemoPreview = ({
                                     <td colSpan={2} className='text-center text-[18px] font-semibold'>Memo</td>
                                 </tr>
                                 <tr className='border border-black'>
-                                    <td className='text-center text-[12px] border border-black'>Date</td>
+                                    <td className='text-center text-[12px] border border-black border-t-0'>Date</td>
                                     <td className='text-center text-[12px]'>Memo #</td>
                                 </tr>
-                                <tr className='border border-black'>
-                                    <td className='text-center text-[12px] border border-black'>12/2/2222</td>
+                                <tr className='border border-black border-t-0'>
+                                    <td className='text-center text-[12px] border border-black border-t-0'>12/2/2222</td>
                                     <td className='text-center text-[12px]'>333</td>
                                 </tr>
                             </table>
@@ -92,7 +92,7 @@ const MemoPreview = ({
 
                     <div className='mt-[40px] text-[12px]'>
                         <table className='w-[370px] h-[130px] border border-black'>
-                            <tr className='border border-black'>
+                            <tr className='border border-black border-x-0 border-t-0'>
                                 <td className='p-1 pl-[8px]'>Name / Address</td>
                             </tr>
                             <tr className='h-full'></tr>
@@ -106,7 +106,7 @@ const MemoPreview = ({
                                     <td className='text-center w-[40px]'>No</td>
                                     <td className='text-center'>RefNo</td>
                                     <td className='text-center'>Description</td>
-                                    <td className='text-center'>PCS.</td>
+                                    {/* <td className='text-center'>PCS.</td> */}
                                     <td className='text-center'>Carats</td>
                                     <td className='text-center'>Price Per Carat</td>
                                     <td className='text-center'>Return In Carats</td>
@@ -117,12 +117,12 @@ const MemoPreview = ({
                             </thead>
                             <tbody>
                                 {
-                                    rowData.length > 0 && rowData.map(({ no, refNo, description, pcs, carats, pricePerCarat, returnInCarats, soldInCarats, amount, remarks }) => (
+                                    rowData.length > 0 && rowData.map(({ no, refNo, description, carats, pricePerCarat, returnInCarats, soldInCarats, amount, remarks }) => (
                                         <tr className='h-[70px] text-[12px] border border-[#E9EAEB] border-x-0 border-t-0'>
                                             <td className='text-center'>{no}</td>
                                             <td className='text-center'>{refNo}</td>
                                             <td className='text-center'>{description}</td>
-                                            <td className='text-center'>{pcs}</td>
+                                            {/* <td className='text-center'>{pcs}</td> */}
                                             <td className='text-center'>{carats}</td>
                                             <td className='text-center font-semibold'>{getCurrency(pricePerCarat)}</td>
                                             <td className='text-center font-semibold'>{getCurrency(returnInCarats)}</td>
@@ -134,7 +134,7 @@ const MemoPreview = ({
                                 }
                                 <tr className='h-[70px] text-[12px]'>
                                     <td colspan="3" className='pl-[8px]'>Total</td>
-                                    <td colspan="1" className='text-center'>{getPctTotal()}</td>
+                                    {/* <td colspan="1" className='text-center'>{getPctTotal()}</td> */}
                                     <td colspan="4"></td>
                                     <td colspan="2" className='pl-[8px] border border-[#E9EAEB] border-x-0 border-t-0'>{getCurrency(getAmountTotal())}</td>
                                 </tr>
