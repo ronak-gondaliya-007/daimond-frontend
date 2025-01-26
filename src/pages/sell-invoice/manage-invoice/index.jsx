@@ -10,25 +10,25 @@ const ManageInvoices = () => {
 
             <div className='relative flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
                 <div className='w-full flex justify-between items-center mb-[20px] border-b border-[#D0D0D0] pb-[20px]'>
-                    <h6 className='text-[16px]'>Invoice #12345</h6>
+                    <h6 className='text-[20px]'>Invoice #12345</h6>
 
                     <div className='flex items-center gap-[12px]'>
-                        <button className='text-[12px] text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
+                        <button className='text-[16px] text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
                             Mark as Paid
                         </button>
-                        <button className='text-[12px] text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
+                        <button className='text-[16px] text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
                             Edit Invoice
                         </button>
-                        <button className='text-[12px] text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
+                        <button className='text-[16px] text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
                             Email Invoice
                         </button>
-                        <button className='text-[12px] text-white px-[12px] py-[8px] bg-[#219653] rounded-[6px]'>
+                        <button className='text-[16px] text-white px-[12px] py-[8px] bg-[#219653] rounded-[6px]'>
                             Download
                         </button>
                     </div>
                 </div>
 
-                <div className='flex flex-col text-[11px] border-b border-[#D0D0D0] py-[20px]'>
+                <div className='flex flex-col text-[16px] border-b border-[#D0D0D0] py-[20px]'>
                     <p className='font-medium mb-[14px]'>Basic Details</p>
                     <div className='flex justify-between flex-wrap'>
                         <div className='flex flex-col basis-[120px] mb-[14px]'>
@@ -67,10 +67,10 @@ const ManageInvoices = () => {
                 </div>
 
                 <div className='mt-[20px]'>
-                    <p className='text-[14px] font-medium'>Payment Details</p>
+                    <p className='text-[16px] font-medium'>Payment Details</p>
                 </div>
                 <div className='mt-[20px]'>
-                    <p className='text-[14px] font-medium'>Outstanding Amount</p>
+                    <p className='text-[16px] font-medium'>Outstanding Amount</p>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@ function CustomTable() {
     return (
         <table className='w-full'>
             <thead className='h-[44px] bg-[#FAFAFA] text-[#717680] border border-[#E9EAEB] border-x-0 border-t-0'>
-                <tr className='text-[10px]'>
+                <tr className='text-[14px]'>
                     <td className='pl-[20px] w-[210px]'>Description</td>
                     <td className='text-center'>Carat</td>
                     <td className='text-center'>PCS</td>
@@ -110,7 +110,7 @@ function CustomTable() {
             <tbody>
                 {
                     table.map(({ _id, description, carat, pcs, pricePerCarat, total }) => (
-                        <tr className='h-[60px] text-[12px] border border-[#E9EAEB] border-x-0 border-t-0' key={_id}>
+                        <tr className='h-[60px] text-[14px] border border-[#E9EAEB] border-x-0 border-t-0' key={_id}>
                             <td className='pl-[20px] w-[210px]'>{description}</td>
                             <td className='text-center'>{carat}</td>
                             <td className='text-center'>{pcs}</td>
@@ -119,7 +119,7 @@ function CustomTable() {
                         </tr>
                     ))
                 }
-                <tr className='h-[60px] text-[12px] border border-[#E9EAEB] border-x-0 border-t-0'>
+                <tr className='h-[60px] text-[14px] border border-[#E9EAEB] border-x-0 border-t-0'>
                     <td colSpan={4} className='p-[20px]'>
                         <div className='flex flex-col'>
                             <span className='h-[22px]'>Subtotal</span>

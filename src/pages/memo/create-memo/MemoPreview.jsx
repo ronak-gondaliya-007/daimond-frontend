@@ -2,10 +2,34 @@ import { CompanyIconSvg, DiamondIconSvg } from 'assets/images/svg'
 import html2pdf from 'html2pdf.js';
 import { getCurrency } from 'utils';
 
-const MemoPreview = ({
-    rowData,
-    onCancel
-}) => {
+const rowData = [
+    {
+        no: 1,
+        refNo: 'REF123',
+        description: 'Sample Item',
+        pcs: 10,
+        carats: 15.5,
+        pricePerCarat: 100,
+        returnInCarats: 5,
+        soldInCarats: 10.5,
+        amount: 1050,
+        remarks: 'VVS'
+    },
+    {
+        no: 2,
+        refNo: 'REF456',
+        description: 'Another Sample Item',
+        pcs: 15,
+        carats: 18.7,
+        pricePerCarat: 150,
+        returnInCarats: 3,
+        soldInCarats: 12.8,
+        amount: 1980,
+        remarks: 'S2'
+    }
+]
+
+const MemoPreview = () => {
 
     function handlePrint() {
         const element = document.getElementById('pdf-content');
@@ -47,13 +71,6 @@ const MemoPreview = ({
                         onClick={handlePrint}
                     >
                         Download
-                    </button>
-                    <button
-                        type='button'
-                        className='px-6 py-4 bg-[#F1F2F4] rounded-[4px] text-[14px] font-semibold text-[#18191C]'
-                        onClick={onCancel}
-                    >
-                        Cancel
                     </button>
                 </div>
                 <div id="pdf-content" className={`w-full h-full p-6 sm:p-8 `}>

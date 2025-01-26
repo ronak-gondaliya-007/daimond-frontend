@@ -13,33 +13,6 @@ import MemoPreview from './MemoPreview';
 import Loader from 'components/loader';
 import InputField from 'components/FormFields/InputField';
 
-const previewData = [
-    {
-        no: 1,
-        refNo: 'REF123',
-        description: 'Sample Item',
-        pcs: 10,
-        carats: 15.5,
-        pricePerCarat: 100,
-        returnInCarats: 5,
-        soldInCarats: 10.5,
-        amount: 1050,
-        remarks: 'VVS'
-    },
-    {
-        no: 2,
-        refNo: 'REF456',
-        description: 'Another Sample Item',
-        pcs: 15,
-        carats: 18.7,
-        pricePerCarat: 150,
-        returnInCarats: 3,
-        soldInCarats: 12.8,
-        amount: 1980,
-        remarks: 'S2'
-    }
-]
-
 const CreateMemo = () => {
     const navigate = useNavigate();
     const params = useParams();
@@ -788,14 +761,6 @@ const CreateMemo = () => {
                 </div>
 
             </div>
-
-            {
-                isPreview &&
-                <MemoPreview
-                    rowData={previewData}
-                    onCancel={() => setIsPreview(q => !q)}
-                />
-            }
         </>
     )
 }
