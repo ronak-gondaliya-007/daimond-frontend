@@ -118,7 +118,7 @@ const MemoPreview = ({
                             <tbody>
                                 {
                                     rowData.length > 0 && rowData.map(({ no, refNo, description, carats, pricePerCarat, returnInCarats, soldInCarats, amount, remarks }) => (
-                                        <tr className='h-[70px] text-[12px] border border-[#E9EAEB] border-x-0 border-t-0'>
+                                        <tr key={no} className='h-[70px] text-[12px] border border-[#E9EAEB] border-x-0 border-t-0'>
                                             <td className='text-center'>{no}</td>
                                             <td className='text-center'>{refNo}</td>
                                             <td className='text-center'>{description}</td>
