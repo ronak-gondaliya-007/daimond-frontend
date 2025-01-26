@@ -562,13 +562,21 @@ const CreateMemo = () => {
                 <div className='relative flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
                     <div className='w-full flex justify-between items-center mb-[20px]'>
                         <h6 className='text-[16px]'>Customer Details</h6>
-                        <button
-                            className='w-[250px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
-                            onClick={() => navigate('/customer/add')}
-                        >
-                            + Add Customer
-                        </button>
-                        {loading && <Loader />}
+                        <div className='flex gap-[12px]'>
+                            <button
+                                className='w-[220px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                                onClick={() => navigate('/customer/add')}
+                            >
+                                + Add Customer
+                            </button>
+                            <button
+                                className='w-[150px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                                onClick={() => setIsPreview(q => !q)}
+                            >
+                                Preview
+                            </button>
+                            {loading && <Loader />}
+                        </div>
                     </div>
 
                     <form className="stock-add" onSubmit={handleSubmit(onSubmit)}>
