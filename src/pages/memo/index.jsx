@@ -11,6 +11,7 @@ import { getDate, getTime } from 'utils/dateFormat';
 import { getCurrency } from 'utils';
 import Loader from 'components/loader';
 import { toast } from 'react-toastify';
+import DeletePopup from 'components/popup/Delete';
 
 
 const Memo = () => {
@@ -19,6 +20,7 @@ const Memo = () => {
     const [memoData, setMemoData] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedItem, setSelectedItem] = useState(null);
     const [loading, setLoading] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
 
@@ -65,6 +67,40 @@ const Memo = () => {
         }
     };
 
+    const onStatusChange = (action, memoId) => {
+        if (action === 'delete') {
+            setMemoData((prevData) => prevData.filter(item => item._id !== memoId));
+        }
+    };
+
+    const handleDeleteMemo = async (action, item) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        setLoading(true);
+        try {
+            const response = await axiosClient.post(`/memo/delete`,
+                { memoId: item._id },
+                { headers: { 'Content-Type': 'application/json' } });
+
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                setSelectedItem({ action, item: response.data.data });
+                handleClosePopup();
+                onStatusChange('delete', item._id);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            setLoading(false);
+            isFetchingRef.current = false;
+        }
+    }
+
+    const handleClosePopup = () => {
+        setSelectedItem(null);
+    };
+
     const handleActionClick = async (action, item) => {
         switch (action) {
             case 'view':
@@ -73,6 +109,7 @@ const Memo = () => {
                 navigate(`/memo/edit/${item._id}`);
                 break;
             case 'delete':
+                setSelectedItem({ action, item });
                 break;
             case 'import':
                 break;
@@ -153,7 +190,7 @@ const Memo = () => {
                             <img src={button} alt="View" />
                         </button>
                         <button>
-                            <img src={button1} alt="Delete" />
+                            <img src={button1} alt="Delete" onClick={() => handleActionClick('delete', {...item, customerName: item.customer.name})}/>
                         </button>
                         <button className="mr-[5px]" onClick={() => handleActionClick('edit', item)}>
                             <img src={button2} alt="Edit" />
@@ -167,7 +204,7 @@ const Memo = () => {
     if (loading) {
         return <Loader />;
     }
-
+    
     return (
         <div className="w-full p-[20px] max-w-[100rem] mx-auto">
             <div className='w-full block md:flex items-center justify-between gap-[10px]'>
@@ -207,6 +244,8 @@ const Memo = () => {
                     onPageChange={setCurrentPage}
                 />
             </div>
+
+            {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => handleDeleteMemo(selectedItem.action, selectedItem.item)} inlineKeys={['memoNumber', 'customerName']} />)}
         </div>
     )
 };

@@ -1,12 +1,10 @@
 import { exclamationIcon } from "assets/utils/images";
 import React from "react";
 
-const DeletePopup = ({ onClose, onDelete, item }) => {
+const DeletePopup = ({ onClose, onDelete, item, inlineKeys }) => {
     const capitalizeFirstLetter = (str) => {
         return str.charAt(0).toUpperCase() + str.slice(1);
     };
-
-    const inlineKeys = ["diamondId", "diamondName"];
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -51,13 +49,13 @@ const DeletePopup = ({ onClose, onDelete, item }) => {
                 {/* Actions */}
                 <div className="flex space-x-4 justify-center">
                     <button
-                        className="px-6 py-3 bg-gradient-to-r from-gray-300 to-gray-400 text-gray-800 font-semibold rounded-lg shadow-md hover:from-gray-400 hover:to-gray-500 transition duration-300 ease-in-out transform hover:scale-105"
+                        className="px-6 py-3 bg-gray-300 text-gray-800 font-semibold rounded-lg"
                         onClick={onClose}
                     >
                         Cancel
                     </button>
                     <button
-                        className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg shadow-md hover:from-red-600 hover:to-red-700 transition duration-300 ease-in-out transform hover:scale-105"
+                        className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg shadow-md"
                         onClick={onDelete}
                     >
                         Delete

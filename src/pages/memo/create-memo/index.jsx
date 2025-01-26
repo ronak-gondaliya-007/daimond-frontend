@@ -47,6 +47,9 @@ const CreateMemo = () => {
     const { register, handleSubmit, control, formState: { errors }, watch, setValue, reset } = useForm({ defaultValues: {} });
 
     const [rowData, setRowData] = useState([]);
+    const [newRows, setNewRows] = useState([]);
+    const [updatedRows, setUpdatedRows] = useState([]);
+    const [removedRows, setRemovedRows] = useState([]);
     const [customerOptions, setCustomerOptions] = useState([]);
     const [isPreview, setIsPreview] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -120,7 +123,6 @@ const CreateMemo = () => {
             );
 
             if (response.status === 200) {
-                console.log(response.data.data);
                 const responseData = response.data.data;
                 setValue('customerName', {
                     label: responseData?.customer?.name, value: responseData?.customer?._id,
@@ -220,12 +222,42 @@ const CreateMemo = () => {
             const amount = parseFloat(carats * pricePerCarat).toFixed();
 
             updatedData[index].price = amount;
+            updatedData[index].carats = carats?.toString();
         }
         setRowData(updatedData);
         setValue('tableData', updatedData);
     }
 
     function handleDeleteClick(index) {
+        if (params.memoId) {
+            if (!rowData[index]?._id) {
+                setNewRows(prev => {
+                    const updatedRow = { ...rowData[index] };
+                    const existingIndex = prev.findIndex((row) => row.refNo === updatedRow.refNo);
+                    if (existingIndex !== -1) {
+                        const newData = [...prev];
+                        newData.splice(existingIndex, 1);
+                        return newData;
+                    }
+                    return [...prev, updatedRow];
+                });
+            } else {
+                setRemovedRows(prev => {
+                    const updatedRow = { ...rowData[index] };
+
+                    const existingIndex = prev.findIndex((row) => row._id === updatedRow._id);
+
+                    if (existingIndex !== -1) {
+                        const newData = [...prev];
+                        newData[existingIndex] = updatedRow;
+                        return newData;
+                    } else {
+                        return [...prev, updatedRow];
+                    }
+                });
+            }
+        }
+
         const updatedData = rowData.filter((item, idx) => idx !== index);
         setRowData(updatedData);
         setValue('tableData', updatedData);
@@ -246,6 +278,23 @@ const CreateMemo = () => {
             updatedData.splice(index, 1);
         } else {
             updatedData[index].isEdit = false;
+            if (params.memoId) {
+                if (!updatedData[index]?._id) {
+                    setNewRows(prev => [...prev, updatedData[index]]);
+                } else {
+                    setUpdatedRows(prev => {
+                        const updatedRow = { ...updatedData[index] };
+                        const existingIndex = prev.findIndex((row) => row._id === updatedRow._id);
+                        if (existingIndex !== -1) {
+                            const newData = [...prev];
+                            newData[existingIndex] = updatedRow;
+                            return newData;
+                        } else {
+                            return [...prev, updatedRow];
+                        }
+                    });
+                }
+            }
         }
         setRowData(updatedData);
         setValue('tableData', updatedData);
@@ -258,6 +307,23 @@ const CreateMemo = () => {
             updatedData.splice(index, 1);
         } else {
             updatedData[index].isEdit = false;
+            if (params.memoId) {
+                if (!updatedData[index]?._id) {
+                    setNewRows(prev => [...prev, updatedData[index]]);
+                } else {
+                    setUpdatedRows(prev => {
+                        const updatedRow = { ...updatedData[index] };
+                        const existingIndex = prev.findIndex((row) => row._id === updatedRow._id);
+                        if (existingIndex !== -1) {
+                            const newData = [...prev];
+                            newData[existingIndex] = updatedRow;
+                            return newData;
+                        } else {
+                            return [...prev, updatedRow];
+                        }
+                    });
+                }
+            }
         }
         setRowData(updatedData);
         setValue('tableData', updatedData);
@@ -297,7 +363,7 @@ const CreateMemo = () => {
             payload.customer = data?.customerName?.value;
             payload.items = rowData?.map((item, index) => {
                 delete item.isEdit;
-                return { ...item, srNo: index + 1 };
+                return item;
             });
 
             const response = await axiosClient.post('/memo/create',
@@ -319,22 +385,21 @@ const CreateMemo = () => {
     const updateMemoApiCall = async (data) => {
         try {
             const payload = {};
+            payload.memoId = params.memoId;
             payload.customer = data?.customerName?.value;
-            payload.items = rowData?.map((item, index) => {
-                delete item.isEdit;
-                return { ...item, srNo: index + 1 };
-            });
-            console.log(payload);
+            payload.newItems = newRows?.map((item) => { delete item.isEdit; return item; });
+            payload.updatedItems = updatedRows?.map((item) => { delete item.isEdit; return item; });
+            payload.removedItems = removedRows?.map((item) => { return item._id; });
 
-            // const response = await axiosClient.post('/memo/create',
-            //     payload,
-            //     { headers: { 'Content-Type': 'application/json' } }
-            // );
+            const response = await axiosClient.post('/memo/update',
+                payload,
+                { headers: { 'Content-Type': 'application/json' } }
+            );
 
-            // if (response.status === 201) {
-            //     toast.success(response?.data?.message);
-            //     navigate(-1);
-            // }
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                navigate(-1);
+            }
         } catch (error) {
             toast.error(error?.response?.data?.message);
         } finally {
@@ -694,7 +759,7 @@ const CreateMemo = () => {
                         </div>
 
                         <div className='w-full flex items-center justify-end gap-[20px]'>
-                            <button
+                            {!params.memoId && <button
                                 type='button'
                                 className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]'
                                 onClick={() => {
@@ -703,7 +768,14 @@ const CreateMemo = () => {
                                 }}
                             >
                                 Reset
-                            </button>
+                            </button>}
+                            {params.memoId && <button
+                                type='button'
+                                className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]'
+                                onClick={() => navigate(-1)}
+                            >
+                                Cancel
+                            </button>}
                             <button
                                 type='submit'
                                 className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'

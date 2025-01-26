@@ -417,7 +417,7 @@ const Stock = () => {
             </div>
 
             {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}
-            {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => deleteStock(selectedItem.action, selectedItem.item)} />)}
+            {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => deleteStock(selectedItem.action, selectedItem.item)} inlineKeys={["diamondId", "diamondName"]} />)}
             {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
             {selectedItem && selectedItem.action === 'import' && <ImportPopup onClose={handleClosePopup} onUpload={handleImportExcel} />}
             {showSkippedPopup && <SkipDataPopup onClose={handleClosePopup} data={skippedStocks} />}
