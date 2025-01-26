@@ -3,14 +3,12 @@ import SelectField from 'components/FormFields/SelectField';
 import Table from 'components/table';
 import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getCurrency } from 'utils';
 import { button1, button2, writeIcon, wrongIcon } from "assets/utils/images";
 import axiosClient from 'api/AxiosClient';
 import { toast } from 'react-toastify';
 import NoDataFound from 'components/no-data-found';
-import { getDate, getTime } from 'utils/dateFormat';
-import DetailPopup from 'components/popup/Detail';
 import MemoPreview from './MemoPreview';
 import Loader from 'components/loader';
 import InputField from 'components/FormFields/InputField';
@@ -44,16 +42,14 @@ const previewData = [
 
 const CreateMemo = () => {
     const navigate = useNavigate();
+    const params = useParams();
 
     const { register, handleSubmit, control, formState: { errors }, watch, setValue, reset } = useForm({ defaultValues: {} });
 
     const [rowData, setRowData] = useState([]);
     const [customerOptions, setCustomerOptions] = useState([]);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
     const [isPreview, setIsPreview] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [query, setQuery] = useState('');
 
     const isFetchingRef = useRef(false);
     const timeoutRef = useRef(null);
@@ -63,8 +59,8 @@ const CreateMemo = () => {
     useEffect(() => {
         if (isFetchingRef.current) return;
         handleCustomerList();
-        // if (params.stockId) fetchStockDetail(params.stockId);
-    }, []);
+        if (params.memoId) fetchMemoDetail(params.memoId);
+    }, [params.memoId]);
 
     useEffect(() => {
         if (selectedCustomer) {
@@ -74,22 +70,25 @@ const CreateMemo = () => {
     }, [selectedCustomer, setValue]);
 
     useEffect(() => {
-        const initialRows = Array.from({ length: 5 }, () => ({
-            refNo: "",
-            description: "",
-            carats: "",
-            pricePerCarat: "",
-            returnInCarats: "",
-            soldInCarats: "",
-            isEdit: true
-        }));
-        setRowData(initialRows);
-    }, []);
+        if (rowData.length === 0) {
+            const initialRows = Array.from({ length: 5 }, () => ({
+                refNo: "",
+                description: "",
+                carats: "",
+                pricePerCarat: "",
+                returnInCarats: "",
+                soldInCarats: "",
+                isEdit: true
+            }));
+            setRowData(initialRows);
+        }
+    }, [!params.memoId]);
 
     const handleCustomerList = async () => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
+        setLoading(true);
         try {
             const response = await axiosClient.get('/memo/all-customer', {
                 headers: { 'Content-Type': 'application/json' }
@@ -109,6 +108,29 @@ const CreateMemo = () => {
             toast.error(error?.response?.data?.message);
         } finally {
             isFetchingRef.current = false;
+            setLoading(false);
+        }
+    };
+
+    const fetchMemoDetail = async (memoId) => {
+        try {
+            const response = await axiosClient.post('/memo/detail',
+                { memoId },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (response.status === 200) {
+                console.log(response.data.data);
+                const responseData = response.data.data;
+                setValue('customerName', {
+                    label: responseData?.customer?.name, value: responseData?.customer?._id,
+                    phone: responseData?.customer?.phone, address: responseData?.customer?.address
+                });
+
+                setRowData(responseData.memoItems);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
         }
     };
 
@@ -116,6 +138,7 @@ const CreateMemo = () => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
+        setLoading(true);
         try {
             const response = await axiosClient.post('/memo/fetch-stock',
                 { refNo },
@@ -154,12 +177,11 @@ const CreateMemo = () => {
             }
         } finally {
             isFetchingRef.current = false;
+            setLoading(false);
         }
     };
 
     const handleRefNoChange = (value, index) => {
-        setQuery(value);
-
         // Clear previous timeout to prevent multiple API calls
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
@@ -172,7 +194,12 @@ const CreateMemo = () => {
     };
 
     async function handleChange(e, index) {
-        const { name, value } = e.target;
+        const { name } = e.target;
+
+        let value = e.target.value;
+        if (['carats', 'pricePerCarat', 'returnInCarats', 'soldInCarats', 'price'].includes(name)) {
+            value = e.target.value.replace(/[^0-9.]/g, '');
+        }
 
         if (name === "refNo") {
             // Clear any previous timeout
@@ -195,11 +222,13 @@ const CreateMemo = () => {
             updatedData[index].price = amount;
         }
         setRowData(updatedData);
+        setValue('tableData', updatedData);
     }
 
     function handleDeleteClick(index) {
         const updatedData = rowData.filter((item, idx) => idx !== index);
         setRowData(updatedData);
+        setValue('tableData', updatedData);
     }
 
     function handleEditClick(index) {
@@ -207,6 +236,7 @@ const CreateMemo = () => {
 
         updatedData[index].isEdit = true;
         setRowData(updatedData);
+        setValue('tableData', updatedData);
     }
 
     function handleSaveClick(index) {
@@ -218,6 +248,7 @@ const CreateMemo = () => {
             updatedData[index].isEdit = false;
         }
         setRowData(updatedData);
+        setValue('tableData', updatedData);
     }
 
     function handleCancelClick(index) {
@@ -229,6 +260,7 @@ const CreateMemo = () => {
             updatedData[index].isEdit = false;
         }
         setRowData(updatedData);
+        setValue('tableData', updatedData);
     }
 
     function handleAddItemsClick() {
@@ -245,18 +277,27 @@ const CreateMemo = () => {
         }]
 
         setRowData(updatedData);
+        setValue('tableData', updatedData);
     }
 
     const onSubmit = async (data) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
-        
+
+        if (!params.memoId) {
+            createMemoApiCall(data);
+        } else {
+            updateMemoApiCall(data);
+        }
+    }
+
+    const createMemoApiCall = async (data) => {
         try {
             const payload = {};
             payload.customer = data?.customerName?.value;
-            payload.items = rowData?.map((item) => {
+            payload.items = rowData?.map((item, index) => {
                 delete item.isEdit;
-                return item;
+                return { ...item, srNo: index + 1 };
             });
 
             const response = await axiosClient.post('/memo/create',
@@ -268,6 +309,32 @@ const CreateMemo = () => {
                 toast.success(response?.data?.message);
                 navigate(-1);
             }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            isFetchingRef.current = false;
+        }
+    }
+
+    const updateMemoApiCall = async (data) => {
+        try {
+            const payload = {};
+            payload.customer = data?.customerName?.value;
+            payload.items = rowData?.map((item, index) => {
+                delete item.isEdit;
+                return { ...item, srNo: index + 1 };
+            });
+            console.log(payload);
+
+            // const response = await axiosClient.post('/memo/create',
+            //     payload,
+            //     { headers: { 'Content-Type': 'application/json' } }
+            // );
+
+            // if (response.status === 201) {
+            //     toast.success(response?.data?.message);
+            //     navigate(-1);
+            // }
         } catch (error) {
             toast.error(error?.response?.data?.message);
         } finally {
@@ -333,28 +400,6 @@ const CreateMemo = () => {
                 )
             }
         },
-        // {
-        //     label: 'Pcs',
-        //     key: 'pcs',
-        //     type: 'custom',
-        //     render: ({ isEdit, pcs }, index) => {
-        //         return (
-        //             <>
-        //                 {
-        //                     isEdit
-        //                         ? <input
-        //                             type="text"
-        //                             name="pcs"
-        //                             className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-        //                             value={pcs}
-        //                             onChange={(e) => handleChange(e, index)}
-        //                         />
-        //                         : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{pcs !== '' ? pcs : '--'}</span>
-        //                 }
-        //             </>
-        //         )
-        //     }
-        // },
         {
             label: 'Carats',
             key: 'carats',
@@ -505,9 +550,6 @@ const CreateMemo = () => {
                                     </button>
                                 </>)
                                 : (<>
-                                    {/* <button onClick={() => handleViewClick(item)}>
-                                        <img src={button} alt="View" />
-                                    </button> */}
                                     <button onClick={() => handleDeleteClick(index)}>
                                         <img src={button1} alt="Delete" />
                                     </button>
@@ -563,12 +605,12 @@ const CreateMemo = () => {
                     <div className='w-full flex justify-between items-center mb-[20px]'>
                         <h6 className='text-[16px]'>Customer Details</h6>
                         <div className='flex gap-[12px]'>
-                            <button
+                            {!params.memoId && <button
                                 className='w-[220px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
                                 onClick={() => navigate('/customer/add')}
                             >
                                 + Add Customer
-                            </button>
+                            </button>}
                             <button
                                 className='w-[150px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
                                 onClick={() => setIsPreview(q => !q)}
@@ -652,8 +694,23 @@ const CreateMemo = () => {
                         </div>
 
                         <div className='w-full flex items-center justify-end gap-[20px]'>
-                            <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>
-                            <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]' onClick={handleSubmit(onSubmit)}>Submit</button>
+                            <button
+                                type='button'
+                                className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]'
+                                onClick={() => {
+                                    reset();
+                                    setRowData([]);
+                                }}
+                            >
+                                Reset
+                            </button>
+                            <button
+                                type='submit'
+                                className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'
+                                onClick={handleSubmit(onSubmit)}
+                            >
+                                Submit
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -134,7 +134,7 @@ const Stock = () => {
                         statusLabel = 'Unknown';
                         statusColor = 'bg-[#D5D7DA]';
                 }
-                return <div className="flex items-center gap-[10px] border border-[#D5D7DA] rounded-[6px] px-[10px] py-[5px] max-w-[110px]">
+                return <div className="flex items-center gap-[8px] border border-[#D5D7DA] rounded-[6px] px-[10px] py-[5px] max-w-[110px]">
                     <span className={`block w-[10px] h-[10px] rounded-full ${statusColor}`}></span>
                     <span className="text-[14px] font-medium text-[#0A112F]">{statusLabel}</span>
                 </div>

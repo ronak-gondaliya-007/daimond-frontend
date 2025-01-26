@@ -82,6 +82,13 @@ export const privateRoutes = [
         breadcrumb: ["Management", "Memo", "Add"]
     },
     {
+        path: '/memo/edit/:memoId',
+        element: CreateMemo,
+        title: "MemoEdit",
+        layout: MAIN,
+        breadcrumb: ["Management", "Memo", "Edit"]
+    },
+    {
         path: '/stock',
         element: Stock,
         title: "Stock",
@@ -94,13 +101,6 @@ export const privateRoutes = [
         title: "StockAdd",
         layout: MAIN,
         breadcrumb: ["Management", "Stock", "Add"]
-    },
-    {
-        path: '/stock/edit',
-        element: StockForm,
-        title: "StockEdit",
-        layout: MAIN,
-        breadcrumb: ["Management", "Stock", "Edit"]
     },
     {
         path: '/stock/edit/:stockId',

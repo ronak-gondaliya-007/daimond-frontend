@@ -126,7 +126,7 @@ const SellInvoice = () => {
                 placeholder="Search by..."
                 addBtn={{
                     title: 'Add Invoice',
-                    onClick: () => { }
+                    onClick: () => { navigate('/sell-invoice/add')}
                 }}
             />
             <div className="my-[30px] stock-table">

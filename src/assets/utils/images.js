@@ -21,6 +21,7 @@ import button1 from '../images/button-1.svg';
 import button2 from '../images/button-2.svg';
 import wrongIcon from '../images/cancel.png';
 import writeIcon from '../images/checkmark.png';
+import downloadIcon from '../images/download-icon.svg';
 
 export {
     logo,
@@ -45,5 +46,6 @@ export {
     button1,
     button2,
     wrongIcon,
-    writeIcon
+    writeIcon,
+    downloadIcon
 };
