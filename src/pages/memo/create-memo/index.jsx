@@ -15,18 +15,6 @@ import MemoPreview from './MemoPreview';
 import Loader from 'components/loader';
 import InputField from 'components/FormFields/InputField';
 
-const defaultRow = {
-    _id: "",
-    refNo: "",
-    description: "",
-    pcs: "",
-    carats: "",
-    pricePerCarat: "",
-    returnInCarats: "",
-    soldInCarats: "",
-    isEdit: true
-};
-
 const previewData = [
     {
         no: 1,
@@ -89,7 +77,6 @@ const CreateMemo = () => {
         const initialRows = Array.from({ length: 5 }, () => ({
             refNo: "",
             description: "",
-            pcs: "",
             carats: "",
             pricePerCarat: "",
             returnInCarats: "",
@@ -135,13 +122,11 @@ const CreateMemo = () => {
                 { headers: { 'Content-Type': 'application/json' } }
             );
 
-            if (response.status === 200 || response.status === 404) {
+            if (response.status === 200) {
                 const responseData = response?.data?.data;
                 const updatedData = rowData.map((item, idx) => idx === index ? {
-                    _id: responseData._id ?? "",
                     refNo: responseData.refNo ?? "",
                     description: "",
-                    pcs: "",
                     carats: responseData.carat ?? "",
                     pricePerCarat: responseData.pricePerCarat ?? "",
                     returnInCarats: "",
@@ -155,10 +140,8 @@ const CreateMemo = () => {
         } catch (error) {
             if (error.response.status === 404) {
                 const updatedData = rowData.map((item, idx) => idx === index ? {
-                    _id: "",
                     refNo: refNo,
                     description: "",
-                    pcs: "",
                     carats: "",
                     pricePerCarat: "",
                     returnInCarats: "",
@@ -204,6 +187,13 @@ const CreateMemo = () => {
         }
 
         const updatedData = rowData.map((item, idx) => idx === index ? { ...item, [name]: value } : item);
+        if (name === 'carats' || name === 'pricePerCarat') {
+            const carats = parseFloat(updatedData[index].carats) || 0;
+            const pricePerCarat = parseFloat(updatedData[index].pricePerCarat) || 0;
+            const amount = parseFloat(carats * pricePerCarat).toFixed();
+
+            updatedData[index].price = amount;
+        }
         setRowData(updatedData);
     }
 
@@ -242,28 +232,52 @@ const CreateMemo = () => {
     }
 
     function handleAddItemsClick() {
-        const updatedData = [{
-            _id: "",
+        const updatedData = [...rowData, {
             refNo: "",
             description: "",
-            pcs: "",
             carats: "",
             pricePerCarat: "",
             returnInCarats: "",
             soldInCarats: "",
+            price: "",
+            remarks: "",
             isEdit: true
-        }, ...rowData]
+        }]
 
         setRowData(updatedData);
     }
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+        
+        try {
+            const payload = {};
+            payload.customer = data?.customerName?.value;
+            payload.items = rowData?.map((item) => {
+                delete item.isEdit;
+                return item;
+            });
+
+            const response = await axiosClient.post('/memo/create',
+                payload,
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (response.status === 201) {
+                toast.success(response?.data?.message);
+                navigate(-1);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            isFetchingRef.current = false;
+        }
     }
 
     const columns = [
         {
-            label: 'SR No.',
+            label: 'SR No',
             key: 'srNo',
             type: 'custom',
             render: (row, index) => {
@@ -319,28 +333,28 @@ const CreateMemo = () => {
                 )
             }
         },
-        {
-            label: 'Pcs',
-            key: 'pcs',
-            type: 'custom',
-            render: ({ isEdit, pcs }, index) => {
-                return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="pcs"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={pcs}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{pcs !== '' ? pcs : '--'}</span>
-                        }
-                    </>
-                )
-            }
-        },
+        // {
+        //     label: 'Pcs',
+        //     key: 'pcs',
+        //     type: 'custom',
+        //     render: ({ isEdit, pcs }, index) => {
+        //         return (
+        //             <>
+        //                 {
+        //                     isEdit
+        //                         ? <input
+        //                             type="text"
+        //                             name="pcs"
+        //                             className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
+        //                             value={pcs}
+        //                             onChange={(e) => handleChange(e, index)}
+        //                         />
+        //                         : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{pcs !== '' ? pcs : '--'}</span>
+        //                 }
+        //             </>
+        //         )
+        //     }
+        // },
         {
             label: 'Carats',
             key: 'carats',
@@ -511,7 +525,7 @@ const CreateMemo = () => {
     const getColumnTotal = (columnKey) => {
         return rowData.reduce((sum, row) => {
             const value = parseFloat(row[columnKey]) || 0;
-            return sum + value;
+            return Math.round((sum + value) * 100) / 100;
         }, 0);
     };
 
@@ -519,14 +533,14 @@ const CreateMemo = () => {
         return (
             <tfoot>
                 <tr className='py-[12px]'>
-                    <th colSpan={4} >
+                    <th colSpan={3} >
                         <strong>Total</strong>
                     </th>
-                    <th>
-                        <strong>{getColumnTotal('carats')} CT</strong>
+                    <th className='!text-start'>
+                        <strong>{getColumnTotal('carats').toFixed(2)} CT</strong>
                     </th>
                     <th colSpan={3}></th>
-                    <th>
+                    <th className='!text-start'>
                         <strong>{getCurrency(getColumnTotal('price'))}</strong>
                     </th>
                     <th colSpan={3}></th>
@@ -631,7 +645,7 @@ const CreateMemo = () => {
 
                         <div className='w-full flex items-center justify-end gap-[20px]'>
                             <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>
-                            <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>
+                            <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]' onClick={handleSubmit(onSubmit)}>Submit</button>
                         </div>
                     </div>
                 </div>
@@ -640,7 +654,6 @@ const CreateMemo = () => {
 
             {
                 isPreview &&
-
                 <MemoPreview
                     rowData={previewData}
                     onCancel={() => setIsPreview(q => !q)}
