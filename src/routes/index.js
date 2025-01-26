@@ -9,6 +9,7 @@ const ResetPassword = lazy(() => import("../pages/Login/ResetPassword"));
 // common routes
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const SellInvoice = lazy(() => import("../pages/Sell-Invoice"));
+const SellInvoiceAdd = lazy(() => import("../pages/Sell-Invoice/Form"));
 const Memo = lazy(() => import("../pages/Memo"));
 const CreateMemo = lazy(() => import("../pages/Memo/Create-Memo"));
 const Stock = lazy(() => import("../pages/Stock"));
@@ -56,6 +57,13 @@ export const privateRoutes = [
         title: "Sell / Invoice",
         layout: MAIN,
         breadcrumb: ["Management", "Sell / Invoice"]
+    },
+    {
+        path: '/sell-invoice/add',
+        element: SellInvoiceAdd,
+        title: "Sell / Invoice - Add",
+        layout: MAIN,
+        breadcrumb: ["Management", "Sell / Invoice", "Add"]
     },
 
     // --> Management
