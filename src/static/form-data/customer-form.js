@@ -35,9 +35,9 @@ export const customerForm = [
                 label: "Contact Number",
                 type: "PHONE_INPUT",
                 placeholder: "Enter contact number",
-                rules: {
-                    required: "Contact number is required",
-                }
+                // rules: {
+                //     required: "Contact number is required",
+                // }
             },
             {
                 id: 8,

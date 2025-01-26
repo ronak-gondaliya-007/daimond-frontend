@@ -84,11 +84,7 @@ const CustomerAdd = () => {
 
             if (response.status === 201) {
                 toast.success(response?.data?.message);
-                if (data.userType === 'Customer') {
-                    navigate('/customer');
-                } else {
-                    navigate('/vendor');
-                }
+                navigate(-1);
             }
         } catch (error) {
             toast.error(error?.response?.data?.message);
@@ -97,7 +93,7 @@ const CustomerAdd = () => {
 
     return (
         <div className='px-[100px] py-[50px]'>
-            <form className="stock-add" onSubmit={handleSubmit(onSubmit)}>
+            <form className="stock-add" autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
                 {
                     routeTitle === '/customer/add' ?
                         customerForm.map((field) => (

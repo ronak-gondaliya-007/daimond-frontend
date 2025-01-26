@@ -1,5 +1,6 @@
 import searchIcon from 'assets/images/search.svg';
 import slidersIcon from 'assets/images/sliders.svg';
+import Loader from 'components/loader';
 import { useRef, useState } from 'react';
 
 const Search = ({
@@ -76,7 +77,7 @@ const Search = ({
                             {"Cancel"}
                         </button>
                     }
-                    {loading && <span className="ml-[10px] text-[16px]">Searching...</span>}
+                    {loading && <Loader />}
                 </div>
             }
         </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Pagination from '../pagination';
+import { getCurrency } from 'utils';
 
 const Table = ({
     columns,
@@ -11,7 +12,8 @@ const Table = ({
     onPageChange,
     handleSelectAll,
     handleCheck = () => { },
-    selectItem = []
+    selectItem = [],
+    tableFooter = <></>
 }) => {
     // Helper to format phone numbers
     const formatPhoneNumber = (phone) => {
@@ -96,6 +98,7 @@ const Table = ({
                         ))
                     }
                 </tbody>
+                {tableFooter}
             </table>
 
             {totalPages > 1 && <Pagination

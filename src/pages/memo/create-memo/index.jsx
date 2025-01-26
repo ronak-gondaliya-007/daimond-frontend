@@ -5,38 +5,25 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { getCurrency } from 'utils';
-import { button, button1, button2, writeIcon, wrongIcon, diamondIcon, arrowDown, arrowUp, } from "assets/utils/images";
+import { button1, button2, writeIcon, wrongIcon } from "assets/utils/images";
 import axiosClient from 'api/AxiosClient';
 import { toast } from 'react-toastify';
-import Search from 'components/search';
-import { FilterPopup } from 'pages/Stock';
 import NoDataFound from 'components/no-data-found';
-import { getDate, getTime } from 'utils/dateFormat';
-import DetailPopup from 'components/popup/Detail';
-
-const defaultRow = {
-    _id: "",
-    refNo: "",
-    description: "",
-    pcs: "",
-    carats: "",
-    pricePerCarat: "",
-    returnInCarats: "",
-    soldInCarats: "",
-    isEdit: true
-};
+import Loader from 'components/loader';
+import InputField from 'components/FormFields/InputField';
 
 const CreateMemo = () => {
     const navigate = useNavigate();
 
-    const { handleSubmit, control, formState: { errors }, watch, setValue } = useForm({ defaultValues: {} });
+    const { register, handleSubmit, control, formState: { errors }, watch, setValue, reset } = useForm({ defaultValues: {} });
 
     const [rowData, setRowData] = useState([]);
     const [customerOptions, setCustomerOptions] = useState([]);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [isOpen, setIsOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [query, setQuery] = useState('');
 
     const isFetchingRef = useRef(false);
+    const timeoutRef = useRef(null);
 
     const selectedCustomer = watch("customerName");
 
@@ -49,14 +36,23 @@ const CreateMemo = () => {
     useEffect(() => {
         if (selectedCustomer) {
             setValue('contactInfo', selectedCustomer?.phone);
+            setValue('address', selectedCustomer?.address);
         }
     }, [selectedCustomer, setValue]);
 
     useEffect(() => {
-        if (rowData.length === 0) {
-            setRowData([defaultRow]);
-        }
-    }, [rowData]);
+        const initialRows = Array.from({ length: 5 }, () => ({
+            refNo: "",
+            description: "",
+            pcs: "",
+            carats: "",
+            pricePerCarat: "",
+            returnInCarats: "",
+            soldInCarats: "",
+            isEdit: true
+        }));
+        setRowData(initialRows);
+    }, []);
 
     const handleCustomerList = async () => {
         if (isFetchingRef.current) return;
@@ -71,7 +67,8 @@ const CreateMemo = () => {
                 const customerOptions = response?.data?.data?.map(customer => ({
                     label: customer.name,
                     value: customer._id,
-                    phone: customer.phone
+                    phone: customer.phone,
+                    address: customer.address,
                 }));
 
                 setCustomerOptions(customerOptions);
@@ -83,40 +80,125 @@ const CreateMemo = () => {
         }
     };
 
-    const handleStockTable = () => {
-        setIsOpen(q => !q);
+    const fetchStockDetail = async (refNo, index) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        try {
+            const response = await axiosClient.post('/memo/fetch-stock',
+                { refNo },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (response.status === 200 || response.status === 404) {
+                const responseData = response?.data?.data;
+                const updatedData = rowData.map((item, idx) => idx === index ? {
+                    _id: responseData._id ?? "",
+                    refNo: responseData.refNo ?? "",
+                    description: "",
+                    pcs: "",
+                    carats: responseData.carat ?? "",
+                    pricePerCarat: responseData.pricePerCarat ?? "",
+                    returnInCarats: "",
+                    soldInCarats: "",
+                    price: responseData.price ?? "",
+                    remarks: responseData.remarks ?? "",
+                    isEdit: true
+                } : item);
+                setRowData(updatedData);
+            }
+        } catch (error) {
+            if (error.response.status === 404) {
+                const updatedData = rowData.map((item, idx) => idx === index ? {
+                    _id: "",
+                    refNo: refNo,
+                    description: "",
+                    pcs: "",
+                    carats: "",
+                    pricePerCarat: "",
+                    returnInCarats: "",
+                    soldInCarats: "",
+                    price: "",
+                    remarks: "",
+                    isEdit: true
+                } : item);
+                setRowData(updatedData);
+            }
+        } finally {
+            isFetchingRef.current = false;
+        }
     };
 
-    async function handleChange(e, id) {
+    const handleRefNoChange = (value, index) => {
+        setQuery(value);
+
+        // Clear previous timeout to prevent multiple API calls
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
+        // Trigger search after a delay (debounce)
+        timeoutRef.current = setTimeout(() => {
+            fetchStockDetail(value, index);
+        }, 500);
+    };
+
+    async function handleChange(e, index) {
         const { name, value } = e.target;
 
-        const updatedData = rowData.map(item => item._id === id ? { ...item, [name]: value } : item);
+        if (name === "refNo") {
+            // Clear any previous timeout
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
 
+            // Debounce the API call
+            timeoutRef.current = setTimeout(() => {
+                handleRefNoChange(value, index);
+            }, 200);
+        }
+
+        const updatedData = rowData.map((item, idx) => idx === index ? { ...item, [name]: value } : item);
         setRowData(updatedData);
     }
 
-    function handleViewClick(item) {
-        console.log(item);
-    }
-
-    function handleDeleteClick(id) {
-        const updatedData = rowData.filter(item => item._id !== id);
+    function handleDeleteClick(index) {
+        const updatedData = rowData.filter((item, idx) => idx !== index);
         setRowData(updatedData);
     }
 
-    function handleEditClick(id) {
-        const updatedData = rowData.map(item => item._id === id ? { ...item, isEdit: true } : item);
+    function handleEditClick(index) {
+        const updatedData = [...rowData];
+
+        updatedData[index].isEdit = true;
         setRowData(updatedData);
     }
 
-    function handleSaveClick(id) {
-        const updatedData = rowData.map(item => item._id === id ? { ...item, isEdit: false } : item);
+    function handleSaveClick(index) {
+        const updatedData = [...rowData];
+
+        if (updatedData[index]?.refNo === "") {
+            updatedData.splice(index, 1);
+        } else {
+            updatedData[index].isEdit = false;
+        }
+        setRowData(updatedData);
+    }
+
+    function handleCancelClick(index) {
+        const updatedData = [...rowData];
+
+        if (updatedData[index]?.refNo === "") {
+            updatedData.splice(index, 1);
+        } else {
+            updatedData[index].isEdit = false;
+        }
         setRowData(updatedData);
     }
 
     function handleAddItemsClick() {
-        const updatedData = [...rowData, {
-            _id: (rowData.length + 101).toString(),
+        const updatedData = [{
+            _id: "",
             refNo: "",
             description: "",
             pcs: "",
@@ -125,7 +207,7 @@ const CreateMemo = () => {
             returnInCarats: "",
             soldInCarats: "",
             isEdit: true
-        }]
+        }, ...rowData]
 
         setRowData(updatedData);
     }
@@ -136,16 +218,23 @@ const CreateMemo = () => {
 
     const columns = [
         {
-            label: '',
-            key: 'diamondId',
-            isCheckbox: true,
-            type: 'checkbox'
+            label: 'SR No.',
+            key: 'srNo',
+            type: 'custom',
+            render: (row, index) => {
+                const srNo = index + 1;
+                return (
+                    <span className="text-[14px] font-medium text-[#0A112F] text-center line-clamp-2">
+                        {srNo}
+                    </span>
+                );
+            }
         },
         {
             label: 'Ref No',
             key: 'refNo',
             type: 'custom',
-            render: ({ _id, isEdit, refNo }) => {
+            render: ({ isEdit, refNo }, index) => {
                 return (
                     <>
                         {
@@ -155,7 +244,7 @@ const CreateMemo = () => {
                                     name="refNo"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={refNo}
-                                    onChange={(e) => handleChange(e, _id)}
+                                    onChange={(e) => handleChange(e, index)}
                                 />
                                 : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{refNo}</span>
                         }
@@ -167,7 +256,7 @@ const CreateMemo = () => {
             label: 'Description',
             key: 'description',
             type: 'custom',
-            render: ({ _id, isEdit, description }) => {
+            render: ({ isEdit, description }, index) => {
                 return (
                     <>
                         {
@@ -177,9 +266,9 @@ const CreateMemo = () => {
                                     name="description"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={description}
-                                    onChange={(e) => handleChange(e, _id)}
+                                    onChange={(e) => handleChange(e, index)}
                                 />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{description} CT</span>
+                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{description !== '' ? description : '--'}</span>
                         }
                     </>
                 )
@@ -189,7 +278,7 @@ const CreateMemo = () => {
             label: 'Pcs',
             key: 'pcs',
             type: 'custom',
-            render: ({ _id, isEdit, pcs }) => {
+            render: ({ isEdit, pcs }, index) => {
                 return (
                     <>
                         {
@@ -199,9 +288,9 @@ const CreateMemo = () => {
                                     name="pcs"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={pcs}
-                                    onChange={(e) => handleChange(e, _id)}
+                                    onChange={(e) => handleChange(e, index)}
                                 />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{pcs} CT</span>
+                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{pcs !== '' ? pcs : '--'}</span>
                         }
                     </>
                 )
@@ -211,7 +300,7 @@ const CreateMemo = () => {
             label: 'Carats',
             key: 'carats',
             type: 'custom',
-            render: ({ _id, isEdit, carats }) => {
+            render: ({ isEdit, carats }, index) => {
                 return (
                     <>
                         {
@@ -221,9 +310,9 @@ const CreateMemo = () => {
                                     name="carats"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={carats}
-                                    onChange={(e) => handleChange(e, _id)}
+                                    onChange={(e) => handleChange(e, index)}
                                 />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{carats}</span>
+                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{carats !== '' ? `${carats} CT` : '--'}</span>
                         }
                     </>
                 )
@@ -233,7 +322,7 @@ const CreateMemo = () => {
             label: 'Price Per Carat',
             key: 'pricePerCarat',
             type: 'custom',
-            render: ({ _id, isEdit, pricePerCarat }) => {
+            render: ({ isEdit, pricePerCarat }, index) => {
                 return (
                     <>
                         {
@@ -243,7 +332,7 @@ const CreateMemo = () => {
                                     name="pricePerCarat"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={pricePerCarat}
-                                    onChange={(e) => handleChange(e, _id)}
+                                    onChange={(e) => handleChange(e, index)}
                                 />
                                 : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(pricePerCarat)}</span>
                         }
@@ -255,7 +344,7 @@ const CreateMemo = () => {
             label: 'Return In Carats',
             key: 'returnInCarats',
             type: 'custom',
-            render: ({ _id, isEdit, returnInCarats }) => {
+            render: ({ isEdit, returnInCarats }, index) => {
                 return (
                     <>
                         {
@@ -265,7 +354,7 @@ const CreateMemo = () => {
                                     name="returnInCarats"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={returnInCarats}
-                                    onChange={(e) => handleChange(e, _id)}
+                                    onChange={(e) => handleChange(e, index)}
                                 />
                                 : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(returnInCarats)}</span>
                         }
@@ -277,7 +366,7 @@ const CreateMemo = () => {
             label: 'Sold In Carats',
             key: 'soldInCarats',
             type: 'custom',
-            render: ({ _id, isEdit, soldInCarats }) => {
+            render: ({ isEdit, soldInCarats }, index) => {
                 return (
                     <>
                         {
@@ -287,9 +376,53 @@ const CreateMemo = () => {
                                     name="soldInCarats"
                                     className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
                                     value={soldInCarats}
-                                    onChange={(e) => handleChange(e, _id)}
+                                    onChange={(e) => handleChange(e, index)}
                                 />
                                 : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(soldInCarats)}</span>
+                        }
+                    </>
+                )
+            }
+        },
+        {
+            label: 'Amount',
+            key: 'price',
+            type: 'custom',
+            render: ({ isEdit, price }, index) => {
+                return (
+                    <>
+                        {
+                            isEdit
+                                ? <input
+                                    type="text"
+                                    name="price"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
+                                    value={price}
+                                    onChange={(e) => handleChange(e, index)}
+                                />
+                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(price)}</span>
+                        }
+                    </>
+                )
+            }
+        },
+        {
+            label: 'Remarks',
+            key: 'remarks',
+            type: 'custom',
+            render: ({ isEdit, remarks }, index) => {
+                return (
+                    <>
+                        {
+                            isEdit
+                                ? <input
+                                    type="text"
+                                    name="remarks"
+                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
+                                    value={remarks}
+                                    onChange={(e) => handleChange(e, index)}
+                                />
+                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{remarks !== '' ? remarks : '--'}</span>
                         }
                     </>
                 )
@@ -299,27 +432,27 @@ const CreateMemo = () => {
             label: '',
             key: 'actions',
             type: 'action',
-            render: (item) => {
+            render: (item, index) => {
                 return <td className="tbl-action">
                     <div className="flex items-center justify-end gap-[10px]">
                         {
                             item.isEdit
                                 ? (<>
-                                    <button onClick={() => handleSaveClick(item._id)}>
+                                    <button onClick={() => handleSaveClick(index)}>
                                         <img src={writeIcon} alt="View" className='create-memo-icon' />
                                     </button>
-                                    <button className="mr-[5px]" onClick={() => handleDeleteClick(item._id)}>
+                                    <button className="mr-[5px]" onClick={() => handleCancelClick(index)}>
                                         <img src={wrongIcon} alt="Delete" className='create-memo-icon' />
                                     </button>
                                 </>)
                                 : (<>
-                                    <button onClick={() => handleViewClick(item)}>
+                                    {/* <button onClick={() => handleViewClick(item)}>
                                         <img src={button} alt="View" />
-                                    </button>
-                                    <button onClick={() => handleDeleteClick(item._id)}>
+                                    </button> */}
+                                    <button onClick={() => handleDeleteClick(index)}>
                                         <img src={button1} alt="Delete" />
                                     </button>
-                                    <button className="mr-[5px]" onClick={() => handleEditClick(item._id)}>
+                                    <button className="mr-[5px]" onClick={() => handleEditClick(index)}>
                                         <img src={button2} alt="Edit" />
                                     </button>
                                 </>)
@@ -327,8 +460,39 @@ const CreateMemo = () => {
                     </div>
                 </td>
             }
-        },
+        }
     ];
+
+    const getColumnTotal = (columnKey) => {
+        return rowData.reduce((sum, row) => {
+            const value = parseFloat(row[columnKey]) || 0;
+            return sum + value;
+        }, 0);
+    };
+
+    function tableFooter() {
+        return (
+            <tfoot>
+                <tr className='py-[12px]'>
+                    <th colSpan={4} >
+                        <strong>Total</strong>
+                    </th>
+                    <th>
+                        <strong>{getColumnTotal('carats')} CT</strong>
+                    </th>
+                    <th colSpan={3}></th>
+                    <th>
+                        <strong>{getCurrency(getColumnTotal('price'))}</strong>
+                    </th>
+                    <th colSpan={3}></th>
+                </tr>
+            </tfoot>
+        );
+    }
+
+    if (loading) {
+        return <Loader />;
+    }
 
     return (
         <div className="w-full h-full p-[20px] max-w-[100rem] flex flex-col mx-auto">
@@ -338,6 +502,13 @@ const CreateMemo = () => {
             <div className='relative flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
                 <div className='w-full flex justify-between items-center mb-[20px]'>
                     <h6 className='text-[16px]'>Customer Details</h6>
+                    <button
+                        className='w-[250px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                        onClick={() => navigate('/customer/add')}
+                    >
+                        + Add Customer
+                    </button>
+                    {loading && <Loader />}
                 </div>
 
                 <form className="stock-add" onSubmit={handleSubmit(onSubmit)}>
@@ -360,6 +531,7 @@ const CreateMemo = () => {
                             errors={errors}
                             control={control}
                             options={customerOptions}
+                            isSearchable={true}
                         />
                         <PhoneInputField
                             {...{
@@ -372,6 +544,18 @@ const CreateMemo = () => {
                             control={control}
                             errors={errors}
                         />
+                        <InputField
+                            {...{
+                                id: 7,
+                                name: "address",
+                                label: "Address",
+                                type: "INPUT",
+                                placeholder: "Enter Address"
+                            }}
+                            register={register}
+                            control={control}
+                            errors={errors}
+                        />
                     </div>
                 </form>
 
@@ -381,11 +565,6 @@ const CreateMemo = () => {
                         <div className='max-w-[40%] flex gap-[20px]'>
                             <button
                                 className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none'
-                                onClick={handleStockTable}>
-                                Select Stock
-                            </button>
-                            <button
-                                className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none'
                                 onClick={handleAddItemsClick}>
                                 Add Items
                             </button>
@@ -393,284 +572,23 @@ const CreateMemo = () => {
                     </div>
 
                     <div className="my-[30px] stock-table">
-                        <Table
-                            columns={columns}
-                            data={rowData}
-                            tableClass="stock-table"
-                        />
+                        {rowData?.length === 0 ? (
+                            <NoDataFound message="Oops! No stocks found." />
+                        ) : (
+                            <Table
+                                columns={columns}
+                                data={rowData}
+                                tableClass="stock-table"
+                                tableFooter={tableFooter()}
+                            />)}
+                    </div>
+
+                    <div className='w-full flex items-center justify-end gap-[20px]'>
+                        <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>
+                        <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>
                     </div>
                 </div>
-
-                {
-                    isOpen && <SelectStock setIsOpenSelectStock={setIsOpen} />
-                }
             </div>
-        </div>
-    )
-}
-
-function SelectStock({ setIsOpenSelectStock }) {
-
-    const isFetchingRef = useRef(false);
-
-    const [stockData, setStockData] = useState([]);
-    const [totalPages, setTotalPages] = useState(1);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [isOpen, setIsOpen] = useState(false)
-    const [range, setRange] = useState([1, 100]);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
-    const [selectItem, setSelectItem] = useState([])
-
-    const handleActionClick = async (action, item) => {
-        switch (action) {
-            case 'view':
-                fetchStockDetail(action, item);
-                break;
-            default:
-                break;
-        }
-    };
-
-    const fetchStockDetail = async (action, item) => {
-        if (isFetchingRef.current) return;
-        isFetchingRef.current = true;
-
-        setLoading(true);
-        try {
-            const response = await axiosClient.post(`/stock/detail`,
-                { stockId: item._id },
-                { headers: { 'Content-Type': 'application/json' } });
-
-            if (response.status === 200) {
-                toast.success(response?.data?.message);
-                setSelectedItem({ action, item: response.data.data });
-            }
-        } catch (error) {
-            toast.error(error?.response?.data?.message);
-        } finally {
-            setLoading(false);
-            isFetchingRef.current = false;
-        }
-    }
-
-    const columns = [
-        {
-            label: '',
-            key: 'diamondId',
-            isCheckbox: true,
-            type: 'checkbox'
-        },
-        {
-            label: 'Diamond name and Id',
-            key: 'diamondName',
-            type: 'custom',
-            render: (item) => {
-                return <div className="flex items-center gap-[10px]">
-                    <img src={diamondIcon} alt="Diamond" />
-                    <div className="flex flex-col items-start">
-                        <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{item.diamondName}</span>
-                        <span className="text-[12px] font-medium text-[#0A112F]">{item.diamondId}</span>
-                    </div>
-                </div>
-            },
-            sortable: true
-        },
-        {
-            label: 'Ref No',
-            key: 'refNo',
-            sortable: true
-        },
-        {
-            label: 'Carat',
-            key: 'carat',
-            sortable: true
-        },
-        {
-            label: 'Shape',
-            key: 'shape',
-            sortable: true
-        },
-        {
-            label: 'Size',
-            key: 'size',
-            sortable: true
-        },
-        {
-            label: 'Color',
-            key: 'color',
-            sortable: true
-        },
-        {
-            label: 'Clarity',
-            key: 'clarity',
-            sortable: true
-        },
-        {
-            label: 'Price Per Carat',
-            key: 'pricePerCarat',
-            sortable: true
-        },
-        {
-            label: 'Price',
-            key: 'price',
-            sortable: true
-        },
-        {
-            label: '',
-            key: 'actions',
-            type: 'action',
-            render: (item) => {
-                return <td className="tbl-action">
-                    <div className="flex items-center justify-center gap-[10px]">
-                        <button onClick={() => handleActionClick('view', item)}>
-                            <img src={button} alt="View" />
-                        </button>
-                    </div>
-                </td>
-            }
-        }
-    ];
-
-    useEffect(() => {
-        if (isFetchingRef.current) return;
-        fetchStocks(currentPage, searchQuery, sortConfig.key, sortConfig.direction);
-    }, [currentPage, searchQuery, sortConfig]);
-
-    const fetchStocks = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
-        if (isFetchingRef.current) return;
-        isFetchingRef.current = true;
-
-        setLoading(true);
-        try {
-            const response = await axiosClient.post('/memo/all-stocks',
-                {
-                    page: page,
-                    limit: 5,
-                    search: searchQuery,
-                    sortingKey: sortKey,
-                    sortingOrder: sortDirection
-                },
-                { headers: { 'Content-Type': 'application/json' } }
-            );
-
-            if (response.status === 200) {
-                toast.success(response?.data?.message);
-                setStockData(response.data.data.docs);
-                setTotalPages(response.data.data.totalPages);
-                setCurrentPage(page);
-            }
-        } catch (error) {
-            toast.error(error?.response?.data?.message);
-        } finally {
-            setLoading(false);
-            isFetchingRef.current = false;
-        }
-    };
-
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        console.log({ query });
-    };
-
-    const handleFilter = (data) => {
-        console.log({ ...data, range })
-        setIsOpen(q => !q)
-    }
-
-    const handleSort = (key) => {
-        const direction = sortConfig.key === key && sortConfig.direction === 'Asc' ? 'Desc' : 'Asc';
-        setSortConfig({ key, direction });
-        fetchStocks(1, searchQuery, key, direction);
-    };
-
-    const handleClosePopup = () => {
-        setSelectedItem(null);
-    };
-
-    const handleSelectAll = (event) => {
-
-        const item = stockData.map(({ _id }) => _id);
-        let selectedItem = selectItem
-
-        if (event.target.checked) {
-            selectedItem = [...selectedItem, ...item];
-        } else {
-            selectedItem = selectItem.filter(e => !item.includes(e));
-        }
-
-        selectedItem = [...new Set(selectedItem)];
-        setSelectItem(selectedItem);
-    }
-
-    const handleCheck = (event, { _id }) => {
-        let item = selectItem
-        if (event.target.checked) {
-            item = [...item, _id]
-        } else {
-            item = item.filter((id) => id !== _id)
-        }
-        setSelectItem(item)
-    }
-
-    return (
-        <div className='absolute top-0 left-0 w-full h-full bg-white p-[30px] pt-[35px] rounded-[12px] z-10'>
-            <div className='w-full flex justify-between items-center mb-[20px]'>
-                <h6 className='text-[16px]'>Current Stocks</h6>
-            </div>
-            <div>
-                <Search
-                    placeholder="Search by: diamond ID, diamond name, etc..."
-                    searchQuery={searchQuery}
-                    onSearch={handleSearch}
-                    addBtn={{
-                        title: 'Add Item',
-                        onClick: () => console.log('Add Item'),
-                        isCancel: true,
-                        onCancel: () => setIsOpenSelectStock(q => !q),
-                    }}
-                    handleFilterClick={() => setIsOpen(q => !q)}
-                />
-                {isOpen && <FilterPopup range={range} setRange={setRange} onSubmit={handleFilter} />}
-                <div className="my-[30px] stock-table">
-
-                    {
-                        stockData?.length === 0
-                            ? (
-                                <NoDataFound message="Oops! No stocks found." />
-                            ) : (
-                                <Table
-                                    columns={columns.map(column => ({
-                                        ...column,
-                                        label: (
-                                            <div
-                                                className="flex items-center cursor-pointer gap-[5px]"
-                                                onClick={() => column.sortable && handleSort(column.key)}
-                                            >
-                                                {column.label}
-                                                {column.sortable && sortConfig.key === column.key && (
-                                                    <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
-                                                )}
-                                            </div>
-                                        ),
-                                    }))}
-                                    data={stockData}
-                                    tableClass="stock-table"
-                                    currentPage={currentPage}
-                                    totalPages={totalPages}
-                                    onPageChange={setCurrentPage}
-                                    handleSelectAll={handleSelectAll}
-                                    handleCheck={handleCheck}
-                                    selectItem={selectItem}
-                                />
-                            )
-                    }
-                </div>
-            </div>
-
-            {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}
         </div>
     )
 }

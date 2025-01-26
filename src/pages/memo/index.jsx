@@ -140,7 +140,7 @@ const Memo = () => {
                         type='button'
                         className='w-full h-full py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
                         onClick={() => navigate('/memo/add')}>
-                        + Add New
+                        + Create Memo
                     </button>
                 </div>
             </div>
