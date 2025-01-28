@@ -12,6 +12,7 @@ import { getCurrency } from 'utils';
 import Loader from 'components/loader';
 import { toast } from 'react-toastify';
 import DeletePopup from 'components/popup/Delete';
+import NoDataFound from 'components/no-data-found';
 
 
 const Memo = () => {
@@ -190,7 +191,7 @@ const Memo = () => {
                             <img src={button} alt="View" />
                         </button>
                         <button>
-                            <img src={button1} alt="Delete" onClick={() => handleActionClick('delete', {...item, customerName: item.customer.name})}/>
+                            <img src={button1} alt="Delete" onClick={() => handleActionClick('delete', { ...item, customerName: item.customer.name })} />
                         </button>
                         <button className="mr-[5px]" onClick={() => handleActionClick('edit', item)}>
                             <img src={button2} alt="Edit" />
@@ -204,7 +205,7 @@ const Memo = () => {
     if (loading) {
         return <Loader />;
     }
-    
+
     return (
         <div className="w-full p-[20px] max-w-[100rem] mx-auto">
             <div className='w-full block md:flex items-center justify-between gap-[10px]'>
@@ -222,27 +223,31 @@ const Memo = () => {
             </div>
 
             <div className="my-[30px] stock-table">
-                <Table
-                    columns={columns.map(column => ({
-                        ...column,
-                        label: (
-                            <div
-                                className="flex items-center cursor-pointer gap-[5px]"
-                                onClick={() => column.sortable && handleSort(column.key)}
-                            >
-                                {column.label}
-                                {column.sortable && sortConfig.key === column.key && (
-                                    <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
-                                )}
-                            </div>
-                        ),
-                    }))}
-                    data={memoData}
-                    tableClass="stock-table"
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                />
+                {memoData?.length === 0 ? (
+                    <NoDataFound message="Oops! No memos found." />
+                ) : (
+                    <Table
+                        columns={columns.map(column => ({
+                            ...column,
+                            label: (
+                                <div
+                                    className="flex items-center cursor-pointer gap-[5px]"
+                                    onClick={() => column.sortable && handleSort(column.key)}
+                                >
+                                    {column.label}
+                                    {column.sortable && sortConfig.key === column.key && (
+                                        <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
+                                    )}
+                                </div>
+                            ),
+                        }))}
+                        data={memoData}
+                        tableClass="stock-table"
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                    />
+                )}
             </div>
 
             {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => handleDeleteMemo(selectedItem.action, selectedItem.item)} inlineKeys={['memoNumber', 'customerName']} />)}
