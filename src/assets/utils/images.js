@@ -22,6 +22,7 @@ import button2 from '../images/button-2.svg';
 import wrongIcon from '../images/cancel.png';
 import writeIcon from '../images/checkmark.png';
 import downloadIcon from '../images/download-icon.svg';
+import uploadCloud02 from '../images/upload-cloud-02.svg';
 
 export {
     logo,
@@ -47,5 +48,6 @@ export {
     button2,
     wrongIcon,
     writeIcon,
-    downloadIcon
+    downloadIcon,
+    uploadCloud02
 };

@@ -111,6 +111,7 @@ const SellInvoice = () => {
     const handleActionClick = async (action, item) => {
         switch (action) {
             case 'view':
+                navigate(`/sell-invoice/preview/${item._id}`);
                 break;
             case 'edit':
                 navigate(`/sell-invoice/edit/${item._id}`);
@@ -212,7 +213,7 @@ const SellInvoice = () => {
                             <img src={downloadIcon} alt="Download" />
                         </button>
                         <button>
-                            <img src={button} alt="View" />
+                            <img src={button} alt="View" onClick={() => handleActionClick('view', item)} />
                         </button>
                         <button>
                             <img src={button1} alt="Delete" onClick={() => handleActionClick('delete', { ...item, customerName: item.customer.name })} />
