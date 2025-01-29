@@ -1,5 +1,6 @@
 import axiosClient from 'api/AxiosClient';
 import { button1, button2, writeIcon, wrongIcon } from 'assets/utils/images';
+import InputField from 'components/FormFields/InputField';
 import PhoneInputField from 'components/FormFields/PhoneInputField/PhoneInputField'
 import SelectField from 'components/FormFields/SelectField'
 import Loader from 'components/loader';
@@ -24,11 +25,26 @@ const SellInvoiceAdd = () => {
     const [customerOptions, setCustomerOptions] = useState([]);
     const [isPreview, setIsPreview] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [dueDate, setDueDate] = useState('');
 
     const isFetchingRef = useRef(false);
     const timeoutRef = useRef(null);
 
     const selectedCustomer = watch("customerName");
+    const termsValue = watch("terms");
+
+    useEffect(() => {
+        if (termsValue && !isNaN(termsValue)) {
+            const currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + parseInt(termsValue));
+            const formattedDueDate = currentDate.toISOString().split('T')[0];
+            setDueDate(formattedDueDate);
+            setValue('dueDate', formattedDueDate);
+        } else {
+            setDueDate('');
+            setValue('dueDate', '');
+        }
+    }, [termsValue, setValue]);
 
     useEffect(() => {
         if (isFetchingRef.current) return;
@@ -38,7 +54,6 @@ const SellInvoiceAdd = () => {
 
     useEffect(() => {
         if (selectedCustomer) {
-            setValue('contactInfo', selectedCustomer?.phone);
             setValue('address', selectedCustomer?.address);
         }
     }, [selectedCustomer, setValue]);
@@ -70,7 +85,8 @@ const SellInvoiceAdd = () => {
             if (response.status === 200) {
                 const customerOptions = response?.data?.data?.map(customer => ({
                     label: customer.name,
-                    value: customer._id
+                    value: customer._id,
+                    address: customer.address
                 }));
 
                 setCustomerOptions(customerOptions);
@@ -92,7 +108,10 @@ const SellInvoiceAdd = () => {
 
             if (response.status === 200) {
                 const responseData = response.data.data;
-                setValue('customerName', { label: responseData?.customer?.name, value: responseData?.customer?._id });
+                setValue('customerName', { label: responseData?.customer?.name, value: responseData?.customer?._id, address: responseData?.address });
+                setValue('invoiceNumber', responseData?.invoiceNumber);
+                setValue('shipTo', responseData?.shipTo);
+                setValue('terms', responseData?.terms);
 
                 setRowData(responseData.invoiceItems);
             }
@@ -105,7 +124,6 @@ const SellInvoiceAdd = () => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
-        setLoading(true);
         try {
             const response = await axiosClient.post('/invoice/fetch-stock',
                 { refNo },
@@ -138,7 +156,6 @@ const SellInvoiceAdd = () => {
             }
         } finally {
             isFetchingRef.current = false;
-            setLoading(false);
         }
     };
 
@@ -156,10 +173,12 @@ const SellInvoiceAdd = () => {
 
     async function handleChange(e, index) {
         const { name } = e.target;
-
         let value = e.target.value;
         if (['carats', 'pricePerCarat', 'price'].includes(name)) {
             value = e.target.value.replace(/[^0-9.]/g, '');
+            if ((value.match(/\./g) || []).length > 1) {
+                value = value.replace(/\.+$/, '');
+            }
         }
 
         if (name === "refNo") {
@@ -181,7 +200,6 @@ const SellInvoiceAdd = () => {
             const amount = parseFloat(carats * pricePerCarat).toFixed();
 
             updatedData[index].price = amount;
-            updatedData[index].carats = carats?.toString();
         }
         setRowData(updatedData);
         setValue('tableData', updatedData);
@@ -242,7 +260,7 @@ const SellInvoiceAdd = () => {
                     setNewRows(prev => [...prev, updatedData[index]]);
                 } else {
                     setUpdatedRows(prev => {
-                        const updatedRow = { ...updatedData[index] };
+                        const updatedRow = { ...updatedData[index], carats: updatedData[index].carats?.toString() };
                         const existingIndex = prev.findIndex((row) => row._id === updatedRow._id);
                         if (existingIndex !== -1) {
                             const newData = [...prev];
@@ -309,7 +327,7 @@ const SellInvoiceAdd = () => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
-        if (!params.memoId) {
+        if (!params.sellInvoiceId) {
             createInvoiceApiCall(data);
         } else {
             updateInvoiceApiCall(data);
@@ -320,6 +338,9 @@ const SellInvoiceAdd = () => {
         try {
             const payload = {};
             payload.customer = data?.customerName?.value;
+            payload.address = data?.address;
+            payload.shipTo = data?.shipTo;
+            payload.terms = data?.terms;
             payload.items = rowData?.map((item, index) => {
                 delete item.isEdit;
                 return item;
@@ -346,6 +367,9 @@ const SellInvoiceAdd = () => {
             const payload = {};
             payload.sellInvoiceId = params.sellInvoiceId;
             payload.customer = data?.customerName?.value;
+            payload.address = data?.address;
+            payload.shipTo = data?.shipTo;
+            payload.terms = data?.terms?.toString();
             payload.newItems = newRows?.map((item) => { delete item.isEdit; return item; });
             payload.updatedItems = updatedRows?.map((item) => { delete item.isEdit; return item; });
             payload.removedItems = removedRows?.map((item) => { return item._id; });
@@ -374,7 +398,7 @@ const SellInvoiceAdd = () => {
             render: (row, index) => {
                 const srNo = index + 1;
                 return (
-                    <span className="text-[14px] font-medium text-[#0A112F] text-center line-clamp-2">
+                    <span className="px-[10px] text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">
                         {srNo}
                     </span>
                 );
@@ -418,34 +442,13 @@ const SellInvoiceAdd = () => {
                                     value={description}
                                     onChange={(e) => handleChange(e, index)}
                                 />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{description} CT</span>
+                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{description != '' ? description : '--'}</span>
                         }
                     </>
                 )
             }
         },
-        {
-            label: 'Pcs',
-            key: 'pcs',
-            type: 'custom',
-            render: ({ isEdit, pcs }, index) => {
-                return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="pcs"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={pcs}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{pcs} CT</span>
-                        }
-                    </>
-                )
-            }
-        },
+
         {
             label: 'Carats',
             key: 'carats',
@@ -462,7 +465,7 @@ const SellInvoiceAdd = () => {
                                     value={carats}
                                     onChange={(e) => handleChange(e, index)}
                                 />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{carats}</span>
+                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{carats} CT</span>
                         }
                     </>
                 )
@@ -525,7 +528,7 @@ const SellInvoiceAdd = () => {
                                     <button onClick={() => handleSaveClick(index)}>
                                         <img src={writeIcon} alt="View" className='create-memo-icon' />
                                     </button>
-                                    <button className="mr-[5px]" onClick={() => handleDeleteClick(index)}>
+                                    <button className="mr-[5px]" onClick={() => handleCancelClick(index)}>
                                         <img src={wrongIcon} alt="Delete" className='create-memo-icon' />
                                     </button>
                                 </>)
@@ -555,143 +558,202 @@ const SellInvoiceAdd = () => {
         return (
             <tfoot>
                 <tr className='py-[12px]'>
-                    <th colSpan={3} >
+                    <th colSpan={2} >
                         <strong>Total</strong>
                     </th>
+                    <th colSpan={1}></th>
                     <th className='!text-start'>
                         <strong>{getColumnTotal('carats').toFixed(2)} CT</strong>
                     </th>
-                    <th colSpan={3}></th>
+                    <th colSpan={1}></th>
                     <th className='!text-start'>
                         <strong>{getCurrency(getColumnTotal('price'))}</strong>
                     </th>
-                    <th colSpan={3}></th>
+                    <th colSpan={2}></th>
                 </tr>
             </tfoot>
         );
     }
 
-    if (loading) {
-        return <Loader />;
-    }
-
-
     return (
-        <div className="w-full h-full p-[20px] max-w-[100rem] flex flex-col mx-auto">
-            <div className="w-full flex justify-between items-center mb-[24px]">
-                <h6 className="text-[16px]">Create Sell Invoice</h6>
-            </div>
-
-            <div className='relative flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
-                <div className='w-full flex justify-between items-center mb-[20px]'>
-                    <h6 className='text-[16px]'>Customer Details</h6>
-                    <div className='flex gap-[12px]'>
-                        {!params.memoId && <button
-                            className='w-[220px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
-                            onClick={() => navigate('/customer/add')}
-                        >
-                            + Add Customer
-                        </button>}
-                        <button
-                            className='w-[150px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
-                            onClick={() => setIsPreview(q => !q)}
-                        >
-                            Preview
-                        </button>
-                        {loading && <Loader />}
-                    </div>
+        loading ? <Loader /> :
+            <div className="w-full h-full p-[20px] max-w-[100rem] flex flex-col mx-auto">
+                <div className="w-full flex justify-between items-center mb-[24px]">
+                    <h6 className="text-[16px]">Create Sell Invoice</h6>
                 </div>
 
-                <form className="stock-add" autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-                    <div className='w-full flex items-center gap-[10px]'>
-                        <SelectField
-                            {...{
-                                id: 8,
-                                name: "customerName",
-                                label: "Customer Name",
-                                type: "SELECT",
-                                placeholder: "Select Customer",
-                                options: [
-                                    { value: "1", label: "Customer 1" },
-                                    { value: "2", label: "Customer 2" }
-                                ],
-                                rule: {
-                                    required: "*Customer Name is required"
-                                },
-                            }}
-                            errors={errors}
-                            control={control}
-                            options={customerOptions}
-                            isSearchable={true}
-                        />
-                        <PhoneInputField
-                            {...{
-                                id: 6,
-                                name: "contactInfo",
-                                label: "Contact Information",
-                                type: "PHONE_INPUT",
-                                placeholder: "Enter Contact Information"
-                            }}
-                            control={control}
-                            errors={errors}
-                        />
-                    </div>
-                </form>
-
-                <div>
-                    <div className='w-full block md:flex items-center justify-between'>
-                        <h2>Items</h2>
-                        <div className='max-w-[40%] flex gap-[20px]'>
+                <div className='relative flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
+                    <div className='w-full flex justify-between items-center mb-[20px]'>
+                        <h6 className='text-[16px]'>Customer Details</h6>
+                        <div className='flex gap-[12px]'>
+                            {!params.memoId && <button
+                                className='w-[220px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                                onClick={() => navigate('/customer/add')}
+                            >
+                                + Add Customer
+                            </button>}
                             <button
-                                className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none'
-                                onClick={handleAddItemsClick}>
-                                Add Items
+                                className='w-[150px] h-full min-w-[130px] py-[17.5px] md-2:py-[15.5px] bg-[#1E1E1E] text-white rounded-[10px]'
+                                onClick={() => setIsPreview(q => !q)}
+                            >
+                                Preview
                             </button>
                         </div>
                     </div>
 
-                    <div className="my-[30px] stock-table">
-                        {rowData?.length === 0 ? (
-                            <NoDataFound message="Oops! No stocks found." />
-                        ) : (
-                            <Table
-                                columns={columns}
-                                data={rowData}
-                                tableClass="stock-table"
-                                tableFooter={tableFooter()}
-                            />)}
+                    <form className="stock-add" autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+                        <div className='w-full flex items-center gap-[10px]'>
+                            <SelectField
+                                {...{
+                                    id: 8,
+                                    name: "customerName",
+                                    label: "Bill To",
+                                    type: "SELECT",
+                                    placeholder: "Select Customer",
+                                    options: [
+                                        { value: "1", label: "Customer 1" },
+                                        { value: "2", label: "Customer 2" }
+                                    ],
+                                    rule: {
+                                        required: "*Bill To is required"
+                                    },
+                                }}
+                                errors={errors}
+                                control={control}
+                                options={customerOptions}
+                                isSearchable={true}
+                            />
+                            <InputField
+                                {...{
+                                    id: 9,
+                                    name: "invoiceNumber",
+                                    label: "Invoice Number",
+                                    type: "INPUT",
+                                    placeholder: "Enter Invoice Number",
+                                }}
+                                readOnly={true}
+                                register={register}
+                                errors={errors}
+                            />
+                        </div>
+                        <div className='w-full flex items-center gap-[10px]'>
+                            <InputField
+                                {...{
+                                    id: 10,
+                                    name: "address",
+                                    label: "Address",
+                                    type: "INPUT",
+                                    placeholder: "Enter Address",
+                                    rule: {
+                                        required: "*Address is required"
+                                    },
+                                }}
+                                register={register}
+                                errors={errors}
+                            />
+                        </div>
+                        <div className='w-full flex items-center gap-[10px]'>
+                            <InputField
+                                {...{
+                                    id: 11,
+                                    name: "shipTo",
+                                    label: "Ship To",
+                                    type: "INPUT",
+                                    placeholder: "Enter Ship To",
+                                    rule: {
+                                        required: "*Ship To is required"
+                                    },
+                                }}
+                                register={register}
+                                errors={errors}
+                            />
+                        </div>
+                        <div className='w-full flex items-center gap-[10px]'>
+                            <InputField
+                                {...{
+                                    id: 12,
+                                    name: "terms",
+                                    label: "Terms (In Days)",
+                                    type: "INPUT",
+                                    placeholder: "Enter Terms",
+                                    rule: {
+                                        required: "*Terms is required"
+                                    },
+                                }}
+                                value={terms}
+                                register={register}
+                                errors={errors}
+                            />
+                            <InputField
+                                {...{
+                                    id: 13,
+                                    name: "dueDate",
+                                    label: "Due Date",
+                                    type: "INPUT",
+                                    placeholder: "Due Date will be auto-calculated",
+                                    readOnly: true
+                                }}
+                                value={dueDate}
+                                register={register}
+                                errors={errors}
+                            />
+                        </div>
+                    </form>
+
+                    <div>
+                        <div className='w-full block md:flex items-center justify-between'>
+                            <h2>Items</h2>
+                            <div className='max-w-[40%] flex gap-[20px]'>
+                                <button
+                                    className='text-[14px] px-[14px] py-[10px] border border-[#D5D7DA] rounded-[8px] font-medium text-[ #414651] outline-none'
+                                    onClick={handleAddItemsClick}>
+                                    Add Items
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="my-[30px] stock-table">
+                            {rowData?.length === 0 ? (
+                                <NoDataFound message="Oops! No stocks found." />
+                            ) : (
+                                <Table
+                                    columns={columns}
+                                    data={rowData}
+                                    tableClass="stock-table"
+                                    tableFooter={tableFooter()}
+                                />)}
+                        </div>
+
+                        <div className='w-full flex items-center justify-end gap-[20px]'>
+                            {!params.memoId && <button
+                                type='button'
+                                className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]'
+                                onClick={() => {
+                                    reset();
+                                    setRowData([]);
+                                }}
+                            >
+                                Reset
+                            </button>}
+                            {params.memoId && <button
+                                type='button'
+                                className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]'
+                                onClick={() => navigate(-1)}
+                            >
+                                Cancel
+                            </button>}
+                            <button
+                                type='submit'
+                                className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'
+                                onClick={handleSubmit(onSubmit)}
+                            >
+                                Submit
+                            </button>
+                        </div>
                     </div>
 
-                    <div className='w-full flex items-center justify-end gap-[20px]'>
-                        {!params.memoId && <button
-                            type='button'
-                            className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]'
-                            onClick={() => {
-                                reset();
-                                setRowData([]);
-                            }}
-                        >
-                            Reset
-                        </button>}
-                        {params.memoId && <button
-                            type='button'
-                            className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]'
-                            onClick={() => navigate(-1)}
-                        >
-                            Cancel
-                        </button>}
-                        <button
-                            type='submit'
-                            className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'
-                            onClick={handleSubmit(onSubmit)}
-                        >
-                            Submit
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+                </div >
+            </div >
     )
 }
 

@@ -9,6 +9,10 @@ import { getCurrency } from 'utils';
 import { toast } from 'react-toastify';
 import axiosClient from 'api/AxiosClient';
 import NoDataFound from 'components/no-data-found';
+import { arrowDown, arrowUp, button, downloadIcon } from 'assets/utils/images';
+import DeletePopup from 'components/popup/Delete';
+import SellInvoiceAdd from './Form';
+import Loader from 'components/loader';
 
 const SellInvoice = () => {
     const navigate = useNavigate();
@@ -19,13 +23,13 @@ const SellInvoice = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
+    const [sortConfig, setSortConfig] = useState({ key: 'dueDate', direction: 'Asc' });
 
     const isFetchingRef = useRef(false);
 
     useEffect(() => {
         if (isFetchingRef.current) return;
-        fetchSellInvoice(currentPage, sortConfig.key, sortConfig.direction);
+        fetchSellInvoice(currentPage, searchQuery, sortConfig.key, sortConfig.direction);
     }, [currentPage, sortConfig]);
 
     const handleSort = (key) => {
@@ -39,7 +43,7 @@ const SellInvoice = () => {
         fetchSellInvoice(1, query);
     };
 
-    const fetchSellInvoice = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
+    const fetchSellInvoice = async (page = 1, searchQuery = "", sortKey = "dueDate", sortDirection = "Asc") => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
@@ -47,9 +51,9 @@ const SellInvoice = () => {
         try {
             const response = await axiosClient.post('/invoice/all-invoice',
                 {
-                    search: searchQuery,
                     page: page,
                     limit: 5,
+                    search: searchQuery,
                     sortingKey: sortKey,
                     sortingOrder: sortDirection
                 },
@@ -70,20 +74,20 @@ const SellInvoice = () => {
         }
     };
 
-    const onStatusChange = (action, memoId) => {
+    const onStatusChange = (action, sellInvoiceId) => {
         if (action === 'delete') {
-            setMemoData((prevData) => prevData.filter(item => item._id !== memoId));
+            setSellInvoiceData((prevData) => prevData.filter(item => item._id !== sellInvoiceId));
         }
     };
 
-    const handleDeleteMemo = async (action, item) => {
+    const handleDeleteInvoice = async (action, item) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
         setLoading(true);
         try {
-            const response = await axiosClient.post(`/memo/delete`,
-                { memoId: item._id },
+            const response = await axiosClient.post(`/invoice/delete`,
+                { sellInvoiceId: item._id },
                 { headers: { 'Content-Type': 'application/json' } });
 
             if (response.status === 200) {
@@ -109,7 +113,7 @@ const SellInvoice = () => {
             case 'view':
                 break;
             case 'edit':
-                navigate(`/invoice/edit/${item._id}`);
+                navigate(`/sell-invoice/edit/${item._id}`);
                 break;
             case 'delete':
                 setSelectedItem({ action, item });
@@ -138,11 +142,16 @@ const SellInvoice = () => {
         {
             label: 'Customer Name',
             key: 'custmerName',
+            type: 'custom',
+            render: ({ customer }) => {
+                return <span className="text-[14px] font-medium text-[#0A112F]">{customer.name}</span>
+            },
             sortable: true,
         },
         {
             label: 'Invoice Date',
             key: 'invoiceDate',
+            type: 'custom',
             render: ({ createdAt }) => {
                 return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)} {getTime(createdAt)}</span>
             },
@@ -153,7 +162,7 @@ const SellInvoice = () => {
             key: 'dueDate',
             type: 'custom',
             render: ({ dueDate }) => {
-                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(dueDate)} {getTime(dueDate)}</span>
+                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(dueDate)}</span>
             },
             sortable: true,
         },
@@ -173,10 +182,10 @@ const SellInvoice = () => {
         },
         {
             label: 'Total Value',
-            key: 'totalPrice',
+            key: 'totalValue',
             type: 'custom',
-            render: ({ totalPrice }) => {
-                return <span className="text-[14px] font-medium text-[#0A112F]">{getCurrency(totalPrice)}</span>
+            render: ({ totalValue }) => {
+                return <span className="text-[14px] font-medium text-[#0A112F]">{getCurrency(totalValue)}</span>
             },
             sortable: true,
         },
@@ -218,46 +227,48 @@ const SellInvoice = () => {
     ];
 
     return (
-        <div className="w-full p-[20px] max-w-[100rem] mx-auto">
-            <Search
-                placeholder="Search by..."
-                searchQuery={searchQuery}
-                onSearch={handleSearch}
-                addBtn={{
-                    title: '+ Add Invoice',
-                    onClick: () => { navigate('/sell-invoice/add') }
-                }}
-            />
-            <div className="my-[30px] stock-table">
-                {sellInvoiceData?.length === 0 ? (
-                    <NoDataFound message="Oops! No sell-invoices found." />
-                ) : (
-                    <Table
-                        columns={columns.map(column => ({
-                            ...column,
-                            label: (
-                                <div
-                                    className="flex items-center cursor-pointer gap-[5px]"
-                                    onClick={() => column.sortable && handleSort(column.key)}
-                                >
-                                    {column.label}
-                                    {column.sortable && sortConfig.key === column.key && (
-                                        <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
-                                    )}
-                                </div>
-                            ),
-                        }))}
-                        data={sellInvoiceData}
-                        tableClass="stock-table"
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={setCurrentPage}
-                    />
-                )}
-            </div>
+        loading ?
+            <Loader />
+            : <div className="w-full p-[20px] max-w-[100rem] mx-auto">
+                <Search
+                    placeholder="Search by..."
+                    searchQuery={searchQuery}
+                    onSearch={handleSearch}
+                    addBtn={{
+                        title: '+ Add Invoice',
+                        onClick: () => { navigate('/sell-invoice/add') }
+                    }}
+                />
+                <div className="my-[30px] stock-table">
+                    {sellInvoiceData?.length === 0 ? (
+                        <NoDataFound message="Oops! No sell-invoices found." />
+                    ) : (
+                        <Table
+                            columns={columns.map(column => ({
+                                ...column,
+                                label: (
+                                    <div
+                                        className="flex items-center cursor-pointer gap-[5px]"
+                                        onClick={() => column.sortable && handleSort(column.key)}
+                                    >
+                                        {column.label}
+                                        {column.sortable && sortConfig.key === column.key && (
+                                            <img src={sortConfig.direction === 'Asc' ? arrowUp : arrowDown} alt='sort-direction' class="w-[15px] h-[15px]" />
+                                        )}
+                                    </div>
+                                ),
+                            }))}
+                            data={sellInvoiceData}
+                            tableClass="stock-table"
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                        />
+                    )}
+                </div>
 
-            {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => handleDeleteMemo(selectedItem.action, selectedItem.item)} inlineKeys={['memoNumber', 'customerName']} />)}
-        </div>
+                {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => handleDeleteInvoice(selectedItem.action, selectedItem.item)} inlineKeys={['invoiceNumber', 'customerName']} />)}
+            </div>
     )
 }
 

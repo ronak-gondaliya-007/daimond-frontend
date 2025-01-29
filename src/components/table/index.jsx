@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Pagination from '../pagination';
-import { getCurrency } from 'utils';
 
 const Table = ({
     columns,

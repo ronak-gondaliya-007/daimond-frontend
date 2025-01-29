@@ -56,30 +56,30 @@ export const privateRoutes = [
     {
         path: '/sell-invoice',
         element: SellInvoice,
-        title: "Sell / Invoice",
+        title: "Sell-Invoice",
         layout: MAIN,
-        breadcrumb: ["Management", "Sell / Invoice"]
+        breadcrumb: ["Management", "Sell-Invoice"]
     },
     {
         path: '/sell-invoice/add',
         element: SellInvoiceAdd,
-        title: "Sell / Invoice - Add",
+        title: "Sell-Invoice - Add",
         layout: MAIN,
-        breadcrumb: ["Management", "Sell / Invoice", "Add"]
+        breadcrumb: ["Management", "Sell-Invoice", "Add"]
     },
     {
         path: '/sell-invoice/edit/:sellInvoiceId',
         element: SellInvoiceAdd,
-        title: "Sell / Invoice - Edit",
+        title: "Sell-Invoice - Edit",
         layout: MAIN,
-        breadcrumb: ["Management", "Sell / Invoice", "Edit"]
+        breadcrumb: ["Management", "Sell-Invoice", "Edit"]
     },
     {
         path: '/sell-invoice/preview/:sellInvoiceId',
         element: ManageInvoices,
-        title: "Sell / Manage invoices",
+        title: "Sell-Invoice / Manage invoices",
         layout: MAIN,
-        breadcrumb: ["Management", "Manage Invoices"]
+        breadcrumb: ["Management", "Sell-Invoice", "Manage Invoices"]
     },
 
     // --> Management

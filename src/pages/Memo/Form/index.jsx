@@ -194,7 +194,6 @@ const CreateMemo = () => {
             const amount = parseFloat(carats * pricePerCarat).toFixed();
 
             updatedData[index].price = amount;
-            updatedData[index].carats = carats?.toString();
         }
         setRowData(updatedData);
         setValue('tableData', updatedData);
