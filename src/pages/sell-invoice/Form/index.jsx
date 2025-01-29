@@ -31,12 +31,12 @@ const SellInvoiceAdd = () => {
     const timeoutRef = useRef(null);
 
     const selectedCustomer = watch("customerName");
-    const termsValue = watch("terms");
+    const terms = watch("terms");
 
     useEffect(() => {
-        if (termsValue && !isNaN(termsValue)) {
+        if (terms && !isNaN(terms)) {
             const currentDate = new Date();
-            currentDate.setDate(currentDate.getDate() + parseInt(termsValue));
+            currentDate.setDate(currentDate.getDate() + parseInt(terms));
             const formattedDueDate = currentDate.toISOString().split('T')[0];
             setDueDate(formattedDueDate);
             setValue('dueDate', formattedDueDate);
@@ -44,7 +44,7 @@ const SellInvoiceAdd = () => {
             setDueDate('');
             setValue('dueDate', '');
         }
-    }, [termsValue, setValue]);
+    }, [terms, setValue]);
 
     useEffect(() => {
         if (isFetchingRef.current) return;

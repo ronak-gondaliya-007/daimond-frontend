@@ -1,18 +1,21 @@
 import axiosClient from 'api/AxiosClient';
-import { uploadCloud02 } from 'assets/utils/images'
+import { exclamationIcon, uploadCloud02 } from 'assets/utils/images'
 import Loader from 'components/loader';
 import NoDataFound from 'components/no-data-found';
 import React, { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getCurrency } from 'utils'
-import { getDate, getTime } from 'utils/dateFormat';
+import { getDate } from 'utils/dateFormat';
 
 const ManageInvoices = () => {
+    const navigate = useNavigate();
     const params = useParams();
 
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState(null);
+    const [isPaid, setIsPaid] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const isFetchingRef = useRef(false);
 
@@ -44,6 +47,30 @@ const ManageInvoices = () => {
         }
     };
 
+    const handleMarkAsPaid = async () => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        setLoading(true);
+        try {
+            const response = await axiosClient.post('/invoice/change-status',
+                { sellInvoiceId: params.sellInvoiceId },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (response.status === 200) {
+                setIsPaid(true);
+                toast.success(response.data.message);
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            isFetchingRef.current = false;
+            setLoading(false);
+            setShowModal(false);
+        }
+    };
+
     return (
         loading ?
             <Loader />
@@ -60,10 +87,19 @@ const ManageInvoices = () => {
                             <h6 className='text-[24px] font-medium'>#{data.invoiceNumber}</h6>
 
                             <div className='flex items-center gap-[12px]'>
-                                <button className='text-[14px] font-medium text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
-                                    Mark as Paid
+                                <button
+                                    className={`text-[14px] font-medium text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]
+                                    ${isPaid ? 'bg-[#219653] text-white border-none' : 'text-[#414651] border border-[#D5D7DA]'}
+                                    `}
+                                    onClick={() => { if (!isPaid) setShowModal(true) }}
+                                    disabled={isPaid}
+                                >
+                                    {isPaid ? 'Invoice Paid' : 'Mark as Paid'}
                                 </button>
-                                <button className='text-[14px] font-medium text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
+                                <button 
+                                className='text-[14px] font-medium text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'
+                                onClick={() => navigate(`/sell-invoice/edit/${params.sellInvoiceId}`)}
+                                >
                                     Edit Invoice
                                 </button>
                                 <button className='text-[14px] font-medium text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'>
@@ -119,6 +155,18 @@ const ManageInvoices = () => {
                             <p className='text-[16px] font-medium'>Outstanding Amount</p>
                         </div>
                     </div>
+
+                    {/* Confirmation Popup */}
+                    {showModal && (
+                        <PaymentConfirmation
+                            invoiceNumber={data?.invoiceNumber}
+                            customerName={data?.customer?.name}
+                            amount={data?.totalValue}
+                            setShowModal={setShowModal}
+                            handleMarkAsPaid={handleMarkAsPaid}
+                            loading={loading}
+                        />
+                    )}
                 </div>
     )
 }
@@ -165,6 +213,76 @@ function CustomTable({ table = [] }) {
                 </tr>
             </tbody>
         </table>
+    )
+}
+
+function PaymentConfirmation({invoiceNumber, customerName, amount, setShowModal, handleMarkAsPaid, loading}) {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative">
+                {/* Image positioned outside the popup with margin-bottom */}
+                <img
+                    className="w-[60px] absolute top-[-25px] left-1/2 transform -translate-x-1/2 mb-6"
+                    src={exclamationIcon}
+                    alt="exclamation"
+                />
+
+                {/* Header with margin-top */}
+                <h3 className="text-lg font-semibold text-gray-800 mb-6 mt-6 text-center">
+                    Confirm Mark As Paid
+                </h3>
+
+                {/* Invoice & Customer Details */}
+                <div className="mb-6 text-left space-y-4 flex border-b border-gray-300">
+                    <div className="flex justify-between mb-4 w-full">
+                        <div>
+                            <div className="text-sm text-gray-500 font-medium mb-2 ">Invoice Number</div>
+                            <div className="text-sm text-gray-900 font-medium">{invoiceNumber}</div>
+                        </div>
+                        <div>
+                            <div className="text-sm text-gray-500 font-medium mb-2 ">Customer Name</div>
+                            <div className="text-sm text-gray-900 font-medium">{customerName}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Payable Amount - Centered */}
+                <div className="mb-4 text-center">
+                    <div>
+                        <div className="text-sm text-gray-500 font-medium mb-2 ">Payable Amount</div>
+                        <div className="text-[30px] text-gray-900 font-medium">{getCurrency(amount)}</div>
+                    </div>
+                </div>
+
+                {/* Delete Item Key-Value Section */}
+                <div className="mb-3 text-center">
+                    <span className="text-sm text-gray-600">Just Double-Checking!</span>
+                </div>
+                <div className="mb-6 text-start bg-red-100 border-l-4 border-red-500 p-4 rounded-r-lg">
+                    <span className="text-sm text-gray-800 font-semibold">
+                        Are you sure you want to mark this invoice as <strong className="font-bold">Paid</strong>? This action cannot be undone.
+                    </span>
+                </div>
+
+                {/* Actions */}
+                <div className="flex space-x-4 justify-center">
+                    <button
+                        className="px-4 py-2 bg-gray-300 text-black rounded-md"
+                        onClick={() => setShowModal(false)}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="px-4 py-2 bg-green-600 text-white rounded-md"
+                        onClick={() => handleMarkAsPaid()}
+                        disabled={loading}
+                    >
+                        Yes, Mark as Paid
+                    </button>
+                </div>
+
+            </div>
+        </div>
     )
 }
 
