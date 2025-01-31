@@ -7,7 +7,8 @@ const InputField = ({
     readOnly = false,
     register,
     rule,
-    errors
+    errors,
+    onInput = {}
 }) => (
     <div className="form-group mb-[16px]">
         <label htmlFor={id}>{label}</label>
@@ -19,6 +20,7 @@ const InputField = ({
             readOnly={readOnly}
             min={20}
             max={60}
+            onInput={onInput}
             {...register(name, rule)}
         />
         {!!errors?.[name] && <span className="error-text">{errors[name].message}</span>}

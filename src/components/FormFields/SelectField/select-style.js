@@ -18,7 +18,7 @@ export const selectStyle = {
         ...provided,
         height: '23px !important',
         padding: '0',
-        margin: '20px 0 0 0'
+        margin: '15px 0 0 0'
     }),
 
     indicatorSeparator: (provided) => ({
@@ -29,12 +29,12 @@ export const selectStyle = {
     singleValue: (provided) => ({
         ...provided,
         fontSize: '14px',
-        margin: '20px 0 0 0'
+        margin: '15px 0 0 0'
     }),
 
     placeholder: (provided) => ({
         ...provided,
-        margin: '20px 0 0 0',
+        margin: '15px 0 0 0',
         fontSize: '14px'
     }),
 

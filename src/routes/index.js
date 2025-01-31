@@ -16,6 +16,8 @@ const ManageInvoices = lazy(() => import("../pages/Sell-Invoice/manage-invoice")
 const MemoPreview = lazy(() => import("../pages/Memo/preview"));
 const Stock = lazy(() => import("../pages/Stock"));
 const StockForm = lazy(() => import("../pages/Stock/Form"));
+const Expense = lazy(() => import("../pages/Expense"));
+const ExpenseForm = lazy(() => import("../pages/Expense/Form"));
 const Customer = lazy(() => import("../pages/Customer"));
 const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
 const RolesPermission = lazy(() => import("../pages/Roles-Permission/RolesPermission"));
@@ -81,8 +83,6 @@ export const privateRoutes = [
         layout: MAIN,
         breadcrumb: ["Management", "Sell-Invoice", "Manage Invoices"]
     },
-
-    // --> Management
     {
         path: '/memo',
         element: Memo,
@@ -131,6 +131,27 @@ export const privateRoutes = [
         title: "StockEdit",
         layout: MAIN,
         breadcrumb: ["Management", "Stock", "Edit"]
+    },
+    {
+        path: '/expense',
+        element: Expense,
+        title: "Expense",
+        layout: MAIN,
+        breadcrumb: ["Management", "Expense"]
+    },
+    {
+        path: '/expense/add',
+        element: ExpenseForm,
+        title: "ExpenseAdd",
+        layout: MAIN,
+        breadcrumb: ["Management", "Expense", "Add"]
+    },
+    {
+        path: '/expense/edit/:expenseId',
+        element: ExpenseForm,
+        title: "ExpenseEdit",
+        layout: MAIN,
+        breadcrumb: ["Management", "Expense", "Edit"]
     },
     {
         path: '/customer',

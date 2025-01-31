@@ -23,6 +23,8 @@ import wrongIcon from '../images/cancel.png';
 import writeIcon from '../images/checkmark.png';
 import downloadIcon from '../images/download-icon.svg';
 import uploadCloud02 from '../images/upload-cloud-02.svg';
+import calendar from '../images/calendar.svg';
+import featuredIcon from '../images/featured-icon.svg';
 
 export {
     logo,
@@ -49,5 +51,7 @@ export {
     wrongIcon,
     writeIcon,
     downloadIcon,
-    uploadCloud02
+    uploadCloud02,
+    calendar,
+    featuredIcon
 };

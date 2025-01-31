@@ -1,7 +1,8 @@
 import { exclamationIcon } from "assets/utils/images";
 import React from "react";
+import { getCurrency } from "utils";
 
-const DeletePopup = ({ onClose, onDelete, item, inlineKeys }) => {
+const DeletePopup = ({ onClose, onDelete, item, inlineKeys, isAmount, amountKey }) => {
     const capitalizeFirstLetter = (str) => {
         return str.charAt(0).toUpperCase() + str.slice(1);
     };
@@ -40,6 +41,12 @@ const DeletePopup = ({ onClose, onDelete, item, inlineKeys }) => {
                 <div className="mb-3 text-center">
                     <span className="text-sm text-gray-600">Just Double-Checking!</span>
                 </div>
+                {isAmount && <div className="mb-4 text-center">
+                    <div>
+                        <div className="text-sm text-gray-500 font-medium mb-2 ">{amountKey}</div>
+                        <div className="text-[30px] text-gray-900 font-medium">{getCurrency(item.amount)}</div>
+                    </div>
+                </div>}
                 <div className="mb-6 text-start bg-red-100 border-l-4 border-red-500 p-4 rounded-r-lg">
                     <span className="text-sm text-gray-800 font-semibold">
                         You're about to delete an item. Are you absolutely sure you want to remove it permanently?

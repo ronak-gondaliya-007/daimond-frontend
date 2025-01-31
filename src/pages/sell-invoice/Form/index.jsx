@@ -579,7 +579,7 @@ const SellInvoiceAdd = () => {
         loading ? <Loader /> :
             <div className="w-full h-full p-[20px] max-w-[100rem] flex flex-col mx-auto">
                 <div className="w-full flex justify-between items-center mb-[24px]">
-                    <h6 className="text-[16px]">Create Sell Invoice</h6>
+                    <h6 className="text-[16px]">Overview</h6>
                 </div>
 
                 <div className='relative flex-1 border border-[rgba(0,0,0,0.1)] rounded-[12px] p-[30px]'>
@@ -752,8 +752,8 @@ const SellInvoiceAdd = () => {
                         </div>
                     </div>
 
-                </div >
-            </div >
+                </div>
+            </div>
     )
 }
 
