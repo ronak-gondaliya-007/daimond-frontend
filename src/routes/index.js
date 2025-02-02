@@ -23,6 +23,8 @@ const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
 const RolesPermission = lazy(() => import("../pages/Roles-Permission/RolesPermission"));
 const RolesPermissionForm = lazy(() => import("../pages/Roles-Permission/Form"));
 const ReportsAnalytics = lazy(() => import("../pages/Reports-Analytics/ReportsAnalytics"));
+const Payment = lazy(() => import("../pages/payment"));
+const PaymentAdd = lazy(() => import("../pages/payment/Form"));
 
 const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -203,5 +205,21 @@ export const privateRoutes = [
         title: "Reports & Analytics",
         layout: MAIN,
         breadcrumb: ["Other", "Reports & Analytics"]
+    },
+
+    // payments
+    {
+        path: '/payment',
+        element: Payment,
+        title: "Payment",
+        layout: MAIN,
+        breadcrumb: ["Management", "Payment"]
+    },
+    {
+        path: '/payment/add',
+        element: PaymentAdd,
+        title: "Payment Add",
+        layout: MAIN,
+        breadcrumb: ["Management", "Payment", "Add"]
     }
 ];
