@@ -25,6 +25,7 @@ import downloadIcon from '../images/download-icon.svg';
 import uploadCloud02 from '../images/upload-cloud-02.svg';
 import calendar from '../images/calendar.svg';
 import featuredIcon from '../images/featured-icon.svg';
+import diamondIconSVG from '../images/diamond-icon.svg';
 
 export {
     logo,
@@ -53,5 +54,6 @@ export {
     downloadIcon,
     uploadCloud02,
     calendar,
-    featuredIcon
+    featuredIcon,
+    diamondIconSVG,
 };

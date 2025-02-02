@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosClient from "api/AxiosClient";
 
 import Table from 'components/table';
+import { PDFDownloadLink, PDFViewer, render } from "@react-pdf/renderer";
 
 import { arrowDown, arrowUp, button, button1, button2, downloadIcon } from "assets/utils/images";
 
@@ -13,6 +14,7 @@ import Loader from 'components/loader';
 import { toast } from 'react-toastify';
 import DeletePopup from 'components/popup/Delete';
 import NoDataFound from 'components/no-data-found';
+import PDFDocument from './preview/PDFDocument';
 
 
 const Memo = () => {
@@ -206,6 +208,80 @@ const Memo = () => {
         return <Loader />;
     }
 
+    const memo = {
+        memoNumber: 601,
+        date: "11/20/2024",
+        company: "NATURE DIAM INC",
+        address: "20 West 47 Street, Suite 602, New York, NY 10036",
+        email: "naturediaminc@gmail.com",
+        phone: "+1 917 702 1701",
+        items: [
+            {
+                refNo: "H5B251B",
+                description: "1.5 Ct",
+                pcs: 1,
+                carats: "1.5 Ct",
+                grade: "VVS1",
+                pricePerCarat: "1,546",
+                returnInCarats: "₹1,546",
+                soldInCarats: "₹1,546",
+                amount: "1,546",
+                remarks: "VVS1",
+            },
+            {
+                refNo: "H5B251B",
+                description: "1.5 Ct",
+                pcs: 1,
+                carats: "1.5 Ct",
+                grade: "S12",
+                pricePerCarat: "₹1,546",
+                returnInCarats: "₹1,546",
+                soldInCarats: "₹1,546",
+                amount: "₹1,546",
+                remarks: "S12",
+            },
+            {
+                refNo: "H5B251B",
+                description: "1.5 Ct",
+                pcs: 1,
+                carats: "1.5 Ct",
+                grade: "VVS1",
+                pricePerCarat: "₹1,546",
+                returnInCarats: "₹1,546",
+                soldInCarats: "₹1,546",
+                amount: "₹1,546",
+                remarks: "VVS1",
+            },
+            {
+                refNo: "H5B251B",
+                description: "1.5 Ct",
+                pcs: 1,
+                carats: "1.5 Ct",
+                grade: "VVS1",
+                pricePerCarat: "₹1,546",
+                returnInCarats: "₹1,546",
+                soldInCarats: "₹1,546",
+                amount: "₹1,546",
+                remarks: "VVS1",
+            },
+            {
+                refNo: "H5B251B",
+                description: "1.5 Ct",
+                pcs: 1,
+                carats: "1.5 Ct",
+                grade: "S12",
+                pricePerCarat: "₹1,546",
+                returnInCarats: "₹1,546",
+                soldInCarats: "₹1,546",
+                amount: "₹1,546",
+                remarks: "S12",
+            },
+        ],
+        totalCarats: "8.8 Ct",
+        totalAmount: "₹15,55,500",
+    };
+
+
     return (
         <div className="w-full p-[20px] max-w-[100rem] mx-auto">
             <div className='w-full block md:flex items-center justify-between gap-[10px]'>
@@ -221,6 +297,16 @@ const Memo = () => {
                     </button>
                 </div>
             </div>
+
+            {/* Only PDF download */}
+            {/* <PDFDownloadLink document={<PDFDocument data={memo} />} fileName="memo.pdf">
+                {({ loading }) => (loading ? "Generating PDF..." : "Download PDF")}
+            </PDFDownloadLink> */}
+
+            {/* Only PDF view */}
+            {/* <PDFViewer height={900} width={1440}>
+                <PDFDocument data={memo} />
+            </PDFViewer> */}
 
             <div className="my-[30px] stock-table">
                 {memoData?.length === 0 ? (
