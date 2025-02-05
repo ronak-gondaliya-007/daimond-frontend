@@ -23,8 +23,8 @@ const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
 const RolesPermission = lazy(() => import("../pages/Roles-Permission/RolesPermission"));
 const RolesPermissionForm = lazy(() => import("../pages/Roles-Permission/Form"));
 const ReportsAnalytics = lazy(() => import("../pages/Reports-Analytics/ReportsAnalytics"));
-const Payment = lazy(() => import("../pages/payment"));
-const PaymentAdd = lazy(() => import("../pages/payment/Form"));
+const Purchase = lazy(() => import("../pages/payment"));
+const PurchaseAdd = lazy(() => import("../pages/payment/Form"));
 
 const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -207,19 +207,19 @@ export const privateRoutes = [
         breadcrumb: ["Other", "Reports & Analytics"]
     },
 
-    // payments
+    // purchase
     {
-        path: '/payment',
-        element: Payment,
-        title: "Payment",
+        path: '/purchase',
+        element: Purchase,
+        title: "Purchase",
         layout: MAIN,
-        breadcrumb: ["Management", "Payment"]
+        breadcrumb: ["Management", "Purchase"]
     },
     {
-        path: '/payment/add',
-        element: PaymentAdd,
-        title: "Payment Add",
+        path: '/purchase/add',
+        element: PurchaseAdd,
+        title: "Purchase Add",
         layout: MAIN,
-        breadcrumb: ["Management", "Payment", "Add"]
+        breadcrumb: ["Management", "Purchase", "Add"]
     }
 ];

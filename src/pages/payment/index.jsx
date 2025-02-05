@@ -7,11 +7,21 @@ import { FilterPopup } from 'pages/Stock';
 import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { getDate, getTime } from 'utils/dateFormat';
+import Select from 'react-select';
+
+const defaultValue = {
+    diamondId: 111,
+    refNo: "",
+    carat: "",
+    shape: "",
+    createdAt: "",
+    status: "Unknown"
+}
 
 const Payment = () => {
     const navigate = useNavigate();
 
-    const [stockData, setStockData] = useState([]);
+    const [stockData, setStockData] = useState([defaultValue]);
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -22,6 +32,7 @@ const Payment = () => {
     const [showSkippedPopup, setShowSkippedPopup] = useState(false);
     const [range, setRange] = useState([1, 100]);
     const [isOpen, setIsOpen] = useState(false)
+    const [rowData, setRowData] = useState([]);
 
     const isFetchingRef = useRef(false);
 
@@ -34,63 +45,59 @@ const Payment = () => {
             type: 'checkbox'
         },
         {
-            label: 'Diamond name and Id',
-            key: 'diamondName',
-            type: 'custom',
-            render: (item) => {
-                return <div className="flex items-center gap-[10px]">
-                    <img src={diamondIcon} alt="Diamond" />
-                    <div className="flex flex-col items-start">
-                        <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{item.diamondName}</span>
-                        <span className="text-[12px] font-medium text-[#0A112F]">{item.diamondId}</span>
-                    </div>
-                </div>
-            },
-            sortable: true
-        },
-        {
             label: 'Ref No',
             key: 'refNo',
-            sortable: true
+            sortable: true,
+            type: 'render',
+            render: ({ refNo }) => {
+                return <td className='!py-0'>
+                    <Select
+                        value={rowData?.refNo}
+                        onChange={(e) => handleChange(e, "refNo")}
+                        className={`custom-select`}
+                        options={[
+                            { value: "apple", label: "Apple", _id: 1 },
+                            { value: "banana", label: "Banana", _id: 2 },
+                            { value: "cherry", label: "Cherry", _id: 3 },
+                        ]}
+                        placeholder={"Select refNo"}
+                        isSearchable={true}
+                    />
+                    {/* <input type="text" className='h-[60px] hover:border focus:border border-1 border-[#408dfb] rounded-[8px] text-[22px] px-[9px] outline-none' /> */}
+                </td>
+            }
         },
         {
             label: 'Carat',
             key: 'carat',
-            sortable: true
+            type: 'render',
+            render: ({ carat }) => (
+                <td className='!py-0'>
+                    <input
+                        type="text"
+                        name='carat'
+                        className='h-[60px] hover:border focus:border border-1 border-[#408dfb] rounded-[8px] text-[22px] px-[9px] outline-none'
+                        value={rowData?.carat ?? "0.0"}
+                        onChange={(e) => handleChange(e)}
+                    />
+                </td>
+            )
         },
         {
             label: 'Shape',
             key: 'shape',
-            sortable: true
-        },
-        {
-            label: 'Size',
-            key: 'size',
-            sortable: true
-        },
-        {
-            label: 'Color',
-            key: 'color',
-            sortable: true
-        },
-        {
-            label: 'Clarity',
-            key: 'clarity',
-            sortable: true
-        },
-        {
-            label: 'Polish',
-            key: 'polish',
-            sortable: true
-        },
-        {
-            label: 'Date',
-            key: 'createdAt',
-            type: 'custom',
-            render: ({ createdAt }) => {
-                return <span className="text-[14px] font-medium text-[#0A112F]">{getDate(createdAt)} {getTime(createdAt)}</span>
-            },
-            sortable: true
+            type: 'render',
+            render: ({ shape }) => (
+                <td className='!py-0'>
+                    <input
+                        type="text"
+                        name='shape'
+                        className='h-[60px] hover:border focus:border border-1 border-[#408dfb] rounded-[8px] text-[22px] px-[9px] outline-none'
+                        value={rowData?.shape ?? "0.0"}
+                        onChange={(e) => handleChange(e)}
+                    />
+                </td>
+            )
         },
         {
             label: 'Status',
@@ -146,6 +153,15 @@ const Payment = () => {
         },
     ];
 
+    const handleChange = (event, key) => {
+        if (key === "refNo") {
+            setRowData({ ...rowData, refNo: event })
+        } else {
+            const { value, name } = event.target;
+            setRowData({ ...rowData, [name]: value })
+        }
+    }
+
     const handleSearch = (query) => {
         setSearchQuery(query);
         // fetchStocks(1, query);
@@ -191,7 +207,7 @@ const Payment = () => {
                 onSearch={handleSearch}
                 addBtn={{
                     title: '+ Add New',
-                    onClick: () => navigate('/payment/add')
+                    onClick: () => navigate('/purchase/add')
                 }}
                 handleFilterClick={() => setIsOpen(q => !q)}
             />
@@ -216,7 +232,7 @@ const Payment = () => {
                             ),
                         }))}
                         data={stockData}
-                        tableClass="stock-table"
+                        tableClass="stock-table purchase-table"
                         currentPage={currentPage}
                         totalPages={totalPages}
                         onPageChange={setCurrentPage}

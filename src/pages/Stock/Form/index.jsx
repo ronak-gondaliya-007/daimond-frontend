@@ -342,6 +342,12 @@ const StockForm = () => {
         }
     };
 
+    const getFormRow = {
+        "stock": stockForm,
+        "loose": looseStockForm,
+        "parcel": parcelStockForm
+    }
+
     return (
         <div className='px-[100px] py-[50px]'>
             <div className="radio-buttons flex gap-[50px]">
@@ -388,18 +394,21 @@ const StockForm = () => {
                     <span>Parcel Diamond</span>
                 </label>
             </div>
-            {/* <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-                {
-                    stockForm.map((field) => (
-                        getComponent(field)
-                    ))
-                }
-                <div className='w-full flex items-center justify-end gap-[20px]'>
-                    {!params.stockId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>}
-                    {params.stockId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => navigate(-1)}>Cancel</button>}
-                    <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>
-                </div>
-            </form> */}
+            {
+                formType !== "" &&
+                <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                    {
+                        getFormRow[formType].map((field) => (
+                            getComponent(field)
+                        ))
+                    }
+                    <div className='w-full flex items-center justify-end gap-[20px]'>
+                        {!params.stockId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>}
+                        {params.stockId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => navigate(-1)}>Cancel</button>}
+                        <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>
+                    </div>
+                </form>
+            }
         </div>
     );
 };

@@ -21,7 +21,17 @@ export const sections = [
         title: 'Management',
         items: [
             { name: 'Memo', slug: "/memo", icon: icon2 },
-            { name: 'Stock', slug: "/stock", icon: icon3 },
+            {
+                name: 'Stock',
+                slug: "/stock",
+                icon: icon3,
+                isHide: true,
+                options: [
+                    { name: 'available', query: "available", icon: icon2 },
+                    { name: 'onMemo', query: "onMemo", icon: icon2 },
+                    { name: 'sold', query: "sold", icon: icon2 },
+                ]
+            },
             { name: 'Payment', slug: "/payment", icon: icon3 },
             { name: 'Expense', slug: "/expense", icon: icon3 },
             { name: 'Customer', slug: "/customer", icon: icon3 },

@@ -74,6 +74,9 @@ const Table = ({
                                             case "action": {
                                                 return col.render(item, index);
                                             }
+                                            case "render": {
+                                                return col.render(item, index);
+                                            }
                                             default: {
                                                 const value = item[col.key];
 

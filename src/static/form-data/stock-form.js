@@ -991,9 +991,9 @@ export const stockFilterForms = [
         placeholder: "Select status",
         isSearchable: true,
         options: [
-            { value: "Available", label: "Available" },
-            { value: "On Memo", label: "On Memo" },
-            { value: "Sold", label: "Sold" },
+            { value: "Available", label: "Available", _id: 'available' },
+            { value: "On Memo", label: "On Memo", _id: 'onMemo' },
+            { value: "Sold", label: "Sold", _id: 'sold' },
         ]
     },
 ];
