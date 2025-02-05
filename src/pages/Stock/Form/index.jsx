@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import InputField from 'components/FormFields/InputField';
 import TextAreaField from 'components/FormFields/TextAreaField';
 import { useForm } from 'react-hook-form';
-import { stockForm as initialStockForm } from 'static/form-data/stock-form';
+import { stockForm, looseStockForm, parcelStockForm } from 'static/form-data/stock-form';
 import addIcon from 'assets/images/add.svg';
 import deleteIcon from 'assets/images/delete.svg';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,13 +18,28 @@ const StockForm = () => {
 
     const { register, handleSubmit, formState: { errors }, reset, control, watch, getValues, setValue } = useForm();
 
-    const [stockForm, setStockForm] = useState(initialStockForm);
+    const [formType, setFormType] = useState('');
+    const [stockForm, setStockForm] = useState();
     const [newImages, setNewImages] = useState([]);
     const [oldImages, setOldImages] = useState([]);
     const [removedImages, setRemovedImages] = useState([]);
     const [stockDetail, setStockDetail] = useState(null);
 
     const isFetchingRef = useRef(false);
+
+    useEffect(() => {
+        switch (formType) {
+            case 'loose':
+                setStockForm(looseStockForm);
+                break;
+            case 'parcel':
+                setStockForm(parcelStockForm);
+                break;
+            default:
+                setStockForm(stockForm);
+                break;
+        }
+    }, [formType]);
 
     useEffect(() => {
         if (isFetchingRef.current) return;
@@ -329,7 +344,51 @@ const StockForm = () => {
 
     return (
         <div className='px-[100px] py-[50px]'>
-            <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+            <div className="radio-buttons flex gap-[50px]">
+                <label className='flex items-center justify-center space-y-2 cursor-pointer gap-[8px]'>
+                    <input
+                        type="radio"
+                        name="formType"
+                        value="stock"
+                        checked={formType === 'stock'}
+                        onChange={() => setFormType('stock')}
+                        className="peer hidden"
+                    />
+                    <span className="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white">
+                        {formType === 'stock' && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                    </span>
+                    <span>GIA Diamond</span>
+                </label>
+                <label className='flex items-center justify-center space-y-2 cursor-pointer gap-[8px]'>
+                    <input
+                        type="radio"
+                        name="formType"
+                        value="loose"
+                        checked={formType === 'loose'}
+                        onChange={() => setFormType('loose')}
+                        className="peer hidden"
+                    />
+                    <span className="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white">
+                        {formType === 'loose' && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                    </span>
+                    <span>Loose Diamond</span>
+                </label>
+                <label className='flex items-center justify-center space-y-2 cursor-pointer gap-[8px]'>
+                    <input
+                        type="radio"
+                        name="formType"
+                        value="parcel"
+                        checked={formType === 'parcel'}
+                        onChange={() => setFormType('parcel')}
+                        className="peer hidden"
+                    />
+                    <span className="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white">
+                        {formType === 'parcel' && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                    </span>
+                    <span>Parcel Diamond</span>
+                </label>
+            </div>
+            {/* <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
                 {
                     stockForm.map((field) => (
                         getComponent(field)
@@ -340,7 +399,7 @@ const StockForm = () => {
                     {params.stockId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => navigate(-1)}>Cancel</button>}
                     <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>
                 </div>
-            </form>
+            </form> */}
         </div>
     );
 };
