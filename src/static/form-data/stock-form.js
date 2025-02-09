@@ -313,6 +313,38 @@ export const parcelStockForm = [
         ],
     },
     {
+        id: 13,
+        type: "ROW",
+        childrens: [
+            {
+                id: 14,
+                name: "cost",
+                label: "Cost",
+                type: "INPUT",
+                placeholder: "Enter Cost",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Cost"
+                    }
+                }
+            },
+            {
+                id: 15,
+                name: "costPerCarat",
+                label: "Cost Per Carat",
+                type: "INPUT",
+                placeholder: "Enter Cost Per Carat",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Cost Per Carat"
+                    }
+                }
+            },
+        ],
+    },
+    {
         id: 10,
         type: "ROW",
         childrens: [

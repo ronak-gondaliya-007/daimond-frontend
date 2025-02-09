@@ -291,52 +291,54 @@ const StockForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            // Remove deleted old images
-            if (removedImages.length > 0) {
-                await handleRemovedImage();
-            }
+            console.log(data);
+            
+            // // Remove deleted old images
+            // if (removedImages.length > 0) {
+            //     await handleRemovedImage();
+            // }
 
-            // Upload new images first
-            if (newImages.length > 0) {
-                const uploadedImageUrls = await handleImageUpload();
+            // // Upload new images first
+            // if (newImages.length > 0) {
+            //     const uploadedImageUrls = await handleImageUpload();
 
-                // Combine new and remaining old image URLs
-                const allImageUrls = [
-                    ...(stockDetail ? stockDetail.diamondImages : []),
-                    ...uploadedImageUrls,
-                ];
-                data.diamondImages = allImageUrls;
+            //     // Combine new and remaining old image URLs
+            //     const allImageUrls = [
+            //         ...(stockDetail ? stockDetail.diamondImages : []),
+            //         ...uploadedImageUrls,
+            //     ];
+            //     data.diamondImages = allImageUrls;
 
-                setRemovedImages(uploadedImageUrls);
-            }
+            //     setRemovedImages(uploadedImageUrls);
+            // }
 
-            delete data.images;
+            // delete data.images;
 
-            const endPoint = params?.stockId ? '/stock/update' : '/stock/add-new';
+            // const endPoint = params?.stockId ? '/stock/update' : '/stock/add-new';
 
-            if (params.stockId) {
-                data.stockId = params.stockId;
-                delete data._id;
-                delete data.diamondId;
-                delete data.status;
-                delete data.isDeleted;
-                delete data.deletedAt;
-                delete data.createdBy;
-                delete data.createdAt;
-                delete data.updatedAt;
-                delete data.__v;
-            };
+            // if (params.stockId) {
+            //     data.stockId = params.stockId;
+            //     delete data._id;
+            //     delete data.diamondId;
+            //     delete data.status;
+            //     delete data.isDeleted;
+            //     delete data.deletedAt;
+            //     delete data.createdBy;
+            //     delete data.createdAt;
+            //     delete data.updatedAt;
+            //     delete data.__v;
+            // };
 
-            const response = await axiosClient.post(endPoint, data, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+            // const response = await axiosClient.post(endPoint, data, {
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     }
+            // });
 
-            if (response.status === 201 || response.status === 200) {
-                navigate('/stock');
-                toast.success(response?.data?.message);
-            }
+            // if (response.status === 201 || response.status === 200) {
+            //     navigate('/stock');
+            //     toast.success(response?.data?.message);
+            // }
         } catch (error) {
             toast.error(error?.response?.data?.message);
         }
