@@ -8,7 +8,7 @@ const InputField = ({
     register,
     rule,
     errors,
-    onInput = {}
+    onInput = () => { },
 }) => (
     <div className="form-group mb-[16px]">
         <label htmlFor={id}>{label}</label>
