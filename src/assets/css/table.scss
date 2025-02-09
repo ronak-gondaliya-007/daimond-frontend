@@ -72,3 +72,15 @@
         padding-right: 0;
     }
 }
+
+.memo-table {
+    .ant-select-selector {
+        border: none !important;
+        transition: border 0.2s ease-in-out;
+    }
+
+    .ant-select-selector:hover,
+    .ant-select-selector:focus-within {
+        border: 1px solid #408dfb !important;
+    }
+}

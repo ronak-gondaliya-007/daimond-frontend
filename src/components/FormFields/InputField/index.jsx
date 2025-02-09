@@ -27,4 +27,17 @@ const InputField = ({
     </div>
 );
 
+export function CommonInput({ name, value, placeholder, onChange }) {
+    return (
+        <input
+            type="text"
+            name={name}
+            placeholder={placeholder}
+            className="w-full h-[40px] hover:border focus:border border-1 border-[#408dfb] rounded-[8px] px-[10px] py-[10px] outline-none"
+            value={value}
+            onChange={onChange}
+        />
+    )
+}
+
 export default InputField;

@@ -1,16 +1,62 @@
 import axiosClient from 'api/AxiosClient';
 import { button1, button2, writeIcon, wrongIcon } from 'assets/utils/images';
-import InputField from 'components/FormFields/InputField';
+import InputField, { CommonInput } from 'components/FormFields/InputField';
 import PhoneInputField from 'components/FormFields/PhoneInputField/PhoneInputField'
 import SelectField from 'components/FormFields/SelectField'
 import Loader from 'components/loader';
 import NoDataFound from 'components/no-data-found';
-import Table from 'components/table';
+// import Table from 'components/table';
+import { Button, Divider, Input, Select, Space, Table } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getCurrency } from 'utils';
+
+const selectOptions = [
+    {
+        refNo: "SK201U",
+        description: "",
+        carats: "2",
+        pricePerCarat: "557",
+        returnInCarats: "",
+        soldInCarats: "",
+        price: "5",
+        remarks: "",
+    },
+    {
+        refNo: "RJ201U",
+        description: "",
+        carats: "0.5",
+        pricePerCarat: "237",
+        returnInCarats: "",
+        soldInCarats: "",
+        price: "7",
+        remarks: "",
+    },
+    {
+        refNo: "PK533O",
+        description: "",
+        carats: "0.8",
+        pricePerCarat: "237",
+        returnInCarats: "",
+        soldInCarats: "",
+        price: "11",
+        remarks: "",
+    }
+];
+
+const initialRows = {
+    refNo: null,
+    description: "",
+    carats: "0.00",
+    pricePerCarat: "0.00",
+    returnInCarats: "0.00",
+    soldInCarats: "0.00",
+    price: "0.00",
+    remarks: "",
+    isEdit: true
+};
 
 const SellInvoiceAdd = () => {
     const navigate = useNavigate();
@@ -26,6 +72,7 @@ const SellInvoiceAdd = () => {
     const [isPreview, setIsPreview] = useState(false);
     const [loading, setLoading] = useState(false);
     const [dueDate, setDueDate] = useState('');
+    const [addRefNo, setAddRefNo] = useState("")
 
     const isFetchingRef = useRef(false);
     const timeoutRef = useRef(null);
@@ -60,15 +107,15 @@ const SellInvoiceAdd = () => {
 
     useEffect(() => {
         if (rowData.length === 0) {
-            const initialRows = Array.from({ length: 5 }, () => ({
-                refNo: "",
-                description: "",
-                carats: "",
-                pricePerCarat: "",
-                price: "",
-                isEdit: true
-            }));
-            setRowData(initialRows);
+            // const initialRows = Array.from({ length: 5 }, () => ({
+            //     refNo: "",
+            //     description: "",
+            //     carats: "",
+            //     pricePerCarat: "",
+            //     price: "",
+            //     isEdit: true
+            // }));
+            setRowData([initialRows]);
         }
     }, [!params.sellInvoiceId]);
 
@@ -390,162 +437,203 @@ const SellInvoiceAdd = () => {
         }
     }
 
-    const columns = [
-        {
-            label: 'SR No',
-            key: 'srNo',
-            type: 'custom',
-            render: (row, index) => {
-                const srNo = index + 1;
-                return (
-                    <span className="px-[10px] text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">
-                        {srNo}
-                    </span>
-                );
-            }
-        },
-        {
-            label: 'Ref No',
-            key: 'refNo',
-            type: 'custom',
-            render: ({ isEdit, refNo }, index) => {
-                return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="refNo"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={refNo}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{refNo}</span>
-                        }
-                    </>
-                )
-            }
-        },
-        {
-            label: 'Description',
-            key: 'description',
-            type: 'custom',
-            render: ({ isEdit, description }, index) => {
-                return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="description"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={description}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{description != '' ? description : '--'}</span>
-                        }
-                    </>
-                )
-            }
-        },
+    const isExitingRefNo = (refNo) => {
+        const existingItem = rowData.find((item) => item.refNo === refNo);
+        return !!existingItem;
+    }
 
-        {
-            label: 'Carats',
-            key: 'carats',
-            type: 'custom',
-            render: ({ isEdit, carats }, index) => {
-                return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="carats"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={carats}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{carats} CT</span>
-                        }
-                    </>
-                )
+    const handleAdd = (index) => {
+        if (!addRefNo) return;
+
+        if (isExitingRefNo(addRefNo)) {
+            toast.info("Ref no is already exist");
+            return;
+        }
+
+        const updatedData = rowData.map((item, idx) => idx === index ? { ...item, ...initialRows, refNo: addRefNo } : item);
+        setRowData([...updatedData, initialRows]);
+        setValue('tableData', updatedData);
+        setAddRefNo('');
+    }
+
+        const columns = [
+            {
+                title: 'SR No',
+                key: 'srNo',
+                dataIndex: 'srNo',
+                type: 'custom',
+                render: (_, row, index) => {
+                    console.log(row, index)
+                    const srNo = index + 1;
+                    return (
+                        <span className="text-[14px] font-medium text-[#0A112F] text-center line-clamp-2">
+                            {srNo}
+                        </span>
+                    );
+                }
+            },
+            {
+                title: 'Ref No',
+                key: 'refNo',
+                dataIndex: 'refNo',
+                type: 'custom',
+                render: (_, { refNo }, index) => {
+                    return (
+                        <>
+                            {
+                                !!refNo
+                                    ? <h2>{refNo}</h2>
+                                    : <Select
+                                        showSearch
+                                        placeholder="Select a refNo"
+                                        filterOption={(input, option) =>
+                                            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                                        }
+                                        className='w-[150px] h-[50px]'
+                                        value={refNo}
+                                        dropdownRender={(menu) => (
+                                            <>
+                                                {menu}
+                                                <Divider style={{ margin: '8px 0' }} />
+                                                <Space style={{ padding: '0 8px 4px' }}>
+                                                    <Input
+                                                        value={addRefNo}
+                                                        placeholder="Please enter refNo"
+                                                        onChange={(e) => setAddRefNo(e.target.value)}
+                                                        onKeyDown={(e) => e.stopPropagation()}
+                                                    />
+                                                    <Button type="text" onClick={() => handleAdd(index)}>
+                                                        Add item
+                                                    </Button>
+                                                </Space>
+                                            </>
+                                        )}
+                                        onChange={(e) => {
+                                            const refNoToFind = e
+    
+                                            if (isExitingRefNo(refNoToFind)) {
+                                                toast.info("Ref no is already exist");
+                                                return;
+                                            }
+    
+                                            const fieldData = selectOptions.find((e) => e.refNo === refNoToFind);
+                                            const updatedData = rowData.map((item, idx) => idx === index ? { ...item, ...fieldData } : item);
+                                            setRowData([...updatedData, initialRows]);
+                                            setValue('tableData', updatedData);
+                                        }}
+                                    >
+                                        {
+                                            selectOptions.map((item, index) => (
+                                                <Select.Option key={index} className="memo-option" value={item.refNo}>
+                                                    <div>
+                                                        <h5>{item.refNo}</h5>
+                                                        <p>SKU: Item {item.carats} sku Purchase Rate: Rs. {item.pricePerCarat}</p>
+                                                    </div>
+                                                </Select.Option>
+                                            ))
+                                        }
+                                    </Select>
+                            }
+                        </>
+                    )
+                }
+            },
+            {
+                title: 'Description',
+                key: 'description',
+                dataIndex: 'description',
+                type: 'custom',
+                render: (_, { description }, index) => {
+                    return (
+                        <CommonInput
+                            name={"description"}
+                            value={description}
+                            placeholder={"Description"}
+                            onChange={(e) => handleChange(e, index)}
+                        />
+                    )
+                }
+            },
+            {
+                title: 'Carats',
+                key: 'carats',
+                dataIndex: 'carats',
+                type: 'custom',
+                render: (_, { carats }, index) => {
+                    return (
+                        <CommonInput
+                            name={"carats"}
+                            value={carats}
+                            placeholder={"Carats"}
+                            onChange={(e) => handleChange(e, index)}
+                        />
+                    )
+                }
+            },
+            {
+                title: 'Price Per Carat',
+                key: 'pricePerCarat',
+                dataIndex: 'pricePerCarat',
+                type: 'custom',
+                render: (_, { pricePerCarat }, index) => {
+                    return (
+                        <CommonInput
+                            name={"pricePerCarat"}
+                            value={pricePerCarat}
+                            placeholder={"PricePerCarat"}
+                            onChange={(e) => handleChange(e, index)}
+                        />
+                    )
+                }
+            },
+            {
+                title: 'Amount',
+                key: 'price',
+                dataIndex: 'price',
+                type: 'custom',
+                render: (_, { price }, index) => {
+                    return (
+                        <CommonInput
+                            name={"price"}
+                            value={price}
+                            placeholder={"Price"}
+                            onChange={(e) => handleChange(e, index)}
+                        />
+                    )
+                }
+            },
+            {
+                title: '',
+                key: 'actions',
+                dataIndex: 'actions',
+                type: 'action',
+                render: (_, item, index) => {
+                    return <td className="tbl-action !w-auto">
+                        <div className="flex items-center justify-end gap-[10px]">
+                            {
+                                item.isEdit
+                                    ? (<>
+                                        {/* <button onClick={() => handleSaveClick(index)}>
+                                            <img src={writeIcon} alt="View" className='create-memo-icon' />
+                                        </button> */}
+                                        <button className="mr-[5px]" onClick={() => handleCancelClick(index)}>
+                                            <img src={wrongIcon} alt="Delete" className='create-memo-icon' />
+                                        </button>
+                                    </>)
+                                    : (<>
+                                        <button onClick={() => handleDeleteClick(index)}>
+                                            <img src={button1} alt="Delete" />
+                                        </button>
+                                        <button className="mr-[5px]" onClick={() => handleEditClick(index)}>
+                                            <img src={button2} alt="Edit" />
+                                        </button>
+                                    </>)
+                            }
+                        </div>
+                    </td>
+                }
             }
-        },
-        {
-            label: 'Price Per Carat',
-            key: 'pricePerCarat',
-            type: 'custom',
-            render: ({ isEdit, pricePerCarat }, index) => {
-                return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="pricePerCarat"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={pricePerCarat}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(pricePerCarat)}</span>
-                        }
-                    </>
-                )
-            }
-        },
-        {
-            label: 'Amount',
-            key: 'price',
-            type: 'custom',
-            render: ({ isEdit, price }, index) => {
-                return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="price"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={price}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(price)}</span>
-                        }
-                    </>
-                )
-            }
-        },
-        {
-            label: '',
-            key: 'actions',
-            type: 'action',
-            render: (item, index) => {
-                return <td className="tbl-action">
-                    <div className="flex items-center justify-end gap-[10px]">
-                        {
-                            item.isEdit
-                                ? (<>
-                                    <button onClick={() => handleSaveClick(index)}>
-                                        <img src={writeIcon} alt="View" className='create-memo-icon' />
-                                    </button>
-                                    <button className="mr-[5px]" onClick={() => handleCancelClick(index)}>
-                                        <img src={wrongIcon} alt="Delete" className='create-memo-icon' />
-                                    </button>
-                                </>)
-                                : (<>
-                                    <button onClick={() => handleDeleteClick(index)}>
-                                        <img src={button1} alt="Delete" />
-                                    </button>
-                                    <button className="mr-[5px]" onClick={() => handleEditClick(index)}>
-                                        <img src={button2} alt="Edit" />
-                                    </button>
-                                </>)
-                        }
-                    </div>
-                </td>
-            }
-        },
-    ];
+        ];
 
     const getColumnTotal = (columnKey) => {
         return rowData.reduce((sum, row) => {
@@ -718,10 +806,24 @@ const SellInvoiceAdd = () => {
                             ) : (
                                 <Table
                                     columns={columns}
-                                    data={rowData}
-                                    tableClass="stock-table"
-                                    tableFooter={tableFooter()}
-                                />)}
+                                    dataSource={rowData}
+                                    pagination={false}
+                                    className='memo-table'
+                                    summary={() => (
+                                        <Table.Summary.Row>
+                                            <Table.Summary.Cell index={0} colSpan={3} style={{ fontWeight: "bold" }}>
+                                                Total Price:
+                                            </Table.Summary.Cell>
+                                            <Table.Summary.Cell index={1} colSpan={2} style={{ fontWeight: "bold" }}>
+                                                {getColumnTotal('carats').toFixed(2)} CT
+                                            </Table.Summary.Cell>
+                                            <Table.Summary.Cell index={2} colSpan={2} style={{ fontWeight: "bold" }}>
+                                                {getCurrency(getColumnTotal('price'))}
+                                            </Table.Summary.Cell>
+                                        </Table.Summary.Row>
+                                    )}
+                                />
+                            )}
                         </div>
 
                         <div className='w-full flex items-center justify-end gap-[20px]'>

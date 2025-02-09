@@ -1,6 +1,6 @@
 import PhoneInputField from 'components/FormFields/PhoneInputField/PhoneInputField';
 import SelectField from 'components/FormFields/SelectField';
-import Table from 'components/table';
+// import Table from 'components/table';
 import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -10,7 +10,53 @@ import axiosClient from 'api/AxiosClient';
 import { toast } from 'react-toastify';
 import NoDataFound from 'components/no-data-found';
 import Loader from 'components/loader';
-import InputField from 'components/FormFields/InputField';
+import InputField, { CommonInput } from 'components/FormFields/InputField';
+import { Button, Divider, Input, Select, Space, Table } from 'antd';
+
+const selectOptions = [
+    {
+        refNo: "SK201U",
+        description: "",
+        carats: "2",
+        pricePerCarat: "557",
+        returnInCarats: "",
+        soldInCarats: "",
+        price: "5",
+        remarks: "",
+    },
+    {
+        refNo: "RJ201U",
+        description: "",
+        carats: "0.5",
+        pricePerCarat: "237",
+        returnInCarats: "",
+        soldInCarats: "",
+        price: "7",
+        remarks: "",
+    },
+    {
+        refNo: "PK533O",
+        description: "",
+        carats: "0.8",
+        pricePerCarat: "237",
+        returnInCarats: "",
+        soldInCarats: "",
+        price: "11",
+        remarks: "",
+    }
+];
+
+const initialRows = {
+    refNo: null,
+    description: "",
+    carats: "0.00",
+    pricePerCarat: "0.00",
+    returnInCarats: "0.00",
+    soldInCarats: "0.00",
+    price: "0.00",
+    remarks: "",
+    isEdit: true
+};
 
 const CreateMemo = () => {
     const navigate = useNavigate();
@@ -25,6 +71,7 @@ const CreateMemo = () => {
     const [customerOptions, setCustomerOptions] = useState([]);
     const [isPreview, setIsPreview] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [addRefNo, setAddRefNo] = useState("")
 
     const isFetchingRef = useRef(false);
     const timeoutRef = useRef(null);
@@ -46,16 +93,16 @@ const CreateMemo = () => {
 
     useEffect(() => {
         if (rowData.length === 0) {
-            const initialRows = Array.from({ length: 5 }, () => ({
-                refNo: "",
-                description: "",
-                carats: "",
-                pricePerCarat: "",
-                returnInCarats: "",
-                soldInCarats: "",
-                isEdit: true
-            }));
-            setRowData(initialRows);
+            // const initialRows = Array.from({ length: 5 }, () => ({
+            //     refNo: null,
+            //     description: "",
+            //     carats: "",
+            //     pricePerCarat: "",
+            //     returnInCarats: "",
+            //     soldInCarats: "",
+            //     isEdit: true
+            // }));
+            setRowData([initialRows]);
         }
     }, [!params.memoId]);
 
@@ -378,12 +425,33 @@ const CreateMemo = () => {
         }
     }
 
+    const isExitingRefNo = (refNo) => {
+        const existingItem = rowData.find((item) => item.refNo === refNo);
+        return !!existingItem;
+    }
+
+    const handleAdd = (index) => {
+        if (!addRefNo) return;
+
+        if (isExitingRefNo(addRefNo)) {
+            toast.info("Ref no is already exist");
+            return;
+        }
+
+        const updatedData = rowData.map((item, idx) => idx === index ? { ...item, ...initialRows, refNo: addRefNo } : item);
+        setRowData([...updatedData, initialRows]);
+        setValue('tableData', updatedData);
+        setAddRefNo('');
+    }
+
     const columns = [
         {
-            label: 'SR No',
+            title: 'SR No',
             key: 'srNo',
+            dataIndex: 'srNo',
             type: 'custom',
-            render: (row, index) => {
+            render: (_, row, index) => {
+                console.log(row, index)
                 const srNo = index + 1;
                 return (
                     <span className="text-[14px] font-medium text-[#0A112F] text-center line-clamp-2">
@@ -393,194 +461,197 @@ const CreateMemo = () => {
             }
         },
         {
-            label: 'Ref No',
+            title: 'Ref No',
             key: 'refNo',
+            dataIndex: 'refNo',
             type: 'custom',
-            render: ({ isEdit, refNo }, index) => {
+            render: (_, { refNo }, index) => {
                 return (
                     <>
                         {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="refNo"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
+                            !!refNo
+                                ? <h2>{refNo}</h2>
+                                : <Select
+                                    showSearch
+                                    placeholder="Select a refNo"
+                                    filterOption={(input, option) =>
+                                        (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                                    }
+                                    className='w-[150px] h-[50px]'
                                     value={refNo}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{refNo}</span>
+                                    dropdownRender={(menu) => (
+                                        <>
+                                            {menu}
+                                            <Divider style={{ margin: '8px 0' }} />
+                                            <Space style={{ padding: '0 8px 4px' }}>
+                                                <Input
+                                                    value={addRefNo}
+                                                    placeholder="Please enter refNo"
+                                                    onChange={(e) => setAddRefNo(e.target.value)}
+                                                    onKeyDown={(e) => e.stopPropagation()}
+                                                />
+                                                <Button type="text" onClick={() => handleAdd(index)}>
+                                                    Add item
+                                                </Button>
+                                            </Space>
+                                        </>
+                                    )}
+                                    onChange={(e) => {
+                                        const refNoToFind = e
+
+                                        if (isExitingRefNo(refNoToFind)) {
+                                            toast.info("Ref no is already exist");
+                                            return;
+                                        }
+
+                                        const fieldData = selectOptions.find((e) => e.refNo === refNoToFind);
+                                        const updatedData = rowData.map((item, idx) => idx === index ? { ...item, ...fieldData } : item);
+                                        setRowData([...updatedData, initialRows]);
+                                        setValue('tableData', updatedData);
+                                    }}
+                                >
+                                    {
+                                        selectOptions.map((item, index) => (
+                                            <Select.Option key={index} className="memo-option" value={item.refNo}>
+                                                <div>
+                                                    <h5>{item.refNo}</h5>
+                                                    <p>SKU: Item {item.carats} sku Purchase Rate: Rs. {item.pricePerCarat}</p>
+                                                </div>
+                                            </Select.Option>
+                                        ))
+                                    }
+                                </Select>
                         }
                     </>
                 )
             }
         },
         {
-            label: 'Description',
+            title: 'Description',
             key: 'description',
+            dataIndex: 'description',
             type: 'custom',
-            render: ({ isEdit, description }, index) => {
+            render: (_, { description }, index) => {
                 return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="description"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={description}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{description !== '' ? description : '--'}</span>
-                        }
-                    </>
+                    <CommonInput
+                        name={"description"}
+                        value={description}
+                        placeholder={"Description"}
+                        onChange={(e) => handleChange(e, index)}
+                    />
                 )
             }
         },
         {
-            label: 'Carats',
+            title: 'Carats',
             key: 'carats',
+            dataIndex: 'carats',
             type: 'custom',
-            render: ({ isEdit, carats }, index) => {
+            render: (_, { carats }, index) => {
                 return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="carats"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={carats}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{carats !== '' ? `${carats} CT` : '--'}</span>
-                        }
-                    </>
+                    <CommonInput
+                        name={"carats"}
+                        value={carats}
+                        placeholder={"Carats"}
+                        onChange={(e) => handleChange(e, index)}
+                    />
                 )
             }
         },
         {
-            label: 'Price Per Carat',
+            title: 'Price Per Carat',
             key: 'pricePerCarat',
+            dataIndex: 'pricePerCarat',
             type: 'custom',
-            render: ({ isEdit, pricePerCarat }, index) => {
+            render: (_, { pricePerCarat }, index) => {
                 return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="pricePerCarat"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={pricePerCarat}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(pricePerCarat)}</span>
-                        }
-                    </>
+                    <CommonInput
+                        name={"pricePerCarat"}
+                        value={pricePerCarat}
+                        placeholder={"PricePerCarat"}
+                        onChange={(e) => handleChange(e, index)}
+                    />
                 )
             }
         },
         {
-            label: 'Return In Carats',
+            title: 'Return In Carats',
             key: 'returnInCarats',
+            dataIndex: 'returnInCarats',
             type: 'custom',
-            render: ({ isEdit, returnInCarats }, index) => {
+            render: (_, { returnInCarats }, index) => {
                 return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="returnInCarats"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={returnInCarats}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(returnInCarats)}</span>
-                        }
-                    </>
+                    <CommonInput
+                        name={"returnInCarats"}
+                        value={returnInCarats}
+                        placeholder={"ReturnInCarats"}
+                        onChange={(e) => handleChange(e, index)}
+                    />
                 )
             }
         },
         {
-            label: 'Sold In Carats',
+            title: 'Sold In Carats',
             key: 'soldInCarats',
+            dataIndex: 'soldInCarats',
             type: 'custom',
-            render: ({ isEdit, soldInCarats }, index) => {
+            render: (_, { isEdit, soldInCarats }, index) => {
                 return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="soldInCarats"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={soldInCarats}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(soldInCarats)}</span>
-                        }
-                    </>
+                    <CommonInput
+                        name={"soldInCarats"}
+                        value={soldInCarats}
+                        placeholder={"SoldInCarats"}
+                        onChange={(e) => handleChange(e, index)}
+                    />
                 )
             }
         },
         {
-            label: 'Amount',
+            title: 'Amount',
             key: 'price',
+            dataIndex: 'price',
             type: 'custom',
-            render: ({ isEdit, price }, index) => {
+            render: (_, { price }, index) => {
                 return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="price"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={price}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{getCurrency(price)}</span>
-                        }
-                    </>
+                    <CommonInput
+                        name={"price"}
+                        value={price}
+                        placeholder={"Price"}
+                        onChange={(e) => handleChange(e, index)}
+                    />
                 )
             }
         },
         {
-            label: 'Remarks',
+            title: 'Remarks',
             key: 'remarks',
+            dataIndex: 'remarks',
             type: 'custom',
-            render: ({ isEdit, remarks }, index) => {
+            render: (_, { remarks }, index) => {
                 return (
-                    <>
-                        {
-                            isEdit
-                                ? <input
-                                    type="text"
-                                    name="remarks"
-                                    className="w-full h-[40px] border border-[#342C2C] rounded-[8px] px-[10px] py-[10px]"
-                                    value={remarks}
-                                    onChange={(e) => handleChange(e, index)}
-                                />
-                                : <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{remarks !== '' ? remarks : '--'}</span>
-                        }
-                    </>
+                    <CommonInput
+                        name={"remarks"}
+                        value={remarks}
+                        placeholder={"Remarks"}
+                        onChange={(e) => handleChange(e, index)}
+                    />
                 )
             }
         },
         {
-            label: '',
+            title: '',
             key: 'actions',
+            dataIndex: 'actions',
             type: 'action',
-            render: (item, index) => {
+            render: (_, item, index) => {
                 return <td className="tbl-action !w-auto">
                     <div className="flex items-center justify-end gap-[10px]">
                         {
                             item.isEdit
                                 ? (<>
-                                    <button onClick={() => handleSaveClick(index)}>
+                                    {/* <button onClick={() => handleSaveClick(index)}>
                                         <img src={writeIcon} alt="View" className='create-memo-icon' />
-                                    </button>
+                                    </button> */}
                                     <button className="mr-[5px]" onClick={() => handleCancelClick(index)}>
                                         <img src={wrongIcon} alt="Delete" className='create-memo-icon' />
                                     </button>
@@ -718,7 +789,26 @@ const CreateMemo = () => {
                         </div>
 
                         <div className="my-[30px] stock-table">
-                            {rowData?.length === 0 ? (
+                            <Table
+                                columns={columns}
+                                dataSource={rowData}
+                                pagination={false}
+                                className='memo-table'
+                                summary={() => (
+                                    <Table.Summary.Row>
+                                        <Table.Summary.Cell index={0} colSpan={3} style={{ fontWeight: "bold" }}>
+                                            Total Price:
+                                        </Table.Summary.Cell>
+                                        <Table.Summary.Cell index={1} colSpan={4} style={{ fontWeight: "bold" }}>
+                                            {getColumnTotal('carats').toFixed(2)} CT
+                                        </Table.Summary.Cell>
+                                        <Table.Summary.Cell index={2} colSpan={3} style={{ fontWeight: "bold" }}>
+                                            {getCurrency(getColumnTotal('price'))}
+                                        </Table.Summary.Cell>
+                                    </Table.Summary.Row>
+                                )}
+                            />
+                            {/* {rowData?.length === 0 ? (
                                 <NoDataFound message="Oops! No stocks found." />
                             ) : (
                                 <Table
@@ -726,7 +816,7 @@ const CreateMemo = () => {
                                     data={rowData}
                                     tableClass="stock-table"
                                     tableFooter={tableFooter()}
-                                />)}
+                                />)} */}
                         </div>
 
                         <div className='w-full flex items-center justify-end gap-[20px]'>

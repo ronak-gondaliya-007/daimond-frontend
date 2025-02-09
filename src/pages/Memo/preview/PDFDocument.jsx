@@ -28,7 +28,7 @@ const PDFDocument = ({ data }) => (
         <Page size="A4" style={styles.page}>
             <View style={styles.FS}>
                 <View style={styles.header}>
-                    <Image src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCx-z95t5CJeb6CmFo2aqxpelS4QItpuV00w&s" style={styles.logo} />
+                    <Image src={`${process.env.REACT_APP_IMAGE_URL}/public/icon.png`} style={styles.logo} />
                     <View style={styles.FS_ADD}>
                         <Text style={{ fontSize: 15 }}>NATURE DIAM INC</Text>
                         <Text style={{ textAlign: 'center' }}>{data.address}</Text>
@@ -86,29 +86,29 @@ const PDFDocument = ({ data }) => (
 
             <View style={styles.table}>
                 <View style={{ ...styles.row, borderBottom: 0 }}>
-                    <Text style={{ ...styles.column, width: 70, borderRight: '1 solid black' }}>No</Text>
+                    <Text style={{ ...styles.column, width: 50, borderRight: '1 solid black' }}>No</Text>
                     <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}>Description</Text>
-                    <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}>Carat</Text>
-                    <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}>Price/Ct</Text>
-                    <Text style={{ ...styles.column, width: 100 }}>Total</Text>
+                    <Text style={{ ...styles.column, width: 80, borderRight: '1 solid black' }}>Carat</Text>
+                    <Text style={{ ...styles.column, width: 80, borderRight: '1 solid black' }}>Price/Ct</Text>
+                    <Text style={{ ...styles.column, width: 80 }}>Total</Text>
                 </View>
                 {
                     data.items.map(({ description, carats, pricePerCarat, amount }, index) => (
                         <View style={{ ...styles.row, borderBottom: 0 }}>
-                            <Text style={{ ...styles.column, width: 70, borderRight: '1 solid black' }}>{index + 1}</Text>
+                            <Text style={{ ...styles.column, width: 50, borderRight: '1 solid black' }}>{index + 1}</Text>
                             <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}>{description}</Text>
-                            <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}>{carats}</Text>
-                            <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}>{pricePerCarat}</Text>
-                            <Text style={{ ...styles.column, width: 100 }}>{amount}</Text>
+                            <Text style={{ ...styles.column, width: 80, borderRight: '1 solid black' }}>{carats}</Text>
+                            <Text style={{ ...styles.column, width: 80, borderRight: '1 solid black' }}>{pricePerCarat}</Text>
+                            <Text style={{ ...styles.column, width: 80, }}>{amount}</Text>
                         </View>
                     ))
                 }
                 <View style={{ ...styles.row }}>
-                    <Text style={{ ...styles.column, width: 70, fontWeight: 600 }}>Total</Text>
+                    <Text style={{ ...styles.column, width: 50, fontWeight: 600 }}>Total:</Text>
                     <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}></Text>
-                    <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black', fontWeight: 600 }}>{data.totalCarats}</Text>
-                    <Text style={{ ...styles.column, flex: 1, borderRight: '1 solid black' }}></Text>
-                    <Text style={{ ...styles.column, width: 100, fontWeight: 600 }}>{data.totalAmount}</Text>
+                    <Text style={{ ...styles.column, width: 80, borderRight: '1 solid black', fontWeight: 600 }}>{data.totalCarats}</Text>
+                    <Text style={{ ...styles.column, width: 80, borderRight: '1 solid black' }}></Text>
+                    <Text style={{ ...styles.column, width: 80, fontWeight: 600 }}>{data.totalAmount}</Text>
                 </View>
             </View>
 

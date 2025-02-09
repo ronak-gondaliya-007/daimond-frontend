@@ -15,6 +15,7 @@ const SelectField = ({
     placeholder = "Select Options",
     isSearchable = false,
 }) => {
+    const isError = errors?.[name];
     return (
         <div className={`form-group mb-[16px] ${formGroup}`}>
             <label htmlFor={id}>{label}</label>
@@ -28,7 +29,7 @@ const SelectField = ({
                         value={value}
                         onChange={onChange}
                         className={`custom-select ${errors?.[name] ? 'error' : ''}`}
-                        styles={selectStyle}
+                        styles={selectStyle(isError)}
                         options={options}
                         placeholder={placeholder}
                         isSearchable={isSearchable}
