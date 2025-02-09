@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import InputField from 'components/FormFields/InputField';
 import TextAreaField from 'components/FormFields/TextAreaField';
 import { useForm } from 'react-hook-form';
-import { stockForm, looseStockForm, parcelStockForm } from 'static/form-data/stock-form';
+import { giaForm, looseStockForm, parcelStockForm } from 'static/form-data/stock-form';
 import addIcon from 'assets/images/add.svg';
 import deleteIcon from 'assets/images/delete.svg';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -36,10 +36,10 @@ const StockForm = () => {
                 setStockForm(parcelStockForm);
                 break;
             default:
-                setStockForm(stockForm);
+                setStockForm(giaForm);
                 break;
         }
-    }, [formType]);
+    }, [formType, stockForm]);
 
     useEffect(() => {
         if (isFetchingRef.current) return;
@@ -73,7 +73,7 @@ const StockForm = () => {
 
             setStockForm(updatedForm);
         }
-    }, [stockDetail]);
+    }, [stockDetail, stockForm]);
 
     const caratValue = watch('carat');
     const pricePerCaratValue = watch('pricePerCarat');
@@ -343,60 +343,78 @@ const StockForm = () => {
     };
 
     const getFormRow = {
-        "stock": stockForm,
+        "gia": giaForm,
         "loose": looseStockForm,
         "parcel": parcelStockForm
     }
 
     return (
         <div className='px-[100px] py-[50px]'>
+            <div className="flex gap-[10px] mb-[20px]">
+                <span className="w-7 h-7 rounded-full text-center font-medium border-2 border-black bg-black text-white">1</span>
+                <p className='text-[20px] font-medium'>Select Stock Type</p>
+            </div>
+            <div className='mb-[10px]'>
+                <label className='text-[#333] leading-[140%] font-medium'>Stock Type</label>
+            </div>
             <div className="radio-buttons flex gap-[50px]">
-                <label className='flex items-center justify-center space-y-2 cursor-pointer gap-[8px]'>
-                    <input
-                        type="radio"
-                        name="formType"
-                        value="stock"
-                        checked={formType === 'stock'}
-                        onChange={() => setFormType('stock')}
-                        className="peer hidden"
-                    />
-                    <span className="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white">
-                        {formType === 'stock' && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
-                    </span>
-                    <span>GIA Diamond</span>
-                </label>
-                <label className='flex items-center justify-center space-y-2 cursor-pointer gap-[8px]'>
-                    <input
-                        type="radio"
-                        name="formType"
-                        value="loose"
-                        checked={formType === 'loose'}
-                        onChange={() => setFormType('loose')}
-                        className="peer hidden"
-                    />
-                    <span className="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white">
-                        {formType === 'loose' && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
-                    </span>
-                    <span>Loose Diamond</span>
-                </label>
-                <label className='flex items-center justify-center space-y-2 cursor-pointer gap-[8px]'>
-                    <input
-                        type="radio"
-                        name="formType"
-                        value="parcel"
-                        checked={formType === 'parcel'}
-                        onChange={() => setFormType('parcel')}
-                        className="peer hidden"
-                    />
-                    <span className="w-4 h-4 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white">
-                        {formType === 'parcel' && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
-                    </span>
-                    <span>Parcel Diamond</span>
-                </label>
+                <div className={formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' :'border-2 border-gray p-[15px] rounded-[6px]'}>
+                    <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
+                        <input
+                            type="radio"
+                            name="formType"
+                            value="gia"
+                            checked={formType === 'gia'}
+                            onChange={() => setFormType('gia')}
+                            className="peer hidden"
+                        />
+                        <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
+                            {formType === 'gia' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
+                        </span>
+                        <span className={formType === 'loose' ? 'font-medium' : ''}>GIA Diamond</span>
+                    </label>
+                </div>
+                <div className={formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' :'border-2 border-gray p-[15px] rounded-[6px]'}>
+                    <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
+                        <input
+                            type="radio"
+                            name="formType"
+                            value="loose"
+                            checked={formType === 'loose'}
+                            onChange={() => setFormType('loose')}
+                            className="peer hidden"
+                        />
+                        <span
+                            className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
+                            {formType === 'loose' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
+                        </span>
+                        <span className={formType === 'loose' ? 'font-medium' : ''}>Loose Diamond</span>
+                    </label>
+                </div>
+                <div className={formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' :'border-2 border-gray p-[15px] rounded-[6px]'}>
+                    <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
+                        <input
+                            type="radio"
+                            name="formType"
+                            value="parcel"
+                            checked={formType === 'parcel'}
+                            onChange={() => setFormType('parcel')}
+                            className="peer hidden"
+                        />
+                        <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
+                            {formType === 'parcel' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
+                        </span>
+                        <span className={formType === 'loose' ? 'font-medium' : ''}>Parcel Diamond</span>
+                    </label>
+                </div>
             </div>
             {
                 formType !== "" &&
                 <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="flex gap-[10px] mt-[40px] mb-[20px]">
+                        <span className="w-7 h-7 rounded-full text-center font-medium border-2 border-black bg-black text-white">2</span>
+                        <p className='text-[20px] font-medium'>Enter Stock Detail</p>
+                    </div>
                     {
                         getFormRow[formType].map((field) => (
                             getComponent(field)

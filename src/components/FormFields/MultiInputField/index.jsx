@@ -24,7 +24,7 @@ const MultiInputField = ({
     const handleHeightChange = (e) => {
         setHeightValue(e.target.value !== "" ? e.target.value : 0);
     };
-
+    
     return (
         <div className="form-group mb-[16px]">
             <label htmlFor={id}>{label}</label>
@@ -36,7 +36,7 @@ const MultiInputField = ({
                         className={`input-field ${errors?.[name]?.measurement ? 'error' : ''}`}
                         type={type}
                         disabled={true}
-                        value={`${getValues(`${name}.length`) === "" ? lengthValue : getValues(`${name}.length`)} x ${getValues(`${name}.length`) === "" ? widthValue : getValues(`${name}.width`)} x ${getValues(`${name}.height`) === "" ? heightValue : getValues(`${name}.height`)}`}
+                        value={`${getValues(`${name}.length`) === "" || getValues(`${name}.length`) === undefined ? lengthValue : getValues(`${name}.length`)} x ${getValues(`${name}.length`) === "" || getValues(`${name}.length`) === undefined ? widthValue : getValues(`${name}.width`)} x ${getValues(`${name}.height`) === "" || getValues(`${name}.length`) === undefined ? heightValue : getValues(`${name}.height`)}`}
                     />
                     <span className='text-[#717680] font-medium'>=</span>
                 </div>
@@ -50,7 +50,6 @@ const MultiInputField = ({
                             type={type}
                             name={'length'}
                             {...register(`${name}.length`, {
-                                required: "*Length is required",
                                 pattern: {
                                     value: /^[0-9]+(\.[0-9]+)?$/,
                                     message: "*Invalid Length"
@@ -75,7 +74,6 @@ const MultiInputField = ({
                             type={type}
                             name={'width'}
                             {...register(`${name}.width`, {
-                                required: "*Width is required",
                                 pattern: {
                                     value: /^[0-9]+(\.[0-9]+)?$/,
                                     message: "*Invalid Width"
@@ -100,7 +98,6 @@ const MultiInputField = ({
                             type={type}
                             name={'height'}
                             {...register(`${name}.height`, {
-                                required: "*Height is required",
                                 pattern: {
                                     value: /^[0-9]+(\.[0-9]+)?$/,
                                     message: "*Invalid Height"

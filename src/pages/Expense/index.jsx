@@ -34,7 +34,7 @@ const Expense = () => {
     const handleSort = (key) => {
         const direction = sortConfig.key === key && sortConfig.direction === 'Asc' ? 'Desc' : 'Asc';
         setSortConfig({ key, direction });
-        fetchMemos(1, key, direction);
+        fetchExpenseList(1, key, direction);
     };
 
     const handleClosePopup = () => {

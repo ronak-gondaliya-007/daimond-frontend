@@ -82,7 +82,7 @@ const LocationField = ({
                                 onChange(selectedOption ? selectedOption.value : '');
                                 handleCustomOptionSelection(selectedOption);
                             }}
-                            className={`custom-select ${errors?.[name] ? 'error' : ''}`}
+                            className={`custom-select`}
                             styles={customStyles}
                             options={customOptions}
                             placeholder={placeholder}
@@ -93,7 +93,7 @@ const LocationField = ({
                             <div className='custom-location relative flex flex-row items-center'>
                                 <label className='custom-label mr-4 text-lg'>Custom Location</label>
                                 <input
-                                    className={`input-field w-full py-2 px-3 rounded-md border ${customLocation === '' ? "error" : ""}`}
+                                    className={`input-field w-full py-2 px-3 rounded-md border`}
                                     type="text"
                                     value={customLocation}
                                     onChange={(e) => handleCustomLocationChange(e.target.value)}
