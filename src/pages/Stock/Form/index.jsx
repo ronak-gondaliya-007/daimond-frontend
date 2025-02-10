@@ -12,6 +12,12 @@ import { toast } from 'react-toastify';
 import LocationField from 'components/FormFields/LocationField';
 import MultiInputField from 'components/FormFields/MultiInputField';
 
+const FORM_ROW = {
+    "loose": looseStockForm,
+    "parcel": parcelStockForm,
+    "gia": giaForm
+}
+
 const StockForm = () => {
     const navigate = useNavigate();
     const params = useParams();
@@ -30,19 +36,19 @@ const StockForm = () => {
     useEffect(() => {
         switch (formType) {
             case 'loose':
-                reset();
+                // reset();
                 setStockForm(looseStockForm);
                 break;
             case 'parcel':
-                reset();
+                // reset();
                 setStockForm(parcelStockForm);
                 break;
             default:
-                reset();
+                // reset();
                 setStockForm(giaForm);
                 break;
         }
-    }, [formType, stockForm]);
+    }, [formType]);
 
     useEffect(() => {
         if (isFetchingRef.current) return;
@@ -76,7 +82,7 @@ const StockForm = () => {
 
             setStockForm(updatedForm);
         }
-    }, [stockDetail, stockForm]);
+    }, [stockDetail]);
 
     const caratValue = watch('carat');
     const pricePerCaratValue = watch('pricePerCarat');
@@ -143,6 +149,9 @@ const StockForm = () => {
                 toast.success(response?.data?.message);
                 let stockData = response.data.data;
                 setStockDetail(stockData);
+
+                const key = Object.entries(stockType).find(([key, value]) => value === stockData.type)?.[0];
+                setFormType(key)
 
                 const mappedOldImages = stockData.diamondImages?.map((img) => ({
                     file: {},
@@ -351,12 +360,6 @@ const StockForm = () => {
         }
     };
 
-    const getFormRow = {
-        "gia": giaForm,
-        "loose": looseStockForm,
-        "parcel": parcelStockForm
-    }
-
     return (
         <div className='px-[100px] py-[50px]'>
             <div className="flex gap-[10px] mb-[20px]">
@@ -367,15 +370,16 @@ const StockForm = () => {
                 <label className='text-[#333] leading-[140%] font-medium'>Stock Type</label>
             </div>
             <div className="radio-buttons flex gap-[50px]">
-                <div className={formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'}>
+                <div className={`${formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${params ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
                             name="formType"
                             value="gia"
                             checked={formType === 'gia'}
-                            onChange={() => setFormType('gia')}
+                            onChange={() => { setFormType('gia'); reset(); }}
                             className="peer hidden"
+                            disabled={params}
                         />
                         <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
                             {formType === 'gia' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
@@ -383,15 +387,16 @@ const StockForm = () => {
                         <span className={formType === 'loose' ? 'font-medium' : ''}>GIA Diamond</span>
                     </label>
                 </div>
-                <div className={formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'}>
+                <div className={`${formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${params ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
                             name="formType"
                             value="loose"
                             checked={formType === 'loose'}
-                            onChange={() => setFormType('loose')}
+                            onChange={() => { setFormType('loose'); reset(); }}
                             className="peer hidden"
+                            disabled={params}
                         />
                         <span
                             className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
@@ -400,15 +405,16 @@ const StockForm = () => {
                         <span className={formType === 'loose' ? 'font-medium' : ''}>Loose Diamond</span>
                     </label>
                 </div>
-                <div className={formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'}>
+                <div className={`${formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${params ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
                             name="formType"
                             value="parcel"
                             checked={formType === 'parcel'}
-                            onChange={() => setFormType('parcel')}
+                            onChange={() => { setFormType('parcel'); reset(); }}
                             className="peer hidden"
+                            disabled={params}
                         />
                         <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
                             {formType === 'parcel' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
@@ -425,7 +431,7 @@ const StockForm = () => {
                         <p className='text-[20px] font-medium'>Enter Stock Detail</p>
                     </div>
                     {
-                        getFormRow[formType].map((field) => (
+                        FORM_ROW[formType].map((field) => (
                             getComponent(field)
                         ))
                     }
