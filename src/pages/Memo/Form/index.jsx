@@ -117,7 +117,11 @@ const CreateMemo = () => {
 
             if (response.status === 200) {
                 const responseData = response?.data?.data;
-                setSelectOptions(responseData);
+                const options = responseData.map(item => ({
+                    ...item,
+                    carat: item?.carat?.toString()
+                }));
+                setSelectOptions(options);
             }
         } catch (error) {
             toast.error(error?.response?.data?.message);
@@ -269,7 +273,6 @@ const CreateMemo = () => {
             const payload = {};
             payload.memoId = params.memoId;
             payload.customer = data?.customerName?.value;
-            console.log(rowData);
 
             payload.items = rowData?.map((item) => {
                 if (item.refNo !== null) {
