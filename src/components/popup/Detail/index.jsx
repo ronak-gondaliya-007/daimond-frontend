@@ -20,38 +20,46 @@ const DetailPopup = ({ item, onClose }) => {
                 <div className="space-y-8">
                     {/* First Row */}
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
-                        <DetailItem label="Diamond Name" value={item.diamondName} />
-                        <DetailItem label="ID" value={item.diamondId} />
-                        <DetailItem label="Carat" value={item.carat} />
-                        <DetailItem label="Color" value={item.color} />
+                        <DetailItem label="Diamond Name" value={item.diamondName || '--'} />
+                        <DetailItem label="ID" value={item.diamondId || '--'} />
+                        <DetailItem label="Carat" value={item.carat || '--'} />
+                        <DetailItem label="Color" value={item.color || '--'} />
                     </div>
 
                     {/* Second Row */}
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
-                        <DetailItem label="Clarity" value={item.clarity} />
-                        <DetailItem label="Polish" value={item.polish} />
-                        <DetailItem label="Symmetry" value={item.symmetry} />
-                        <DetailItem label="Depth" value={item.depth} />
+                        <DetailItem label="Clarity" value={item.clarity || '--'} />
+                        <DetailItem label="Polish" value={item.polish || '--'} />
+                        <DetailItem label="Symmetry" value={item.symmetry || '--'} />
+                        <DetailItem label="Depth" value={item.depth || '--'} />
                     </div>
 
                     {/* Third Row */}
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
-                        <DetailItem label="Fluorescence" value={item.fl} />
-                        <DetailItem label="Table" value={item.table} />
-                        <DetailItem label="Ratio" value={item.ratio} />
-                        <DetailItem label="Certificate No" value={item.certificateNo} />
+                        <DetailItem label="Fluorescence" value={item.fl || '--'} />
+                        <DetailItem label="Table" value={item.table || '--'} />
+                        <DetailItem label="Ratio" value={item.ratio || '--'} />
+                        <DetailItem label="Certificate No" value={item.certificateNo || '--'} />
                     </div>
 
                     {/* Fourth Row */}
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
-                        <DetailItem label="Price Per Carat" value={item.pricePerCarat} />
-                        <DetailItem label="Price" value={item.price} />
-                        <DetailItem label="Status" value={item.status} />
-                        <DetailItem label="Measurement" value={`${item.measurement.length} x ${item.measurement.width} x ${item.measurement.height}`} />
+                        <DetailItem label="Price Per Carat" value={item.pricePerCarat || '--'} />
+                        <DetailItem label="Price" value={item.price || '--'} />
+                        <DetailItem label="Cost Per Carat" value={item.costPerCarat || '--'} />
+                        <DetailItem label="Cost" value={item.cost || '--'} />
+                    </div>
+
+                    {/* Fifth Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
+                        <DetailItem label="Pic" value={item.pic || '--'} />
+                        <DetailItem label="Shape" value={item.shape || '--'} />
+                        <DetailItem label="Status" value={item.status || '--'} />
+                        <DetailItem label="Measurement" value={`${item.measurement?.length || '0'} x ${item.measurement?.width || '0'} x ${item.measurement?.height || '0'}`} />
                     </div>
 
                     {/* Images Section */}
-                    {item.diamondImages && item.diamondImages.length > 0 && (
+                    {item.diamondImages && item.diamondImages.length > 0 ? (
                         <div>
                             <div className="text-sm text-gray-500 font-medium mb-2">
                                 Images
@@ -67,6 +75,13 @@ const DetailPopup = ({ item, onClose }) => {
                                 ))}
                             </div>
                         </div>
+                    ) : (
+                        <div>
+                            <div className="text-sm text-gray-500 font-medium mb-2">
+                                Images
+                            </div>
+                            <div className="text-sm text-gray-900 font-medium">No Images Available</div>
+                        </div>
                     )}
 
                     {/* Remarks Section */}
@@ -75,7 +90,7 @@ const DetailPopup = ({ item, onClose }) => {
                             Remark
                         </div>
                         <div className="text-sm text-gray-900 font-medium">
-                            {item.remarks !== "" ? item.remarks : '--'}
+                            {item.remarks || '--'}
                         </div>
                     </div>
                 </div>

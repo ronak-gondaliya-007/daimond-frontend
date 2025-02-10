@@ -16,7 +16,7 @@ const StockForm = () => {
     const navigate = useNavigate();
     const params = useParams();
 
-    const { register, handleSubmit, formState: { errors }, reset, control, watch, getValues, setValue } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset, control, watch, getValues, setValue } = useForm({ defaultValues: { pic: '1' } });
 
     const [formType, setFormType] = useState('');
     const [stockForm, setStockForm] = useState();
@@ -30,12 +30,15 @@ const StockForm = () => {
     useEffect(() => {
         switch (formType) {
             case 'loose':
+                reset();
                 setStockForm(looseStockForm);
                 break;
             case 'parcel':
+                reset();
                 setStockForm(parcelStockForm);
                 break;
             default:
+                reset();
                 setStockForm(giaForm);
                 break;
         }
@@ -80,7 +83,7 @@ const StockForm = () => {
 
     useEffect(() => {
         if (caratValue && pricePerCaratValue) {
-            const price = (caratValue * pricePerCaratValue);
+            const price = (caratValue * pricePerCaratValue)?.toFixed(2);
             setValue('price', isNaN(price) ? '0' : price?.toString());
         } else {
             setValue('price', '0');
@@ -140,8 +143,6 @@ const StockForm = () => {
                 toast.success(response?.data?.message);
                 let stockData = response.data.data;
                 setStockDetail(stockData);
-
-                // stockData.vendor = { value: stockData.vendor._id, label: stockData.vendor.name };
 
                 const mappedOldImages = stockData.diamondImages?.map((img) => ({
                     file: {},
@@ -289,56 +290,62 @@ const StockForm = () => {
         }
     };
 
+    const stockType = {
+        "gia": 'GIA Stone',
+        "loose": 'Loose Stone',
+        "parcel": 'Parcel Good'
+    }
+
     const onSubmit = async (data) => {
         try {
-            console.log(data);
-            
-            // // Remove deleted old images
-            // if (removedImages.length > 0) {
-            //     await handleRemovedImage();
-            // }
+            data.type = stockType[formType];
 
-            // // Upload new images first
-            // if (newImages.length > 0) {
-            //     const uploadedImageUrls = await handleImageUpload();
+            // Remove deleted old images
+            if (removedImages.length > 0) {
+                await handleRemovedImage();
+            }
 
-            //     // Combine new and remaining old image URLs
-            //     const allImageUrls = [
-            //         ...(stockDetail ? stockDetail.diamondImages : []),
-            //         ...uploadedImageUrls,
-            //     ];
-            //     data.diamondImages = allImageUrls;
+            // Upload new images first
+            if (newImages.length > 0) {
+                const uploadedImageUrls = await handleImageUpload();
 
-            //     setRemovedImages(uploadedImageUrls);
-            // }
+                // Combine new and remaining old image URLs
+                const allImageUrls = [
+                    ...(stockDetail ? stockDetail.diamondImages : []),
+                    ...uploadedImageUrls,
+                ];
+                data.diamondImages = allImageUrls;
 
-            // delete data.images;
+                setRemovedImages(uploadedImageUrls);
+            }
 
-            // const endPoint = params?.stockId ? '/stock/update' : '/stock/add-new';
+            delete data.images;
 
-            // if (params.stockId) {
-            //     data.stockId = params.stockId;
-            //     delete data._id;
-            //     delete data.diamondId;
-            //     delete data.status;
-            //     delete data.isDeleted;
-            //     delete data.deletedAt;
-            //     delete data.createdBy;
-            //     delete data.createdAt;
-            //     delete data.updatedAt;
-            //     delete data.__v;
-            // };
+            const endPoint = params?.stockId ? '/stock/update' : '/stock/add-new';
 
-            // const response = await axiosClient.post(endPoint, data, {
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     }
-            // });
+            if (params.stockId) {
+                data.stockId = params.stockId;
+                delete data._id;
+                delete data.diamondId;
+                delete data.status;
+                delete data.isDeleted;
+                delete data.deletedAt;
+                delete data.createdBy;
+                delete data.createdAt;
+                delete data.updatedAt;
+                delete data.__v;
+            };
 
-            // if (response.status === 201 || response.status === 200) {
-            //     navigate('/stock');
-            //     toast.success(response?.data?.message);
-            // }
+            const response = await axiosClient.post(endPoint, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.status === 201 || response.status === 200) {
+                navigate('/stock');
+                toast.success(response?.data?.message);
+            }
         } catch (error) {
             toast.error(error?.response?.data?.message);
         }
@@ -360,7 +367,7 @@ const StockForm = () => {
                 <label className='text-[#333] leading-[140%] font-medium'>Stock Type</label>
             </div>
             <div className="radio-buttons flex gap-[50px]">
-                <div className={formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' :'border-2 border-gray p-[15px] rounded-[6px]'}>
+                <div className={formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
@@ -376,7 +383,7 @@ const StockForm = () => {
                         <span className={formType === 'loose' ? 'font-medium' : ''}>GIA Diamond</span>
                     </label>
                 </div>
-                <div className={formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' :'border-2 border-gray p-[15px] rounded-[6px]'}>
+                <div className={formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
@@ -393,7 +400,7 @@ const StockForm = () => {
                         <span className={formType === 'loose' ? 'font-medium' : ''}>Loose Diamond</span>
                     </label>
                 </div>
-                <div className={formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' :'border-2 border-gray p-[15px] rounded-[6px]'}>
+                <div className={formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"

@@ -26,6 +26,8 @@ import uploadCloud02 from '../images/upload-cloud-02.svg';
 import calendar from '../images/calendar.svg';
 import featuredIcon from '../images/featured-icon.svg';
 import diamondIconSVG from '../images/diamond-icon.svg';
+import stockHistoryIcon from '../images/stocks-history.svg';
+import deleteRedIcon from '../images/delete-red.svg';
 
 export {
     logo,
@@ -56,4 +58,6 @@ export {
     calendar,
     featuredIcon,
     diamondIconSVG,
+    stockHistoryIcon,
+    deleteRedIcon
 };

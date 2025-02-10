@@ -18,7 +18,7 @@ import SkipDataPopup from "components/popup/Skip";
 import { getDate, getTime } from "utils/dateFormat";
 import { downloadExcel } from "utils";
 
-import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon } from "assets/utils/images";
+import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon, stockHistoryIcon } from "assets/utils/images";
 import SelectField from "components/FormFields/SelectField";
 import InputField from "components/FormFields/InputField";
 import { useForm } from "react-hook-form";
@@ -45,17 +45,11 @@ const Stock = () => {
 
     const columns = [
         {
-            label: '',
-            key: 'diamondId',
-            isCheckbox: true,
-            type: 'checkbox'
-        },
-        {
             label: 'Diamond name and Id',
             key: 'diamondName',
             type: 'custom',
             render: (item) => {
-                return <div className="flex items-center gap-[10px]">
+                return <div className="flex items-center gap-[10px] max-w-[240px]">
                     <img src={diamondIcon} alt="Diamond" />
                     <div className="flex flex-col items-start">
                         <span className="text-[14px] font-medium text-[#0A112F] text-start line-clamp-2">{item.diamondName}</span>
@@ -68,6 +62,11 @@ const Stock = () => {
         {
             label: 'Ref No',
             key: 'refNo',
+            sortable: true
+        },
+        {
+            label: 'Type',
+            key: 'type',
             sortable: true
         },
         {
@@ -148,6 +147,9 @@ const Stock = () => {
             render: (item) => {
                 return <td className="tbl-action">
                     <div className="flex items-center justify-end gap-[10px]">
+                        <button>
+                            <img src={stockHistoryIcon} alt="History" />
+                        </button>
                         <button onClick={() => handleActionClick('view', item)}>
                             <img src={button} alt="View" />
                         </button>
@@ -202,7 +204,7 @@ const Stock = () => {
             );
 
             if (response.status === 200) {
-                toast.success(response?.data?.message);
+                // toast.success(response?.data?.message);
                 setStockData(response.data.data.docs);
                 setTotalPages(response.data.data.totalPages);
                 setCurrentPage(page);
@@ -493,7 +495,7 @@ export const FilterPopup = ({ range, setRange, onSubmit }) => {
                             <div className="flex-1">
                                 {getComponent({ type: 'SELECT', name: 'status', label: 'Status' })}
                             </div>
-                           
+
                             {/* Range Filter */}
                             <div className="flex-1">
                                 {getComponent({ type: 'RANGE_INPUT', name: 'carat', label: 'Carat' })}

@@ -57,7 +57,7 @@ const Memo = () => {
             );
 
             if (response.status === 200) {
-                toast.success(response?.data?.message);
+                // toast.success(response?.data?.message);
                 setMemoData(response.data.data.docs);
                 setTotalPages(response.data.data.totalPages);
                 setCurrentPage(page);

@@ -88,7 +88,10 @@ export const giaForm = [
                 name: "shape",
                 label: "shape",
                 type: "INPUT",
-                placeholder: "Enter shape",
+                placeholder: "Enter Shape",
+                rule: {
+                    required: "*Shape is required",
+                }
             },
             {
                 id: 12,
@@ -198,6 +201,38 @@ export const giaForm = [
         ],
     },
     {
+        id: 33,
+        type: "ROW",
+        childrens: [
+            {
+                id: 34,
+                name: "cost",
+                label: "Cost",
+                type: "INPUT",
+                placeholder: "Enter Cost",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Cost"
+                    }
+                }
+            },
+            {
+                id: 35,
+                name: "costPerCarat",
+                label: "Cost Per Carat",
+                type: "INPUT",
+                placeholder: "Enter Cost Per Carat",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Cost Per Carat"
+                    }
+                }
+            },
+        ],
+    },
+    {
         id: 25,
         type: "ROW",
         childrens: [
@@ -233,10 +268,32 @@ export const giaForm = [
                     { value: "Mumbai", label: "Mumbai" },
                     { value: "Surat", label: "Surat" },
                     { value: "Custom", label: "Custom" },
-                ]
+                ],
+                rule: {
+                    required: "*Location is required",
+                }
             },
             {
-                id: 30,
+                id: 12,
+                name: "pic",
+                label: "Pic",
+                type: "INPUT",
+                placeholder: "Enter Pic",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Price Per Carat"
+                    }
+                }
+            },
+        ],
+    },
+    {
+        id: 36,
+        type: "ROW",
+        childrens: [
+            {
+                id: 37,
                 name: "remarks",
                 label: "Remarks",
                 type: "TEXTAREA",
@@ -313,6 +370,32 @@ export const parcelStockForm = [
         ],
     },
     {
+        id: 10,
+        type: "ROW",
+        childrens: [
+            {
+                id: 11,
+                name: "clarity",
+                label: "clarity",
+                type: "INPUT",
+                placeholder: "Enter clarity",
+            },
+            {
+                id: 12,
+                name: "pic",
+                label: "Pic",
+                type: "INPUT",
+                placeholder: "Enter Pic",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Pic"
+                    }
+                }
+            },
+        ],
+    },
+    {
         id: 13,
         type: "ROW",
         childrens: [
@@ -345,32 +428,6 @@ export const parcelStockForm = [
         ],
     },
     {
-        id: 10,
-        type: "ROW",
-        childrens: [
-            {
-                id: 11,
-                name: "clarity",
-                label: "clarity",
-                type: "INPUT",
-                placeholder: "Enter clarity",
-            },
-            {
-                id: 12,
-                name: "pic",
-                label: "Pic",
-                type: "INPUT",
-                placeholder: "Enter Pic",
-                rule:{
-                    pattern: {
-                        value: /^[0-9]+(\.[0-9]+)?$/,
-                        message: "*Invalid Price Per Carat"
-                    }
-                }
-            },
-        ],
-    },
-    {
         id: 4,
         type: "ROW",
         childrens: [
@@ -389,17 +446,50 @@ export const parcelStockForm = [
             },
             {
                 id: 6,
-                name: "rapPrice",
-                label: "Rap Price",
+                name: "price",
+                label: "Price",
                 type: "INPUT",
                 placeholder: "Enter Rap Price",
-                rule:{
+                rule: {
                     pattern: {
                         value: /^[0-9]+(\.[0-9]+)?$/,
-                        message: "*Invalid Price Per Carat"
+                        message: "*Invalid Price"
                     }
                 }
             }
+        ],
+    },
+    {
+        id: 7,
+        type: "ROW",
+        childrens: [
+            {
+                id: 8,
+                name: "shape",
+                label: "shape",
+                type: "INPUT",
+                placeholder: "Enter Shape",
+                rule: {
+                    required: "*Shape is required",
+                }
+            },
+            {
+                id: 9,
+                name: "location",
+                label: "Location",
+                type: "LOCATION",
+                placeholder: "Select Location",
+                isSearchable: true,
+                options: [
+                    { value: "New York", label: "New York" },
+                    { value: "Mumbai", label: "Mumbai" },
+                    { value: "Surat", label: "Surat" },
+                    { value: "Custom", label: "Custom" },
+                ],
+                rule: {
+                    required: "*Location is required",
+                }
+            },
         ],
     },
 ]
@@ -475,10 +565,42 @@ export const looseStockForm = [
                 label: "Pic",
                 type: "INPUT",
                 placeholder: "Enter Pic",
-                rule:{
+                rule: {
                     pattern: {
                         value: /^[0-9]+(\.[0-9]+)?$/,
                         message: "*Invalid Price Per Carat"
+                    }
+                }
+            },
+        ],
+    },
+    {
+        id: 33,
+        type: "ROW",
+        childrens: [
+            {
+                id: 34,
+                name: "cost",
+                label: "Cost",
+                type: "INPUT",
+                placeholder: "Enter Cost",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Cost"
+                    }
+                }
+            },
+            {
+                id: 35,
+                name: "costPerCarat",
+                label: "Cost Per Carat",
+                type: "INPUT",
+                placeholder: "Enter Cost Per Carat",
+                rule: {
+                    pattern: {
+                        value: /^[0-9]+(\.[0-9]+)?$/,
+                        message: "*Invalid Cost Per Carat"
                     }
                 }
             },
@@ -503,18 +625,51 @@ export const looseStockForm = [
             },
             {
                 id: 6,
-                name: "rapPrice",
-                label: "Rap Price",
+                name: "price",
+                label: "Price",
                 type: "INPUT",
-                placeholder: "Enter Rap Price",
+                placeholder: "Enter Price",
                 disabled: true,
                 rule: {
-                   pattern: {
+                    pattern: {
                         value: /^[0-9]+(\.[0-9]+)?$/,
-                        message: "*Invalid Price Per Carat"
+                        message: "*Invalid Price"
                     }
                 }
             }
+        ],
+    },
+    {
+        id: 7,
+        type: "ROW",
+        childrens: [
+            {
+                id: 8,
+                name: "shape",
+                label: "shape",
+                type: "INPUT",
+                placeholder: "Enter Shape",
+                rule: {
+                    required: "*Shape is required",
+                }
+            },
+            {
+                id: 9,
+                name: "location",
+                label: "Location",
+                type: "LOCATION",
+                placeholder: "Select Location",
+                isSearchable: true,
+                options: [
+                    { value: "New York", label: "New York" },
+                    { value: "Mumbai", label: "Mumbai" },
+                    { value: "Surat", label: "Surat" },
+                    { value: "Custom", label: "Custom" },
+                ],
+                rule: {
+                    required: "*Location is required",
+                }
+            },
         ],
     },
 ]

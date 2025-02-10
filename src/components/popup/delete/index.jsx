@@ -28,7 +28,7 @@ const DeletePopup = ({ onClose, onDelete, item, inlineKeys, isAmount, amountKey 
                     <div className="flex justify-between mb-4 w-full">
                         {inlineKeys.map((key) => (
                             item[key] && (
-                                <div>
+                                <div className="max-w-[50%]">
                                     <div className="text-sm text-gray-500 font-medium mb-2 ">{capitalizeFirstLetter(key)}</div>
                                     <div className="text-sm text-gray-900 font-medium">{item[key]}</div>
                                 </div>
