@@ -25,6 +25,7 @@ import { useForm } from "react-hook-form";
 import { stockFilterForm } from "static/form-data/stock-form";
 import RangeSlider from 'react-range-slider-input';
 import RangeInputField from "components/FormFields/RangeInputField";
+import HistoryPopup from "./History";
 
 const Stock = () => {
     const navigate = useNavigate();
@@ -147,7 +148,7 @@ const Stock = () => {
             render: (item) => {
                 return <td className="tbl-action">
                     <div className="flex items-center justify-end gap-[10px]">
-                        <button>
+                        <button onClick={() => handleActionClick('history', item)}>
                             <img src={stockHistoryIcon} alt="History" />
                         </button>
                         <button onClick={() => handleActionClick('view', item)}>
@@ -329,6 +330,9 @@ const Stock = () => {
 
     const handleActionClick = async (action, item) => {
         switch (action) {
+            case 'history':
+                fetchStockDetail(action, item);
+                break;
             case 'view':
                 fetchStockDetail(action, item);
                 break;
@@ -418,6 +422,7 @@ const Stock = () => {
                 )}
             </div>
 
+            {selectedItem && selectedItem.action === 'history' && <HistoryPopup item={selectedItem.item} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => deleteStock(selectedItem.action, selectedItem.item)} inlineKeys={["diamondId", "diamondName"]} />)}
             {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
