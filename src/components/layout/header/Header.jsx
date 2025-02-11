@@ -23,7 +23,7 @@ const Header = ({
                     </div>
                 }
 
-                {
+                {/* {
                     isSearch &&
                     <div className="relative min-w-[200px] max-w-[260px] w-full h-[40px]">
                         <input
@@ -38,7 +38,7 @@ const Header = ({
                         <img src={search} alt="search" className="absolute left-[16px] top-1/2 transform -translate-x-1/2 -translate-y-1/2" />
                         <img src={searchD} alt="search" className="absolute right-[1px] top-1/2 transform -translate-x-1/2 -translate-y-1/2" />
                     </div>
-                }
+                } */}
             </div>
         </header>
     );
