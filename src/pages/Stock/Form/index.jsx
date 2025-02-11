@@ -21,6 +21,7 @@ const FORM_ROW = {
 const StockForm = () => {
     const navigate = useNavigate();
     const params = useParams();
+    const stockId = params?.stockId;
 
     const { register, handleSubmit, formState: { errors }, reset, control, watch, getValues, setValue } = useForm({ defaultValues: { pic: '1' } });
 
@@ -376,7 +377,7 @@ const StockForm = () => {
                 <label className='text-[#333] leading-[140%] font-medium'>Stock Type</label>
             </div>
             <div className="radio-buttons flex gap-[50px]">
-                <div className={`${formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${params ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <div className={`${formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${stockId ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
@@ -385,7 +386,7 @@ const StockForm = () => {
                             checked={formType === 'gia'}
                             onChange={() => { setFormType('gia'); reset(); }}
                             className="peer hidden"
-                            disabled={params}
+                            disabled={stockId}
                         />
                         <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
                             {formType === 'gia' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
@@ -393,7 +394,7 @@ const StockForm = () => {
                         <span className={formType === 'loose' ? 'font-medium' : ''}>GIA Diamond</span>
                     </label>
                 </div>
-                <div className={`${formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${params ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <div className={`${formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${stockId ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
@@ -402,7 +403,7 @@ const StockForm = () => {
                             checked={formType === 'loose'}
                             onChange={() => { setFormType('loose'); reset(); }}
                             className="peer hidden"
-                            disabled={params}
+                            disabled={stockId}
                         />
                         <span
                             className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
@@ -411,7 +412,7 @@ const StockForm = () => {
                         <span className={formType === 'loose' ? 'font-medium' : ''}>Loose Diamond</span>
                     </label>
                 </div>
-                <div className={`${formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${params ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <div className={`${formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${stockId ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                         <input
                             type="radio"
@@ -420,7 +421,7 @@ const StockForm = () => {
                             checked={formType === 'parcel'}
                             onChange={() => { setFormType('parcel'); reset(); }}
                             className="peer hidden"
-                            disabled={params}
+                            disabled={stockId}
                         />
                         <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
                             {formType === 'parcel' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
