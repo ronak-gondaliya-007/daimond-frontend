@@ -5,7 +5,8 @@ import { getDate, getTime } from "utils/dateFormat";
 
 const HistoryPopup = ({ rows, onClose }) => {
     const navigate = useNavigate();
-
+    console.log(rows);
+    
     const handleClick = (item) => {
         if (item.activity === 'Sold') {
             navigate(`/sell-invoice/preview/${item.activityId}`);
@@ -29,6 +30,26 @@ const HistoryPopup = ({ rows, onClose }) => {
                     </button>
                 </div>
 
+                {/* Inline Stats Boxes */}
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 p-6 rounded-xl shadow-lg text-white text-center">
+                        <h3 className="text-lg font-semibold">Total Available</h3>
+                        <p className="text-3xl font-bold">{rows.availableCarat}</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-green-500 via-green-600 to-green-700 p-6 rounded-xl shadow-lg text-white text-center">
+                        <h3 className="text-lg font-semibold">Sold</h3>
+                        <p className="text-3xl font-bold">{rows.soldCarat}</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-700 p-6 rounded-xl shadow-lg text-white text-center">
+                        <h3 className="text-lg font-semibold">Memo</h3>
+                        <p className="text-3xl font-bold">{rows.memoCarat}</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 p-6 rounded-xl shadow-lg text-white text-center">
+                        <h3 className="text-lg font-semibold">Total Carat</h3>
+                        <p className="text-3xl font-bold">{rows.carat}</p>
+                    </div>
+                </div>
+
                 {/* Table Wrapper */}
                 <div className="mt-4">
                     <div className="border border-gray-300 rounded-md overflow-hidden">
@@ -47,8 +68,8 @@ const HistoryPopup = ({ rows, onClose }) => {
                             {/* Scrollable Table Body */}
                             <div className="block max-h-[60vh] overflow-y-auto">
                                 <tbody className="block w-full text-gray-800">
-                                    {rows && rows.length > 0 ? (
-                                        rows.map((row, index) => (
+                                    {rows.historyData && rows.historyData.length > 0 ? (
+                                        rows.historyData.map((row, index) => (
                                             <tr key={index} className="flex w-full border-b bg-white hover:bg-gray-100 transition">
                                                 <td className="p-4 w-60">
                                                     <div className="flex items-center gap-[10px] max-w-[240px]">
@@ -81,7 +102,7 @@ const HistoryPopup = ({ rows, onClose }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

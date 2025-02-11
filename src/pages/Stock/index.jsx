@@ -376,7 +376,6 @@ const Stock = () => {
     };
 
     const handleFilter = (data) => {
-        console.log({ ...data, range })
         setIsOpen(q => !q)
     }
 
