@@ -172,9 +172,25 @@ const Memo = () => {
             key: 'status',
             type: 'custom',
             render: ({ status }) => {
-                return <div className="flex items-center gap-[10px] border border-[#D5D7DA] rounded-[6px] px-[10px] py-[5px] max-w-[100px]">
-                    <span className={`block w-[10px] h-[10px] rounded-full ${status !== 'pending' ? 'bg-[#FF0000]' : 'bg-[#FF9D00]'}`}></span>
-                    <span className="text-[14px] font-medium text-[#0A112F]">{status}</span>
+                let statusLabel = '';
+                let statusColor = '';
+
+                switch (status) {
+                    case 'Pending':
+                        statusLabel = 'Pending';
+                        statusColor = 'bg-[#FFEB3B]';
+                        break;
+                    case 'Due Pass':
+                        statusLabel = 'Due Pass';
+                        statusColor = 'bg-[#FF0000]';
+                        break;
+                    default:
+                        statusLabel = 'Unknown';
+                        statusColor = 'bg-[#D5D7DA]';
+                }
+                return <div className="flex items-center gap-[10px] border border-[#D5D7DA] rounded-[4px] px-[10px] py-[5px] max-w-[100px]">
+                    <span className={`block w-[10px] h-[10px] rounded-full ${statusColor}`}></span>
+                    <span className="text-[14px] font-medium text-[#0A112F]">{statusLabel}</span>
                 </div>
             },
             sortable: true

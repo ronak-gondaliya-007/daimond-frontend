@@ -102,7 +102,7 @@ const MemoPreview = () => {
                                         <td className='text-center'>{no}</td>
                                         <td className='text-center'>{refNo}</td>
                                         <td className='text-center'>{description}</td>
-                                        <td className='text-center'>{carats}</td>
+                                        <td className='text-center'>{carat}</td>
                                         <td className='text-center font-semibold'>{getCurrency(pricePerCarat)}</td>
                                         <td className='text-center font-semibold'>{getCurrency(returnInCarats)}</td>
                                         <td className='text-center font-semibold'>{getCurrency(soldInCarats)}</td>

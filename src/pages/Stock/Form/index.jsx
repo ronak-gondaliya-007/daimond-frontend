@@ -148,10 +148,10 @@ const StockForm = () => {
             if (response.status === 200) {
                 toast.success(response?.data?.message);
                 let stockData = response.data.data;
-                setStockDetail(stockData);
-
                 const key = Object.entries(stockType).find(([key, value]) => value === stockData.type)?.[0];
                 setFormType(key)
+
+                setStockDetail(stockData);
 
                 const mappedOldImages = stockData.diamondImages?.map((img) => ({
                     file: {},
@@ -334,6 +334,12 @@ const StockForm = () => {
 
             if (params.stockId) {
                 data.stockId = params.stockId;
+                if ([stockType['loose'], stockType['parcel']].includes(data.type)) delete data.diamondImages;
+                data.carat = data.carat?.toString();
+                data.pic = data.pic?.toString();
+                delete data.availableCarat;
+                delete data.memoCarat;
+                delete data.soldCarat;
                 delete data._id;
                 delete data.diamondId;
                 delete data.status;

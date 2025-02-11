@@ -96,9 +96,9 @@ const ManageInvoices = () => {
                                 >
                                     {isPaid ? 'Invoice Paid' : 'Mark as Paid'}
                                 </button>
-                                <button 
-                                className='text-[14px] font-medium text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'
-                                onClick={() => navigate(`/sell-invoice/edit/${params.sellInvoiceId}`)}
+                                <button
+                                    className='text-[14px] font-medium text-[#414651] px-[12px] py-[8px] border border-[#D5D7DA] rounded-[6px]'
+                                    onClick={() => navigate(`/sell-invoice/edit/${params.sellInvoiceId}`)}
                                 >
                                     Edit Invoice
                                 </button>
@@ -185,11 +185,11 @@ function CustomTable({ table = [] }) {
             </thead>
             <tbody>
                 {
-                    table.map(({ _id, description, carats, refNo, pricePerCarat, price }) => (
+                    table.map(({ _id, description, carat, refNo, pricePerCarat, price }) => (
                         <tr className='h-[60px] text-[14px] border border-[#E9EAEB] border-x-0 border-t-0' key={_id}>
                             <td className='pl-[25px] text-start'>{refNo}</td>
                             <td className='max-w-[110px] break-words'>{description === "" ? '--' : description}</td>
-                            <td className='text-center'>{carats} CT</td>
+                            <td className='text-center'>{carat} CT</td>
                             <td className='text-center font-semibold'>{pricePerCarat}</td>
                             <td className='text-center font-semibold'>{price}</td>
                         </tr>
@@ -216,7 +216,7 @@ function CustomTable({ table = [] }) {
     )
 }
 
-function PaymentConfirmation({invoiceNumber, customerName, amount, setShowModal, handleMarkAsPaid, loading}) {
+function PaymentConfirmation({ invoiceNumber, customerName, amount, setShowModal, handleMarkAsPaid, loading }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full relative">

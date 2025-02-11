@@ -70,7 +70,7 @@ const CreateMemo = () => {
             if (params.memoId) await fetchMemoDetail(params.memoId);
 
         } catch (error) {
-            console.error('Error fetching data:', error);
+            toast.error(error?.response?.data?.message);
         } finally {
             setLoading(false);
             isFetchingRef.current = false;
@@ -147,6 +147,7 @@ const CreateMemo = () => {
 
                 const updatedRowData = responseData.memoItems.map(item => ({
                     ...item,
+                    carat: item?.carat?.toString(),
                     stockId: item?.stockId || null
                 }));
                 setRowData(updatedRowData);
@@ -231,7 +232,6 @@ const CreateMemo = () => {
     const onSubmit = async (data) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
-        console.log("Data : ", data);
 
         if (!params.memoId) {
             createMemoApiCall(data);
@@ -445,7 +445,7 @@ const CreateMemo = () => {
                     <CommonInput
                         name={"pricePerCarat"}
                         value={pricePerCarat}
-                        placeholder={"PricePerCarat"}
+                        placeholder={"Price Per Carat"}
                         onChange={(e) => handleChange(e, index)}
                     />
                 )
