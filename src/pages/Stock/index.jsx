@@ -239,6 +239,28 @@ const Stock = () => {
             isFetchingRef.current = false;
         }
     }
+    
+    const fetchStockHistory = async (action, item) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+
+        setLoading(true);
+        try {
+            const response = await axiosClient.post(`/stock/history`,
+                { stockId: item._id },
+                { headers: { 'Content-Type': 'application/json' } });
+
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                setSelectedItem({ action, item: response.data.data });
+            }
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+        } finally {
+            setLoading(false);
+            isFetchingRef.current = false;
+        }
+    }
 
     const deleteStock = async (action, item) => {
         if (isFetchingRef.current) return;
@@ -331,7 +353,7 @@ const Stock = () => {
     const handleActionClick = async (action, item) => {
         switch (action) {
             case 'history':
-                fetchStockDetail(action, item);
+                fetchStockHistory(action, item);
                 break;
             case 'view':
                 fetchStockDetail(action, item);
@@ -422,7 +444,7 @@ const Stock = () => {
                 )}
             </div>
 
-            {selectedItem && selectedItem.action === 'history' && <HistoryPopup item={selectedItem.item} onClose={handleClosePopup} />}
+            {selectedItem && selectedItem.action === 'history' && <HistoryPopup rows={selectedItem.item} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => deleteStock(selectedItem.action, selectedItem.item)} inlineKeys={["diamondId", "diamondName"]} />)}
             {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
