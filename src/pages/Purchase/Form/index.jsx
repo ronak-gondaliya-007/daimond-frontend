@@ -109,7 +109,7 @@ const PurchaseForm = () => {
             if (response.status === 200) {
                 toast.success(response?.data?.message);
                 let purchaseData = response.data.data;
-                const key = Object.entries(stockType).find(([key, value]) => value === purchaseData.type)?.[0];
+                const key = Object.entries(purchaseType).find(([key, value]) => value === purchaseData.type)?.[0];
                 setFormType(key)
 
                 setPurchaseDetail(purchaseData);
