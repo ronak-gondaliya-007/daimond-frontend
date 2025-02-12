@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 import axiosClient from "api/AxiosClient";
 
-import StockForm from "./Form";
+import PurchaseForm from "./Form";
 
 import Search from "components/search";
 import Table from "components/table";
@@ -12,33 +12,28 @@ import DetailPopup from 'components/popup/Detail';
 import DeletePopup from "components/popup/Delete";
 import Loader from "components/loader";
 import NoDataFound from "components/no-data-found";
-import ImportPopup from "components/popup/Import";
-import SkipDataPopup from "components/popup/Skip";
 
 import { getDate, getTime } from "utils/dateFormat";
-import { downloadExcel } from "utils";
 
-import { diamondIcon, button, button1, button2, arrowDown, arrowUp, exportIcon, importIcon, stockHistoryIcon } from "assets/utils/images";
+import { diamondIcon, button, button1, button2, arrowDown, arrowUp } from "assets/utils/images";
 import SelectField from "components/FormFields/SelectField";
 import { useForm } from "react-hook-form";
 import RangeSlider from 'react-range-slider-input';
 import RangeInputField from "components/FormFields/RangeInputField";
-import HistoryPopup from "./History";
 
-const Stock = () => {
+const Purchase = () => {
     const navigate = useNavigate();
 
-    const [stockData, setStockData] = useState([]);
+    const [purchaseData, setPurchaseData] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'Desc' });
     const [selectedItem, setSelectedItem] = useState(null);
-    const [skippedStocks, setSkippedStocks] = useState([]);
-    const [showSkippedPopup, setShowSkippedPopup] = useState(false);
     const [range, setRange] = useState([1, 100]);
     const [isOpen, setIsOpen] = useState(false)
+    const [showSkippedPopup, setShowSkippedPopup] = useState(false);
 
     const isFetchingRef = useRef(false);
 
@@ -108,47 +103,12 @@ const Stock = () => {
             sortable: true
         },
         {
-            label: 'Status',
-            key: 'status',
-            type: 'custom',
-            render: ({ status }) => {
-                let statusLabel = '';
-                let statusColor = '';
-
-                switch (status) {
-                    case 'Available':
-                        statusLabel = 'Available';
-                        statusColor = 'bg-[#00C241]';
-                        break;
-                    case 'On Memo':
-                        statusLabel = 'On Memo';
-                        statusColor = 'bg-[#FFEB3B]';
-                        break;
-                    case 'Sold':
-                        statusLabel = 'Sold';
-                        statusColor = 'bg-[#FF0000]';
-                        break;
-                    default:
-                        statusLabel = 'Unknown';
-                        statusColor = 'bg-[#D5D7DA]';
-                }
-                return <div className="flex items-center gap-[8px] border border-[#D5D7DA] rounded-[6px] px-[10px] py-[5px] max-w-[110px]">
-                    <span className={`block w-[10px] h-[10px] rounded-full ${statusColor}`}></span>
-                    <span className="text-[14px] font-medium text-[#0A112F]">{statusLabel}</span>
-                </div>
-            },
-            sortable: true
-        },
-        {
             label: '',
             key: 'actions',
             type: 'action',
             render: (item) => {
                 return <td className="tbl-action">
                     <div className="flex items-center justify-end gap-[10px]">
-                        <button onClick={() => handleActionClick('history', item)}>
-                            <img src={stockHistoryIcon} alt="History" />
-                        </button>
                         <button onClick={() => handleActionClick('view', item)}>
                             <img src={button} alt="View" />
                         </button>
@@ -171,27 +131,27 @@ const Stock = () => {
 
     const handleSearch = (query) => {
         setSearchQuery(query);
-        fetchStocks(1, query);
+        fetchPurchases(1, query);
     };
 
     useEffect(() => {
         if (isFetchingRef.current) return;
-        fetchStocks(currentPage, searchQuery, sortConfig.key, sortConfig.direction);
+        fetchPurchases(currentPage, searchQuery, sortConfig.key, sortConfig.direction);
     }, [currentPage, searchQuery, sortConfig]);
 
     const handleSort = (key) => {
         const direction = sortConfig.key === key && sortConfig.direction === 'Asc' ? 'Desc' : 'Asc';
         setSortConfig({ key, direction });
-        fetchStocks(1, searchQuery, key, direction);
+        fetchPurchases(1, searchQuery, key, direction);
     };
 
-    const fetchStocks = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
+    const fetchPurchases = async (page = 1, searchQuery = "", sortKey = "createdAt", sortDirection = "Asc") => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
         setLoading(true);
         try {
-            const response = await axiosClient.post('/stock/all-stocks',
+            const response = await axiosClient.post('/purchase/all-purchases',
                 {
                     page: page,
                     limit: 5,
@@ -204,7 +164,7 @@ const Stock = () => {
 
             if (response.status === 200) {
                 // toast.success(response?.data?.message);
-                setStockData(response.data.data.docs);
+                setPurchaseData(response.data.data.docs);
                 setTotalPages(response.data.data.totalPages);
                 setCurrentPage(page);
             }
@@ -216,14 +176,14 @@ const Stock = () => {
         }
     };
 
-    const fetchStockDetail = async (action, item) => {
+    const fetchPurchaseDetail = async (action, item) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
         setLoading(true);
         try {
-            const response = await axiosClient.post(`/stock/detail`,
-                { stockId: item._id },
+            const response = await axiosClient.post(`/purchase/detail`,
+                { purchaseId: item._id },
                 { headers: { 'Content-Type': 'application/json' } });
 
             if (response.status === 200) {
@@ -238,36 +198,14 @@ const Stock = () => {
         }
     }
 
-    const fetchStockHistory = async (action, item) => {
+    const deletePurchase = async (action, item) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
         setLoading(true);
         try {
-            const response = await axiosClient.post(`/stock/history`,
-                { stockId: item._id },
-                { headers: { 'Content-Type': 'application/json' } });
-
-            if (response.status === 200) {
-                toast.success(response?.data?.message);
-                setSelectedItem({ action, item: response.data.data });
-            }
-        } catch (error) {
-            toast.error(error?.response?.data?.message);
-        } finally {
-            setLoading(false);
-            isFetchingRef.current = false;
-        }
-    }
-
-    const deleteStock = async (action, item) => {
-        if (isFetchingRef.current) return;
-        isFetchingRef.current = true;
-
-        setLoading(true);
-        try {
-            const response = await axiosClient.post(`/stock/delete`,
-                { stockId: item._id },
+            const response = await axiosClient.post(`/purchase/delete`,
+                { purchaseId: item._id },
                 { headers: { 'Content-Type': 'application/json' } });
 
             if (response.status === 200) {
@@ -284,89 +222,22 @@ const Stock = () => {
         }
     }
 
-    const handleImportExcel = async (file) => {
-        if (isFetchingRef.current) return;
-        isFetchingRef.current = true;
-
-        setLoading(true);
-        try {
-            const formData = new FormData();
-
-            formData.append('StockExcel', file);
-
-            const response = await axiosClient.post(`/stock/import-excel`,
-                formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } });
-
-            if (response.status === 200) {
-                toast.success(response?.data?.message);
-                if (response.data.data.skippedStockCount > 0) {
-                    setSkippedStocks(response.data.data);
-                    setShowSkippedPopup(true);
-                } else {
-                    fetchStocks();
-                }
-            }
-        } catch (error) {
-            toast.error(error?.response?.data?.message);
-        } finally {
-            setLoading(false);
-            isFetchingRef.current = false;
-        }
-    }
-
-    const handleExportExcel = async () => {
-        if (isFetchingRef.current) return;
-        isFetchingRef.current = true;
-
-        setLoading(true);
-        try {
-            const response = await axiosClient.post(`/stock/export-excel`,
-                {
-                    search: searchQuery
-                },
-                { headers: { 'Content-Type': 'application/json' } });
-
-            if (response.status === 200) {
-                toast.success(response?.data?.message);
-                const fileUrl = response?.data?.data;
-                if (fileUrl) {
-                    downloadExcel(fileUrl);
-                }
-            }
-        } catch (error) {
-            toast.error(error?.response?.data?.message);
-        } finally {
-            setLoading(false);
-            isFetchingRef.current = false;
-        }
-    }
-
-    const onStatusChange = (action, stockId) => {
+    const onStatusChange = (action, purchaseId) => {
         if (action === 'delete') {
-            setStockData((prevData) => prevData.filter(item => item._id !== stockId));
+            setPurchaseData((prevData) => prevData.filter(item => item._id !== purchaseId));
         }
     };
 
     const handleActionClick = async (action, item) => {
         switch (action) {
-            case 'history':
-                fetchStockHistory(action, item);
-                break;
             case 'view':
-                fetchStockDetail(action, item);
+                fetchPurchaseDetail(action, item);
                 break;
             case 'edit':
-                navigate(`/stock/edit/${item._id}`);
+                navigate(`/purchase/edit/${item._id}`);
                 break;
             case 'delete':
                 setSelectedItem({ action, item });
-                break;
-            case 'import':
-                setSelectedItem({ action });
-                break;
-            case 'export':
-                handleExportExcel();
                 break;
             default:
                 break;
@@ -385,22 +256,6 @@ const Stock = () => {
         <div className="w-full p-[20px] max-w-[100rem] mx-auto">
             <div className="w-full flex justify-between items-center mb-[24px]">
                 <h6 className="text-[16px]">Overview</h6>
-                <div className="flex flex-row gap-[20px] w-[25%]">
-                    <button
-                        className="bg-[#1E1E1E] text-white rounded-md flex flex-row px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
-                        onClick={() => handleActionClick('import')}
-                    >
-                        <img src={importIcon} alt="Import Excel" className="h-6 w-6" />
-                        <p>Import Excel</p>
-                    </button>
-                    <button
-                        className="bg-[#1E1E1E] text-white rounded-md flex flex-row  px-[15px] py-[10px] gap-[10px] justify-center items-center w-full"
-                        onClick={() => handleActionClick('export')}
-                    >
-                        <img src={exportIcon} alt="Import Excel" className="h-6 w-6" />
-                        <p>Export Excel</p>
-                    </button>
-                </div>
             </div>
             <Search
                 placeholder="Search by: diamond ID, diamond name, etc..."
@@ -408,14 +263,14 @@ const Stock = () => {
                 onSearch={handleSearch}
                 addBtn={{
                     title: '+ Add New',
-                    onClick: () => navigate('/stock/add')
+                    onClick: () => navigate('/purchase/add')
                 }}
                 handleFilterClick={() => setIsOpen(q => !q)}
             />
             {isOpen ? <FilterPopup range={range} setRange={setRange} onSubmit={handleFilter} /> : <></>}
             <div className="my-[30px] stock-table">
-                {stockData?.length === 0 ? (
-                    <NoDataFound message="Oops! No stocks found." />
+                {purchaseData?.length === 0 ? (
+                    <NoDataFound message="Oops! No purchase found." />
                 ) : (
                     <Table
                         columns={columns.map(column => ({
@@ -432,7 +287,7 @@ const Stock = () => {
                                 </div>
                             ),
                         }))}
-                        data={stockData}
+                        data={purchaseData}
                         tableClass="stock-table"
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -441,12 +296,9 @@ const Stock = () => {
                 )}
             </div>
 
-            {selectedItem && selectedItem.action === 'history' && <HistoryPopup rows={selectedItem.item} onClose={handleClosePopup} />}
             {selectedItem && selectedItem.action === 'view' && <DetailPopup item={selectedItem.item} onClose={handleClosePopup} />}
-            {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => deleteStock(selectedItem.action, selectedItem.item)} inlineKeys={["diamondId", "diamondName"]} />)}
-            {selectedItem && selectedItem.action === 'edit' && <StockForm data={selectedItem} />}
-            {selectedItem && selectedItem.action === 'import' && <ImportPopup onClose={handleClosePopup} onUpload={handleImportExcel} />}
-            {showSkippedPopup && <SkipDataPopup onClose={handleClosePopup} data={skippedStocks} />}
+            {selectedItem && selectedItem.action === 'delete' && (<DeletePopup item={selectedItem.item} onClose={handleClosePopup} onDelete={() => deletePurchase(selectedItem.action, selectedItem.item)} inlineKeys={["diamondId", "diamondName"]} />)}
+            {selectedItem && selectedItem.action === 'edit' && <PurchaseForm data={selectedItem} />}
         </div>
     );
 };
@@ -559,4 +411,4 @@ export const FilterPopup = ({ range, setRange, onSubmit }) => {
     );
 };
 
-export default Stock;
+export default Purchase;

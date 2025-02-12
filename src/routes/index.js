@@ -12,8 +12,8 @@ const SellInvoice = lazy(() => import("../pages/Sell-Invoice"));
 const SellInvoiceAdd = lazy(() => import("../pages/Sell-Invoice/Form"));
 const Memo = lazy(() => import("../pages/Memo"));
 const CreateMemo = lazy(() => import("../pages/Memo/Form"));
-const ManageInvoices = lazy(() => import("../pages/Sell-Invoice/manage-invoice"));
-const MemoPreview = lazy(() => import("../pages/Memo/preview"));
+const ManageInvoices = lazy(() => import("../pages/Sell-Invoice/Preview"));
+const MemoPreview = lazy(() => import("../pages/Memo/Preview"));
 const Stock = lazy(() => import("../pages/Stock"));
 const StockForm = lazy(() => import("../pages/Stock/Form"));
 const Expense = lazy(() => import("../pages/Expense"));
@@ -23,8 +23,8 @@ const CustomerAdd = lazy(() => import("../pages/Customer/Form"));
 const RolesPermission = lazy(() => import("../pages/Roles-Permission/RolesPermission"));
 const RolesPermissionForm = lazy(() => import("../pages/Roles-Permission/Form"));
 const ReportsAnalytics = lazy(() => import("../pages/Reports-Analytics/ReportsAnalytics"));
-const Purchase = lazy(() => import("../pages/payment"));
-const PurchaseAdd = lazy(() => import("../pages/payment/Form"));
+const Purchase = lazy(() => import("../pages/Purchase"));
+const PurchaseForm = lazy(() => import("../pages/Purchase/Form"));
 
 const { MAIN, DASHBOARD_LAYOUT } = LAYOUTS;
 
@@ -217,9 +217,16 @@ export const privateRoutes = [
     },
     {
         path: '/purchase/add',
-        element: PurchaseAdd,
+        element: PurchaseForm,
         title: "Purchase Add",
         layout: MAIN,
         breadcrumb: ["Management", "Purchase", "Add"]
-    }
+    },
+    {
+        path: '/purchase/edit/:purchaseId',
+        element: PurchaseForm,
+        title: "Purchase Edit",
+        layout: MAIN,
+        breadcrumb: ["Management", "Purchase", "Edit"]
+    },
 ];

@@ -5,7 +5,6 @@ import { getDate, getTime } from "utils/dateFormat";
 
 const HistoryPopup = ({ rows, onClose }) => {
     const navigate = useNavigate();
-    console.log(rows);
 
     const handleClick = (item) => {
         if (item.activity === 'Sold') {
@@ -36,28 +35,28 @@ const HistoryPopup = ({ rows, onClose }) => {
                         <h3 className="text-lg font-semibold">Total Available</h3>
                         <div className="text-[20px] px-[24px] font-bold flex justify-between">
                             <span>{rows.availableCarat}</span>
-                            <span>189.38%</span>
+                            <span>{((rows.availableCarat / rows.carat) * 100).toFixed(2)}%</span>
                         </div>
                     </div>
                     <div className="flex flex-col justify-between bg-gradient-to-r from-[rgba(34,197,94,0.9)] via-[rgba(22,163,74,0.9)] to-[rgba(21,128,61,0.8)] p-6 rounded-xl shadow-lg text-white text-center">
                         <h3 className="text-lg font-semibold">Sold</h3>
                         <div className="text-[20px] px-[24px] font-bold flex justify-between">
                             <span>{rows.soldCarat}</span>
-                            <span>189.38%</span>
+                            <span>{((rows.soldCarat / rows.carat) * 100).toFixed(2)}%</span>
                         </div>
                     </div>
                     <div className="flex flex-col justify-between bg-gradient-to-r from-[rgba(234,179,8,0.9)] via-[rgba(202,138,4,0.9)] to-[rgba(161,98,7,0.8)] p-6 rounded-xl shadow-lg text-white text-center">
                         <h3 className="text-lg font-semibold">Memo</h3>
                         <div className="text-[20px] px-[24px] font-bold flex justify-between">
                             <span>{rows.memoCarat}</span>
-                            <span>189.38%</span>
+                            <span>{((rows.memoCarat / rows.carat) * 100).toFixed(2)}%</span>
                         </div>
                     </div>
                     <div className="flex flex-col justify-between bg-gradient-to-r from-[rgba(239,68,68,0.8)] via-[rgba(220,38,38,0.8)] to-[rgba(185,28,28,0.7)] p-6 rounded-xl shadow-lg text-white text-center">
                         <h3 className="text-lg font-semibold">Total Carat</h3>
                         <div className="text-[20px] px-[24px] font-bold flex justify-between">
                             <span>{rows.carat}</span>
-                            <span>189.38%</span>
+                            <span>100%</span>
                         </div>
                     </div>
                 </div>

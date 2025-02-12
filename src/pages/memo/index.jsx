@@ -14,7 +14,7 @@ import Loader from 'components/loader';
 import { toast } from 'react-toastify';
 import DeletePopup from 'components/popup/Delete';
 import NoDataFound from 'components/no-data-found';
-import PDFDocument from './preview/PDFDocument';
+import PDFDocument from './Preview/PDFDocument';
 
 
 const Memo = () => {
@@ -107,6 +107,7 @@ const Memo = () => {
     const handleActionClick = async (action, item) => {
         switch (action) {
             case 'view':
+                navigate(`/memo/preview/${item._id}`);
                 break;
             case 'edit':
                 navigate(`/memo/edit/${item._id}`);
@@ -205,11 +206,11 @@ const Memo = () => {
                         <button>
                             <img src={downloadIcon} alt="Download" />
                         </button>
-                        <button>
+                        <button onClick={() => handleActionClick('view', item)}>
                             <img src={button} alt="View" />
                         </button>
-                        <button>
-                            <img src={button1} alt="Delete" onClick={() => handleActionClick('delete', { ...item, customerName: item.customer.name })} />
+                        <button onClick={() => handleActionClick('delete', { ...item, customerName: item.customer.name })}>
+                            <img src={button1} alt="Delete" />
                         </button>
                         <button className="mr-[5px]" onClick={() => handleActionClick('edit', item)}>
                             <img src={button2} alt="Edit" />

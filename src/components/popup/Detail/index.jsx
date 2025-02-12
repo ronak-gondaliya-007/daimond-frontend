@@ -17,7 +17,7 @@ const DetailPopup = ({ item, onClose }) => {
                 </div>
 
                 {/* Details Section */}
-                <div className="space-y-8 max-h-[75vh] overflow-y-auto">
+                <div className="space-y-8 max-h-[65vh] overflow-y-auto">
                     {/* First Row */}
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-y-4 sm:gap-x-16 border-b pb-4">
                         <DetailItem label="Diamond Name" value={item.diamondName || '--'} />

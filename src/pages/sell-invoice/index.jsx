@@ -119,10 +119,6 @@ const SellInvoice = () => {
             case 'delete':
                 setSelectedItem({ action, item });
                 break;
-            case 'import':
-                break;
-            case 'export':
-                break;
             default:
                 break;
         }

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import InputField from 'components/FormFields/InputField';
 import TextAreaField from 'components/FormFields/TextAreaField';
 import { useForm } from 'react-hook-form';
-import { giaForm, looseStockForm, parcelStockForm } from 'static/form-data/stock-form';
+import { giaForm, loosePurchaseForm, parcelPurchaseForm } from 'static/form-data/purchase-form';
 import addIcon from 'assets/images/add.svg';
 import deleteIcon from 'assets/images/delete.svg';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,25 +14,25 @@ import MultiInputField from 'components/FormFields/MultiInputField';
 import Loader from 'components/loader';
 
 const FORM_ROW = {
-    "loose": looseStockForm,
-    "parcel": parcelStockForm,
+    "loose": loosePurchaseForm,
+    "parcel": parcelPurchaseForm,
     "gia": giaForm
 }
 
-const StockForm = () => {
+const PurchaseForm = () => {
     const navigate = useNavigate();
     const params = useParams();
 
-    const stockId = params?.stockId;
+    const purchaseId = params?.purchaseId;
 
     const { register, handleSubmit, formState: { errors }, reset, control, watch, getValues, setValue } = useForm({ defaultValues: { pic: '1' } });
 
     const [formType, setFormType] = useState('');
-    const [stockForm, setStockForm] = useState();
+    const [purchaseForm, setPurchaseForm] = useState();
     const [newImages, setNewImages] = useState([]);
     const [oldImages, setOldImages] = useState([]);
     const [removedImages, setRemovedImages] = useState([]);
-    const [stockDetail, setStockDetail] = useState(null);
+    const [purchaseDetail, setPurchaseDetail] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const isFetchingRef = useRef(false);
@@ -40,35 +40,35 @@ const StockForm = () => {
     useEffect(() => {
         switch (formType) {
             case 'loose':
-                setStockForm(looseStockForm);
+                setPurchaseForm(loosePurchaseForm);
                 break;
             case 'parcel':
-                setStockForm(parcelStockForm);
+                setPurchaseForm(parcelPurchaseForm);
                 break;
             default:
-                setStockForm(giaForm);
+                setPurchaseForm(giaForm);
                 break;
         }
     }, [formType]);
 
     useEffect(() => {
         if (isFetchingRef.current) return;
-        if (stockId) fetchStockDetail(stockId);
-    }, [stockId]);
+        if (purchaseId) fetchPurchaseDetail(purchaseId);
+    }, [purchaseId]);
 
     useEffect(() => {
-        if (stockDetail != null) {
-            const updatedForm = stockForm.map((field) => {
+        if (purchaseDetail != null) {
+            const updatedForm = purchaseForm.map((field) => {
                 if (field.type === "ROW") {
                     return {
                         ...field,
                         childrens: field.childrens.map((child) => {
                             if (child.name === "location") {
                                 const updatedOptions = child.options.map(option => option.value);
-                                if (!updatedOptions.includes(stockDetail.location)) {
-                                    child.options.unshift({ value: stockDetail.location, label: stockDetail.location });
+                                if (!updatedOptions.includes(purchaseDetail.location)) {
+                                    child.options.unshift({ value: purchaseDetail.location, label: purchaseDetail.location });
                                 }
-                                if (child.options.length > 4 && child.options[0].value !== stockDetail.location) {
+                                if (child.options.length > 4 && child.options[0].value !== purchaseDetail.location) {
                                     child.options.shift();
                                 }
                                 return { ...child };
@@ -80,9 +80,9 @@ const StockForm = () => {
                 return field;
             });
 
-            setStockForm(updatedForm);
+            setPurchaseForm(updatedForm);
         }
-    }, [stockDetail]);
+    }, [purchaseDetail]);
 
     const caratValue = watch('carat');
     const pricePerCaratValue = watch('pricePerCarat');
@@ -96,33 +96,33 @@ const StockForm = () => {
         }
     }, [caratValue, pricePerCaratValue, setValue]);
 
-    const fetchStockDetail = async (stockId) => {
+    const fetchPurchaseDetail = async (purchaseId) => {
         if (isFetchingRef.current) return;
         isFetchingRef.current = true;
 
         setLoading(true);
         try {
-            const response = await axiosClient.post(`/stock/detail`,
-                { stockId },
+            const response = await axiosClient.post(`/purchase/detail`,
+                { purchaseId },
                 { headers: { 'Content-Type': 'application/json' } });
 
             if (response.status === 200) {
                 toast.success(response?.data?.message);
-                let stockData = response.data.data;
-                const key = Object.entries(stockType).find(([key, value]) => value === stockData.type)?.[0];
+                let purchaseData = response.data.data;
+                const key = Object.entries(stockType).find(([key, value]) => value === purchaseData.type)?.[0];
                 setFormType(key)
 
-                setStockDetail(stockData);
+                setPurchaseDetail(purchaseData);
 
-                const mappedOldImages = stockData.diamondImages?.map((img) => ({
+                const mappedOldImages = purchaseData.diamondImages?.map((img) => ({
                     file: {},
                     preview: `${process.env.REACT_APP_IMAGE_URL}${img}`
                 }));
                 setOldImages(mappedOldImages);
 
-                for (const key in stockData) {
-                    if (stockData.hasOwnProperty(key)) {
-                        setValue(key, stockData[key]);
+                for (const key in purchaseData) {
+                    if (purchaseData.hasOwnProperty(key)) {
+                        setValue(key, purchaseData[key]);
                     }
                 }
             }
@@ -233,7 +233,7 @@ const StockForm = () => {
                 formData.append('DaimondPic', image.file);
             });
 
-            const response = await axiosClient.post('/stock/upload-image', formData, {
+            const response = await axiosClient.post('/purchase/upload-image', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -250,7 +250,7 @@ const StockForm = () => {
 
     const handleRemovedImage = async () => {
         try {
-            const response = await axiosClient.post('/stock/remove-image', { url: removedImages }, {
+            const response = await axiosClient.post('/purchase/remove-image', { url: removedImages }, {
                 headers: { 'Content-Type': 'application/json' },
             });
 
@@ -263,7 +263,7 @@ const StockForm = () => {
         }
     };
 
-    const stockType = {
+    const purchaseType = {
         "gia": 'GIA Stone',
         "loose": 'Loose Stone',
         "parcel": 'Parcel Good'
@@ -271,7 +271,7 @@ const StockForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            data.type = stockType[formType];
+            data.type = purchaseType[formType];
 
             // Remove deleted old images
             if (removedImages.length > 0) {
@@ -284,7 +284,7 @@ const StockForm = () => {
 
                 // Combine new and remaining old image URLs
                 const allImageUrls = [
-                    ...(stockDetail ? stockDetail.diamondImages : []),
+                    ...(purchaseDetail ? purchaseDetail.diamondImages : []),
                     ...uploadedImageUrls,
                 ];
                 data.diamondImages = allImageUrls;
@@ -294,11 +294,11 @@ const StockForm = () => {
 
             delete data.images;
 
-            const endPoint = stockId ? '/stock/update' : '/stock/add-new';
+            const endPoint = purchaseId ? '/purchase/update' : '/purchase/add-new';
 
-            if (stockId) {
-                data.stockId = stockId;
-                if ([stockType['loose'], stockType['parcel']].includes(data.type)) delete data.diamondImages;
+            if (purchaseId) {
+                data.purchaseId = purchaseId;
+                if ([purchaseType['loose'], purchaseType['parcel']].includes(data.type)) delete data.diamondImages;
                 data.carat = data.carat?.toString();
                 data.pic = data.pic?.toString();
                 delete data.availableCarat;
@@ -322,7 +322,7 @@ const StockForm = () => {
             });
 
             if (response.status === 201 || response.status === 200) {
-                navigate('/stock');
+                navigate(-1);
                 toast.success(response?.data?.message);
             }
         } catch (error) {
@@ -335,13 +335,13 @@ const StockForm = () => {
             <div className='px-[100px] py-[50px]'>
                 <div className="flex gap-[10px] mb-[20px]">
                     <span className="w-7 h-7 rounded-full text-center font-medium border-2 border-black bg-black text-white">1</span>
-                    <p className='text-[20px] font-medium'>Select Stock Type</p>
+                    <p className='text-[20px] font-medium'>Select Purchase Type</p>
                 </div>
                 <div className='mb-[10px]'>
-                    <label className='text-[#333] leading-[140%] font-medium'>Stock Type</label>
+                    <label className='text-[#333] leading-[140%] font-medium'>Purchase Type</label>
                 </div>
                 <div className="radio-buttons flex gap-[50px]">
-                    <div className={`${formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${stockId ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <div className={`${formType === 'gia' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${purchaseId ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                             <input
                                 type="radio"
@@ -350,7 +350,7 @@ const StockForm = () => {
                                 checked={formType === 'gia'}
                                 onChange={() => { setFormType('gia'); reset(); }}
                                 className="peer hidden"
-                                disabled={stockId}
+                                disabled={purchaseId}
                             />
                             <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
                                 {formType === 'gia' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
@@ -358,7 +358,7 @@ const StockForm = () => {
                             <span className={formType === 'loose' ? 'font-medium' : ''}>GIA Diamond</span>
                         </label>
                     </div>
-                    <div className={`${formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${stockId ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <div className={`${formType === 'loose' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${purchaseId ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                             <input
                                 type="radio"
@@ -367,7 +367,7 @@ const StockForm = () => {
                                 checked={formType === 'loose'}
                                 onChange={() => { setFormType('loose'); reset(); }}
                                 className="peer hidden"
-                                disabled={stockId}
+                                disabled={purchaseId}
                             />
                             <span
                                 className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
@@ -376,7 +376,7 @@ const StockForm = () => {
                             <span className={formType === 'loose' ? 'font-medium' : ''}>Loose Diamond</span>
                         </label>
                     </div>
-                    <div className={`${formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${stockId ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <div className={`${formType === 'parcel' ? 'border-2 border-[#1373e7] bg-[#e7f1fd] p-[15px] rounded-[6px]' : 'border-2 border-gray p-[15px] rounded-[6px]'} ${purchaseId ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         <label className='flex items-center justify-center cursor-pointer gap-[15px]'>
                             <input
                                 type="radio"
@@ -385,7 +385,7 @@ const StockForm = () => {
                                 checked={formType === 'parcel'}
                                 onChange={() => { setFormType('parcel'); reset(); }}
                                 className="peer hidden"
-                                disabled={stockId}
+                                disabled={purchaseId}
                             />
                             <span className="w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center peer-checked:border-blue-500">
                                 {formType === 'parcel' && <div className="w-3 h-3 bg-[#1373e7] rounded-full"></div>}
@@ -399,7 +399,7 @@ const StockForm = () => {
                     <form className="stock-add" autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
                         <div className="flex gap-[10px] mt-[40px] mb-[20px]">
                             <span className="w-7 h-7 rounded-full text-center font-medium border-2 border-black bg-black text-white">2</span>
-                            <p className='text-[20px] font-medium'>Enter Stock Detail</p>
+                            <p className='text-[20px] font-medium'>Enter Purchase Detail</p>
                         </div>
                         {
                             FORM_ROW[formType].map((field) => (
@@ -407,8 +407,8 @@ const StockForm = () => {
                             ))
                         }
                         <div className='w-full flex items-center justify-end gap-[20px]'>
-                            {!stockId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>}
-                            {stockId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => navigate(-1)}>Cancel</button>}
+                            {!purchaseId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => reset()}>Reset</button>}
+                            {purchaseId && <button type='button' className='w-[150px] h-[48px] outline-none rounded-[12px] border-[2px] border-[#342C2C] border-solid text-[16px]' onClick={() => navigate(-1)}>Cancel</button>}
                             <button type='submit' className='w-[150px] h-[48px] outline-none rounded-[12px] bg-[#342C2C] text-white text-[16px]'>Submit</button>
                         </div>
                     </form>
@@ -496,4 +496,4 @@ const BasicImage = ({
     );
 };
 
-export default StockForm;
+export default PurchaseForm;
